@@ -35,4 +35,8 @@ extension UIColor {
     static var ypWhite: UIColor {
         UIColor(named: "White") ?? UIColor.white
     }
+
+    static var colorSelection5: UIColor {
+        UIColor(named: "Color Selection 5") ?? UIColor.green
+    }
 }
