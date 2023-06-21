@@ -68,6 +68,10 @@ final class TrackersViewController: UIViewController {
         let leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done, target: self, action: nil)
         let rightBarButtonItem = UIBarButtonItem(customView: datePickerView)
         leftBarButtonItem.tintColor = .ypBlack
+
+        leftBarButtonItem.action = #selector(leftBarButtonTapped)
+        rightBarButtonItem.action = #selector(rightBarButtonTapped)
+
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.rightBarButtonItem = rightBarButtonItem
 
@@ -108,6 +112,15 @@ final class TrackersViewController: UIViewController {
     private func checkNeedPlaceholder() {
         placeholderImageView.isHidden = true
         placeholderText.isHidden = true
+    }
+
+    @objc private func leftBarButtonTapped() {
+        let viewController = NewTrackerTypeChoosingViewController()
+        let modalNavigationController = UINavigationController(rootViewController: viewController)
+        navigationController?.present(modalNavigationController, animated: true)
+    }
+    
+    @objc private func rightBarButtonTapped() {
     }
 }
 
