@@ -40,6 +40,22 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
 
+    private let placeholderImageView: UIImageView = {
+        let placeholderImageView = UIImageView()
+        placeholderImageView.image = UIImage(named: C.UIImages.emptyTrackersPlaceholder)
+        placeholderImageView.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderImageView
+    }()
+
+    private let placeholderText: UILabel = {
+        let placeholderText = UILabel()
+        placeholderText.text = "Что будем отслеживать?"
+        placeholderText.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        placeholderText.textColor = .ypBlack
+        placeholderText.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderText
+    }()
+
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +63,7 @@ final class TrackersViewController: UIViewController {
         configureNavigationBar()
         configureCollectionView()
         makeLayout()
+        checkNeedPlaceholder()
     }
 
     // MARK: - Private Methods
@@ -64,7 +81,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private func makeLayout() {
-        [titleLabel, datePickerView, searchField, collectionView].forEach({ view.addSubview($0) })
+        [titleLabel, datePickerView, searchField, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
 
         let padding: CGFloat = 16
 
@@ -82,8 +99,19 @@ final class TrackersViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            placeholderImageView.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
+            placeholderImageView.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor),
+
+            placeholderText.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
+            placeholderText.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8)
         ])
+    }
+
+    private func checkNeedPlaceholder() {
+        placeholderImageView.isHidden = true
+        placeholderText.isHidden = true
     }
 }
 

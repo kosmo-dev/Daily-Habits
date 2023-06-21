@@ -72,7 +72,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         return checkButton
     }()
 
-    var cardIsChecked = false
+    private var cardIsChecked = false
 
     // MARK: - Public Methods
     func configureCell() {
@@ -93,30 +93,32 @@ final class CardCollectionViewCell: UICollectionViewCell {
         addSubview(daysLabel)
         addSubview(checkButton)
 
+        let padding: CGFloat = 12
+
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: topAnchor),
             cardView.leadingAnchor.constraint(equalTo: leadingAnchor),
             cardView.trailingAnchor.constraint(equalTo: trailingAnchor),
             cardView.heightAnchor.constraint(equalToConstant: 90),
 
-            emojiLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
-            emojiLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            emojiLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: padding),
+            emojiLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: padding),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
 
             pinImageView.centerYAnchor.constraint(equalTo: emojiLabel.centerYAnchor),
-            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -padding),
 
-            cardText.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
-            cardText.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
-            cardText.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -12),
+            cardText.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: padding),
+            cardText.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -padding),
+            cardText.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -padding),
 
             checkButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 8),
-            checkButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            checkButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
             checkButton.widthAnchor.constraint(equalToConstant: 34),
             checkButton.heightAnchor.constraint(equalToConstant: 34),
 
-            daysLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            daysLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             daysLabel.centerYAnchor.constraint(equalTo: checkButton.centerYAnchor)
         ])
     }
