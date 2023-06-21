@@ -9,15 +9,6 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     // MARK: - Private Properties
-    private let titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.text = "Трекеры"
-        titleLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        titleLabel.textColor = .ypBlack
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        return titleLabel
-    }()
-
     private let datePickerView: UIDatePicker = {
         let datePickerView = UIDatePicker()
         datePickerView.preferredDatePickerStyle = .compact
@@ -56,10 +47,16 @@ final class TrackersViewController: UIViewController {
         return placeholderText
     }()
 
+    private var categories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = []
+    private var completedTrackers: Set<TrackerRecord> = []
+    private var currentDate: Date = Date()
+
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
+
         configureNavigationBar()
         configureCollectionView()
         makeLayout()
@@ -69,8 +66,13 @@ final class TrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func configureNavigationBar() {
         let leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done, target: self, action: nil)
+        let rightBarButtonItem = UIBarButtonItem(customView: datePickerView)
         leftBarButtonItem.tintColor = .ypBlack
         navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+
+        navigationItem.title = "Трекеры"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     private func configureCollectionView() {
@@ -81,18 +83,12 @@ final class TrackersViewController: UIViewController {
     }
 
     private func makeLayout() {
-        [titleLabel, datePickerView, searchField, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
+        [searchField, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
 
         let padding: CGFloat = 16
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1),
-            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-
-            datePickerView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            datePickerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
-
-            searchField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 7),
+            searchField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
             searchField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
 
@@ -117,8 +113,12 @@ final class TrackersViewController: UIViewController {
 
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return visibleCategories.count
+    }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        let count = visibleCategories.reduce(0) { $0 + $1.trackers.count }
+        return count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
