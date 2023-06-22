@@ -16,6 +16,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
         button.layer.masksToBounds = true
         button.setTitleColor(.ypWhite, for: .normal)
         button.setTitle("Привычка", for: .normal)
+        button.addTarget(nil, action: #selector(habitButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -34,13 +35,13 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .ypWhite
         configureView()
     }
 
     // MARK: - Private Methods
     private func configureView() {
+        view.backgroundColor = .ypWhite
+        
         navigationItem.title = "Создание трекера"
         navigationController?.navigationBar.prefersLargeTitles = false
         view.addSubview(habitButton)
@@ -57,5 +58,10 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
             eventbutton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             eventbutton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+
+    @objc private func habitButtonTapped() {
+        let viewController = NewTrackerViewController()
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
