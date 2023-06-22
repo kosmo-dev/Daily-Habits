@@ -27,6 +27,7 @@ final class TrackersViewController: UIViewController {
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = .ypWhite
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -48,7 +49,7 @@ final class TrackersViewController: UIViewController {
     }()
 
     private var categories: [TrackerCategory] = []
-    private var visibleCategories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = [TrackerCategory(name: "1", trackers: [Tracker(id: UUID(), name: "1", color: .colorSelection5, emoji: "❤️", schedule: "")])]
     private var completedTrackers: Set<TrackerRecord> = []
     private var currentDate: Date = Date()
 

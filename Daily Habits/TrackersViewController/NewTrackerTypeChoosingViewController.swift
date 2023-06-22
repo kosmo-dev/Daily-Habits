@@ -14,7 +14,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.tintColor = .ypWhite
+        button.setTitleColor(.ypWhite, for: .normal)
         button.setTitle("Привычка", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -25,7 +25,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.tintColor = .ypWhite
+        button.setTitleColor(.ypWhite, for: .normal)
         button.setTitle("Нерегулярное событие", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

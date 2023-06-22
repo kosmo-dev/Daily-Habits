@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3D2998332A40D4C300B42278 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */; };
 		3D44CA0E2A4381E600B7AF05 /* NewTrackerTypeChoosingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D44CA0D2A4381E600B7AF05 /* NewTrackerTypeChoosingViewController.swift */; };
+		3D44CA102A43998600B7AF05 /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D44CA0F2A43998600B7AF05 /* NewTrackerViewController.swift */; };
 		3D7BF5BC2A3F636C007FDAC9 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7BF5BB2A3F636C007FDAC9 /* TabBarController.swift */; };
 		3D7BF5BE2A3F6B83007FDAC9 /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7BF5BD2A3F6B83007FDAC9 /* StatisticViewController.swift */; };
 		3D7BF5C72A3FA9FC007FDAC9 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7BF5C62A3FA9FC007FDAC9 /* UIColor+Extension.swift */; };
@@ -26,6 +27,7 @@
 /* Begin PBXFileReference section */
 		3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		3D44CA0D2A4381E600B7AF05 /* NewTrackerTypeChoosingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerTypeChoosingViewController.swift; sourceTree = "<group>"; };
+		3D44CA0F2A43998600B7AF05 /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		3D7BF5BB2A3F636C007FDAC9 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		3D7BF5BD2A3F6B83007FDAC9 /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		3D7BF5C62A3FA9FC007FDAC9 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 			children = (
 				3DEA00E32A3B280300CE2402 /* TrackersViewController.swift */,
 				3D44CA0D2A4381E600B7AF05 /* NewTrackerTypeChoosingViewController.swift */,
+				3D44CA0F2A43998600B7AF05 /* NewTrackerViewController.swift */,
 				3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */,
 			);
 			path = TrackersViewController;
@@ -218,6 +221,7 @@
 				3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */,
 				3D2998332A40D4C300B42278 /* CardCollectionViewCell.swift in Sources */,
 				3D7BF5BE2A3F6B83007FDAC9 /* StatisticViewController.swift in Sources */,
+				3D44CA102A43998600B7AF05 /* NewTrackerViewController.swift in Sources */,
 				3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */,
 				3D44CA0E2A4381E600B7AF05 /* NewTrackerTypeChoosingViewController.swift in Sources */,
 				3DB172AE2A42FB7C0043A3F1 /* Constants.swift in Sources */,

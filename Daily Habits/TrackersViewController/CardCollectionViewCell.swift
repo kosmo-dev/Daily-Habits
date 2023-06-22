@@ -54,8 +54,10 @@ final class CardCollectionViewCell: UICollectionViewCell {
     private let checkButton: UIButton = {
         let checkButton = UIButton()
         checkButton.setTitle("", for: .normal)
-        checkButton.tintColor = .colorSelection5
-        checkButton.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+        checkButton.tintColor = .ypWhite
+        checkButton.backgroundColor = .colorSelection5
+        checkButton.layer.cornerRadius = 17
+        checkButton.layer.masksToBounds = true
 
         if #available(iOS 15.0, *) {
             var config = UIButton.Configuration.plain()
@@ -109,6 +111,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
             pinImageView.centerYAnchor.constraint(equalTo: emojiLabel.centerYAnchor),
             pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -padding),
 
+            cardText.topAnchor.constraint(greaterThanOrEqualTo: emojiLabel.bottomAnchor, constant: 8),
             cardText.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: padding),
             cardText.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -padding),
             cardText.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -padding),
@@ -121,17 +124,25 @@ final class CardCollectionViewCell: UICollectionViewCell {
             daysLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             daysLabel.centerYAnchor.constraint(equalTo: checkButton.centerYAnchor)
         ])
+
+        checkButtonState()
     }
 
     @objc func checkButtonTapped() {
+        cardIsChecked.toggle()
+        checkButtonState()
+    }
+
+    private func checkButtonState() {
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)
+        var image: UIImage?
         if cardIsChecked {
-            checkButton.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
-            checkButton.layer.opacity = 1
-            cardIsChecked = false
-        } else {
-            checkButton.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .normal)
+            image = UIImage(systemName: "checkmark", withConfiguration: imageConfiguration)
             checkButton.layer.opacity = 0.3
-            cardIsChecked = true
+        } else {
+            image = UIImage(systemName: "plus", withConfiguration: imageConfiguration)
+            checkButton.layer.opacity = 1
         }
+        checkButton.setImage(image, for: .normal)
     }
 }
