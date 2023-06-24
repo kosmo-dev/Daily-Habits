@@ -77,11 +77,11 @@ final class CardCollectionViewCell: UICollectionViewCell {
     private var cardIsChecked = false
 
     // MARK: - Public Methods
-    func configureCell() {
-        emojiLabel.text = "❤️"
-        cardText.text = "Поливать растение"
+    func configureCell(with tracker: Tracker) {
+        emojiLabel.text = tracker.emoji
+        cardText.text = tracker.name
         daysLabel.text = "1 день"
-        cardView.backgroundColor = .colorSelection5
+        cardView.backgroundColor = tracker.color
 
         makeLayout()
     }

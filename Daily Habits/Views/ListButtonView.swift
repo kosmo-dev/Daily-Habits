@@ -7,19 +7,20 @@
 
 import UIKit
 
-final class ListView: UIView {
+final class ListButtonView: UIButton {
     enum ViewType {
         case disclosure
         case switcher
+        case checkmark
     }
     // MARK: - Private Properties
-    let disclosureButton: UIButton = {
-        let disclosureButton = UIButton()
-        disclosureButton.setTitle("", for: .normal)
-        disclosureButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-        disclosureButton.tintColor = .ypGray
-        disclosureButton.translatesAutoresizingMaskIntoConstraints = false
-        return disclosureButton
+    private let disclosureImageView: UIImageView = {
+        let disclosureImageView = UIImageView()
+        disclosureImageView.image = UIImage(systemName: "chevron.right")
+        disclosureImageView.tintColor = .ypGray
+        disclosureImageView.isUserInteractionEnabled = true
+        disclosureImageView.translatesAutoresizingMaskIntoConstraints = false
+        return disclosureImageView
     }()
 
     private let switcher: UISwitch = {
@@ -27,6 +28,15 @@ final class ListView: UIView {
         switcher.onTintColor = .ypBlue
         switcher.translatesAutoresizingMaskIntoConstraints = false
         return switcher
+    }()
+
+    private let checkmarkImageView: UIImageView = {
+        let checkmarkImageView = UIImageView()
+        checkmarkImageView.image = UIImage(systemName: "checkmark")
+        checkmarkImageView.tintColor = .ypBlue
+        checkmarkImageView.isUserInteractionEnabled = true
+        checkmarkImageView.translatesAutoresizingMaskIntoConstraints = false
+        return checkmarkImageView
     }()
 
     let stackView: UIStackView = {
@@ -63,24 +73,15 @@ final class ListView: UIView {
     private var viewType: ViewType?
 
     // MARK: - Initializers
-    /// Creates a view with disclosure button
-    init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, action: Selector) {
+    init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, type: ViewType, action: Selector?) {
         super.init(frame: .zero)
         layer.maskedCorners = viewMaskedCorners
         bottomDivider.isHidden = bottomDividerIsHidden
         self.primaryText.text = primaryText
-        disclosureButton.addTarget(nil, action: action, for: .touchUpInside)
-        viewType = .disclosure
-        configureView()
-    }
-
-    /// Creates a view with UISwitch
-    init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String) {
-        super.init(frame: .zero)
-        layer.maskedCorners = viewMaskedCorners
-        bottomDivider.isHidden = bottomDividerIsHidden
-        self.primaryText.text = primaryText
-        viewType = .switcher
+        if let action {
+            addTarget(nil, action: action, for: .touchUpInside)
+        }
+        viewType = type
         configureView()
     }
 
@@ -96,6 +97,14 @@ final class ListView: UIView {
 
     func updateSecondaryText(_ text: String) {
         secondaryText.text = text
+    }
+
+    func switcherIsOn() -> Bool {
+        return switcher.isOn
+    }
+
+    func getPrimaryText() -> String? {
+        return primaryText.text
     }
 
     // MARK: - Private Methods
@@ -126,13 +135,13 @@ final class ListView: UIView {
         guard let viewType else { return }
         switch viewType {
         case .disclosure:
-            addSubview(disclosureButton)
+            addSubview(disclosureImageView)
             NSLayoutConstraint.activate([
-                disclosureButton.widthAnchor.constraint(equalToConstant: 10),
-                disclosureButton.heightAnchor.constraint(equalToConstant: 17),
-                disclosureButton.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
-                disclosureButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-                disclosureButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                disclosureImageView.widthAnchor.constraint(equalToConstant: 10),
+                disclosureImageView.heightAnchor.constraint(equalToConstant: 17),
+                disclosureImageView.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
+                disclosureImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+                disclosureImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             ])
         case .switcher:
             addSubview(switcher)
@@ -140,6 +149,15 @@ final class ListView: UIView {
                 switcher.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
                 switcher.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
                 switcher.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ])
+        case .checkmark:
+            addSubview(checkmarkImageView)
+            NSLayoutConstraint.activate([
+                checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
+                checkmarkImageView.heightAnchor.constraint(equalToConstant: 24),
+                checkmarkImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                checkmarkImageView.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
+                checkmarkImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
             ])
         }
     }

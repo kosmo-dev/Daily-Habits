@@ -32,6 +32,11 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
 
+    private let cancelSearchButton: UIButton = {
+        let cancelSearchButton = UIButton()
+        return cancelSearchButton
+    }()
+
     private let placeholderImageView: UIImageView = {
         let placeholderImageView = UIImageView()
         placeholderImageView.image = UIImage(named: C.UIImages.emptyTrackersPlaceholder)
@@ -49,7 +54,7 @@ final class TrackersViewController: UIViewController {
     }()
 
     private var categories: [TrackerCategory] = []
-    private var visibleCategories: [TrackerCategory] = [TrackerCategory(name: "1", trackers: [Tracker(id: UUID(), name: "1", color: .colorSelection5, emoji: "❤️", schedule: "")])]
+    private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
     private var currentDate: Date = Date()
 
@@ -85,6 +90,7 @@ final class TrackersViewController: UIViewController {
         collectionView.dataSource = self
 
         collectionView.register(CardCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
     }
 
     private func makeLayout() {
@@ -116,8 +122,10 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func leftBarButtonTapped() {
-        let viewController = NewTrackerTypeChoosingViewController()
-        let modalNavigationController = UINavigationController(rootViewController: viewController)
+        let newTrackerViewController = NewTrackerViewController()
+        newTrackerViewController.delegate = self
+        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(newTrackerViewController: newTrackerViewController, newHabitVIewController: nil)
+        let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
         navigationController?.present(modalNavigationController, animated: true)
     }
     
@@ -137,8 +145,15 @@ extension TrackersViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CardCollectionViewCell
-        cell?.configureCell()
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        cell?.configureCell(with: tracker)
         return cell ?? UICollectionViewCell()
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header", for: indexPath) as? HeaderCollectionReusableView
+        view?.configureView(text: visibleCategories[indexPath.row].name)
+        return view ?? UICollectionReusableView()
     }
 }
 
@@ -151,5 +166,35 @@ extension TrackersViewController: UICollectionViewDelegate {
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 167, height: 148)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+extension TrackersViewController: NewTrackerViewControllerDelegate {
+    func addNewTracker(_ trackerCategory: TrackerCategory) {
+        var newCategories: [TrackerCategory] = []
+
+        if let categoryIndex = categories.firstIndex(where: { $0.name == trackerCategory.name }) {
+            for (index, category) in categories.enumerated() {
+                var trackers = category.trackers
+                if index == categoryIndex {
+                    trackers.append(contentsOf: trackerCategory.trackers)
+                }
+                newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
+            }
+        } else {
+            newCategories = categories
+            newCategories.append(trackerCategory)
+        }
+
+        categories = newCategories
+        visibleCategories = categories
+        
+        collectionView.reloadData()
     }
 }

@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol NewTrackerViewControllerDelegate: AnyObject {
+    func addNewTracker(_ trackerCategory: TrackerCategory)
+}
+
 final class NewTrackerViewController: UIViewController {
+    // MARK: - Public Properties
+    weak var delegate: NewTrackerViewControllerDelegate?
+    
     // MARK: - Private Properties
     private let titleTextField: UITextField = {
         let titleTextField = UITextField()
@@ -20,10 +27,12 @@ final class NewTrackerViewController: UIViewController {
         return titleTextField
     }()
 
-    let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
-    let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
-    let categoryView = ListView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", action: #selector(categoryViewButtonTapped))
-    let scheduleView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", action: #selector(scheduleViewButtonTapped))
+    private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
+    private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
+    private let categoryButtonView = ListButtonView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
+    private let scheduleButtonView = ListButtonView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
+
+    private var category: String?
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -37,10 +46,10 @@ final class NewTrackerViewController: UIViewController {
         navigationItem.title = "Новая привычка"
         navigationItem.hidesBackButton = true
 
-        categoryView.translatesAutoresizingMaskIntoConstraints = false
-        scheduleView.translatesAutoresizingMaskIntoConstraints = false
+        categoryButtonView.translatesAutoresizingMaskIntoConstraints = false
+        scheduleButtonView.translatesAutoresizingMaskIntoConstraints = false
 
-        [titleTextField, categoryView, scheduleView, cancelButton, saveButton].forEach({ view.addSubview($0) })
+        [titleTextField, categoryButtonView, scheduleButtonView, cancelButton, saveButton].forEach({ view.addSubview($0) })
 
         let padding: CGFloat = 16
 
@@ -50,15 +59,15 @@ final class NewTrackerViewController: UIViewController {
             titleTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             titleTextField.heightAnchor.constraint(equalToConstant: 75),
 
-            categoryView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24),
-            categoryView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            categoryView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
-            categoryView.heightAnchor.constraint(equalToConstant: 75),
+            categoryButtonView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24),
+            categoryButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
+            categoryButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            categoryButtonView.heightAnchor.constraint(equalToConstant: 75),
 
-            scheduleView.topAnchor.constraint(equalTo: categoryView.bottomAnchor),
-            scheduleView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            scheduleView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
-            scheduleView.heightAnchor.constraint(equalToConstant: 75),
+            scheduleButtonView.topAnchor.constraint(equalTo: categoryButtonView.bottomAnchor),
+            scheduleButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
+            scheduleButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            scheduleButtonView.heightAnchor.constraint(equalToConstant: 75),
 
             cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
@@ -73,16 +82,31 @@ final class NewTrackerViewController: UIViewController {
     }
 
     @objc private func cancelButtonTapped() {
+        dismiss(animated: true)
     }
 
     @objc private func saveButtonTapped() {
+        let text: String = titleTextField.text ?? "Tracker"
+        let category: String = category ?? "Category"
+        delegate?.addNewTracker(TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: .colorSelection5, emoji: "❤️", schedule: "sun")]))
+        dismiss(animated: true)
     }
 
     @objc private func categoryViewButtonTapped() {
+        let viewController = CategoryViewController()
+        viewController.delegate = self
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
     @objc private func scheduleViewButtonTapped() {
         let viewController = ScheduleViewController()
         navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+extension NewTrackerViewController: CategoryViewControllerDelegate {
+    func addCategory(_ category: String) {
+        categoryButtonView.addSecondaryText(category)
+        self.category = category
     }
 }

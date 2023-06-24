@@ -8,9 +8,23 @@
 import UIKit
 
 final class NewTrackerTypeChoosingViewController: UIViewController {
-// MARK: - Private Properties
-    let habitButton = PrimaryButton(title: "Привычка", action: #selector(habitButtonTapped), type: .primary)
-    let eventButton = PrimaryButton(title: "Нерегулярное событие", action: #selector(eventButtonTapped), type: .primary)
+    // MARK: - Private Properties
+    private let habitButton = PrimaryButton(title: "Привычка", action: #selector(habitButtonTapped), type: .primary)
+    private let eventButton = PrimaryButton(title: "Нерегулярное событие", action: #selector(eventButtonTapped), type: .primary)
+
+    private var newTrackerViewController: UIViewController?
+    private var newHabitVIewController: UIViewController?
+
+    // MARK: Initializers
+    init(newTrackerViewController: UIViewController?, newHabitVIewController: UIViewController?) {
+        super.init(nibName: nil, bundle: nil)
+        self.newTrackerViewController = newTrackerViewController
+        self.newHabitVIewController = newHabitVIewController
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
@@ -41,11 +55,13 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     }
 
     @objc private func habitButtonTapped() {
-        let viewController = NewTrackerViewController()
-        navigationController?.pushViewController(viewController, animated: true)
+        guard let newTrackerViewController else { return }
+        navigationController?.pushViewController(newTrackerViewController, animated: true)
     }
 
     @objc private func eventButtonTapped() {
 
     }
 }
+
+
