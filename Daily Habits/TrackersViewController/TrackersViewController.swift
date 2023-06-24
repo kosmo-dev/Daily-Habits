@@ -145,7 +145,19 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func datePickerValueChanged() {
-//        let weekday = dateFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: datePickerView.date)-1]
+        let weekday = Calendar.current.component(.weekday, from: datePickerView.date)-1
+        var newCategories: [TrackerCategory] = []
+        for category in categories {
+            var trackers: [Tracker] = []
+            for tracker in category.trackers {
+                if tracker.schedule.contains(where: { $0 == weekday }) {
+                    trackers.append(tracker)
+                }
+            }
+            newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
+        }
+        visibleCategories = newCategories
+        collectionView.reloadData()
     }
 }
 
@@ -155,7 +167,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         return visibleCategories.count
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = visibleCategories.reduce(0) { $0 + $1.trackers.count }
+        let count = visibleCategories[section].trackers.count
         return count
     }
 
@@ -168,7 +180,7 @@ extension TrackersViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header", for: indexPath) as? HeaderCollectionReusableView
-        view?.configureView(text: visibleCategories[indexPath.row].name)
+        view?.configureView(text: visibleCategories[indexPath.section].name)
         return view ?? UICollectionReusableView()
     }
 }
@@ -209,8 +221,9 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
             newCategories.append(trackerCategory)
         }
 
+        print(newCategories)
         categories = newCategories
-        visibleCategories = categories
+        datePickerValueChanged()
         
         collectionView.reloadData()
     }

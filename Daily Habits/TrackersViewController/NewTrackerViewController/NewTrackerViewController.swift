@@ -29,11 +29,12 @@ final class NewTrackerViewController: UIViewController {
 
     private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
     private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
-    private let categoryButtonView = ListButtonView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
-    private let scheduleButtonView = ListButtonView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
+    private let categoryButtonView = ListView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
+    private let scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
 
     private var category: String?
     private var choosedDays: [Int] = []
+    private var choosedCategoryIndex: Int?
     private var dateFormatter: DateFormatter
 
     // MARK: - Initializers
@@ -100,18 +101,18 @@ final class NewTrackerViewController: UIViewController {
     @objc private func saveButtonTapped() {
         let text: String = titleTextField.text ?? "Tracker"
         let category: String = category ?? "Category"
-        delegate?.addNewTracker(TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: .colorSelection5, emoji: "❤️", schedule: "sun")]))
+        delegate?.addNewTracker(TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: .colorSelection5, emoji: "❤️", schedule: choosedDays)]))
         dismiss(animated: true)
     }
 
     @objc private func categoryViewButtonTapped() {
-        let viewController = CategoryViewController()
+        let viewController = CategoryViewController(choosedCategoryIndex: choosedCategoryIndex)
         viewController.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
 
     @objc private func scheduleViewButtonTapped() {
-        let viewController = ScheduleViewController(dateFormatter: dateFormatter)
+        let viewController = ScheduleViewController(dateFormatter: dateFormatter, choosedDays: choosedDays)
         viewController.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
@@ -119,9 +120,10 @@ final class NewTrackerViewController: UIViewController {
 
 // MARK: - CategoryViewControllerDelegate
 extension NewTrackerViewController: CategoryViewControllerDelegate {
-    func addCategory(_ category: String) {
+    func addCategory(_ category: String, index: Int) {
         categoryButtonView.addSecondaryText(category)
         self.category = category
+        choosedCategoryIndex = index
     }
 }
 

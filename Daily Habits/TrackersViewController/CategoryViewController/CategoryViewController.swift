@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CategoryViewControllerDelegate: AnyObject {
-    func addCategory(_ category: String)
+    func addCategory(_ category: String, index: Int)
 }
 
 final class CategoryViewController: UIViewController {
@@ -17,7 +17,7 @@ final class CategoryViewController: UIViewController {
 
     // MARK: - Private Properties
     private var categories = ["Важное", "Не важное"]
-    private var categoriesView = [ListButtonView]()
+    private var categoriesView = [ListView]()
     private var choosedCategoryIndex: Int?
 
     private let addCategoryButton = PrimaryButton(title: "Добавить категорию", action: #selector(addCategoryButtonTapped), type: .primary)
@@ -29,12 +29,23 @@ final class CategoryViewController: UIViewController {
         return stackView
     }()
 
+    private let tableView = UITableView()
+
+    // MARK: - Initializers
+    init(choosedCategoryIndex: Int?) {
+        super.init(nibName: nil, bundle: nil)
+        self.choosedCategoryIndex = choosedCategoryIndex
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureListView()
         configureView()
-        choosedCategoryIndex = 0
     }
 
     // MARK: - Private Methods
@@ -79,19 +90,25 @@ final class CategoryViewController: UIViewController {
                 maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
                 bottomDividerIsHidden = true
             }
-            categoriesView.append(ListButtonView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: categories[category], type: .checkmark, action: nil))
+            let view = ListView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: categories[category], type: .checkmark, action: #selector(categoryButtonTapped))
+            view.hideCheckMarkImage(true)
+            if category == choosedCategoryIndex {
+                view.hideCheckMarkImage(false)
+            }
+            categoriesView.append(view)
         }
     }
 
-    @objc private func categoryButtonTapped() {
-        print("category button tapped")
-    }
-
-    @objc private func addCategoryButtonTapped() {
+    @objc private func categoryButtonTapped(sender: ListButton) {
+        guard let primaryText = sender.getPrimaryText(), let index = categories.firstIndex(where: { $0 == primaryText }) else { return }
+        choosedCategoryIndex = index
+        sender.hideCheckMarkImage(false)
         if let choosedCategoryIndex {
-            delegate?.addCategory(categories[choosedCategoryIndex])
+            delegate?.addCategory(categories[choosedCategoryIndex], index: index)
         }
         navigationController?.popViewController(animated: true)
     }
 
+    @objc private func addCategoryButtonTapped() {
+    }
 }

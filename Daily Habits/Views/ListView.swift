@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ListButtonView: UIButton {
+final class ListView: UIView {
     enum ViewType {
         case disclosure
         case switcher
@@ -70,23 +70,26 @@ final class ListButtonView: UIButton {
         return secondaryText
     }()
 
+    private var buttonView: ListButton
     private var viewType: ViewType?
 
     // MARK: - Initializers
     init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, type: ViewType, action: Selector?) {
+        buttonView = ListButton(primaryText: primaryText)
         super.init(frame: .zero)
         layer.maskedCorners = viewMaskedCorners
         bottomDivider.isHidden = bottomDividerIsHidden
         self.primaryText.text = primaryText
+        buttonView.delegate = self
         if let action {
-            addTarget(nil, action: action, for: .touchUpInside)
+            buttonView.addTarget(nil, action: action, for: .touchUpInside)
         }
         viewType = type
         configureView()
     }
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError()
     }
 
     // MARK: - Public Methods
@@ -103,8 +106,16 @@ final class ListButtonView: UIButton {
         return switcher.isOn
     }
 
+    func setSwitcherOn() {
+        switcher.setOn(true, animated: false)
+    }
+
     func getPrimaryText() -> String? {
         return primaryText.text
+    }
+
+    func hideCheckMarkImage(_ hide: Bool) {
+        checkmarkImageView.isHidden = hide
     }
 
     // MARK: - Private Methods
@@ -117,6 +128,7 @@ final class ListButtonView: UIButton {
         addSubview(stackView)
         addSubview(bottomDivider)
         stackView.addArrangedSubview(primaryText)
+        addSubview(buttonView)
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
@@ -126,6 +138,11 @@ final class ListButtonView: UIButton {
             bottomDivider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             bottomDivider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             bottomDivider.heightAnchor.constraint(equalToConstant: 0.5),
+
+            buttonView.topAnchor.constraint(equalTo: topAnchor),
+            buttonView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            buttonView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            buttonView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
         configureViewType()
@@ -162,3 +179,5 @@ final class ListButtonView: UIButton {
         }
     }
 }
+
+extension ListView: ListButtonDelegate {}

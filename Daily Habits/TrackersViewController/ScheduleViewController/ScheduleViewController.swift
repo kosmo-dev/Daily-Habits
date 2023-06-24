@@ -20,8 +20,8 @@ final class ScheduleViewController: UIViewController {
     private var days = [String]()
     private let dateFormatter: DateFormatter
 
-    private var list = [ListButtonView]()
-    private var finalList = [Int]()
+    private var list = [ListView]()
+    private var finalList: [Int] = []
 
     private let confirmButton = PrimaryButton(title: "Готово", action: #selector(confirmButtonTapped), type: .primary)
 
@@ -33,9 +33,10 @@ final class ScheduleViewController: UIViewController {
     }()
 
     // MARK: - Initializer
-    init(dateFormatter: DateFormatter) {
+    init(dateFormatter: DateFormatter, choosedDays: [Int]) {
         self.dateFormatter = dateFormatter
         days = calendar.weekdaySymbols
+        finalList = choosedDays
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -81,6 +82,11 @@ final class ScheduleViewController: UIViewController {
         let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         var bottomDividerIsHidden = false
 
+        var choosedDays: [String] = []
+        for item in finalList {
+            choosedDays.append(Calendar.current.weekdaySymbols[item])
+        }
+
         for day in 0..<days.count {
             var maskedCorners: CACornerMask = []
             if day == 0 {
@@ -94,7 +100,11 @@ final class ScheduleViewController: UIViewController {
                 maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
                 bottomDividerIsHidden = true
             }
-            list.append(ListButtonView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day], type: .switcher, action: nil))
+            var view = ListView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day], type: .switcher, action: nil)
+            if choosedDays.contains(where: { $0 == days[day].lowercased() }) {
+                view.setSwitcherOn()
+            }
+            list.append(view)
         }
     }
 
@@ -113,6 +123,7 @@ final class ScheduleViewController: UIViewController {
     }
 
     @objc private func confirmButtonTapped() {
+        finalList.removeAll()
         for item in list {
             guard item.switcherIsOn() else { continue }
             guard let text = item.getPrimaryText() else { continue }
