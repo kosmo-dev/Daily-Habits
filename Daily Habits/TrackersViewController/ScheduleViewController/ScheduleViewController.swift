@@ -7,12 +7,8 @@
 
 import UIKit
 
-enum Weekdays: String {
-    case monday, tuesday, wednesday, thursday, friday, saturday, sunday
-}
-
 protocol ScheduleViewControllerDelegate: AnyObject {
-    func receiveWeekDays(_ weekdays: [Weekdays])
+    func addWeekDays(_ weekdays: [Int])
 }
 
 final class ScheduleViewController: UIViewController {
@@ -20,10 +16,12 @@ final class ScheduleViewController: UIViewController {
     weak var delegate: ScheduleViewControllerDelegate?
 
     // MARK: - Private Properties
-    private let days: [Weekdays] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+    private var calendar = Calendar.current
+    private var days = [String]()
+    private let dateFormatter: DateFormatter
 
     private var list = [ListButtonView]()
-    private var finalList = [Weekdays]()
+    private var finalList = [Int]()
 
     private let confirmButton = PrimaryButton(title: "Готово", action: #selector(confirmButtonTapped), type: .primary)
 
@@ -34,9 +32,21 @@ final class ScheduleViewController: UIViewController {
         return stackView
     }()
 
+    // MARK: - Initializer
+    init(dateFormatter: DateFormatter) {
+        self.dateFormatter = dateFormatter
+        days = calendar.weekdaySymbols
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureDaysArray()
         configureList()
         configureView()
     }
@@ -84,40 +94,36 @@ final class ScheduleViewController: UIViewController {
                 maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
                 bottomDividerIsHidden = true
             }
-            list.append(ListButtonView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day].rawValue, type: .switcher, action: nil))
+            list.append(ListButtonView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day], type: .switcher, action: nil))
         }
+    }
+
+    private func configureDaysArray() {
+        let weekdaySymbols = Calendar.current.weekdaySymbols
+        var weekdays: [String] = []
+
+        for weekdaySymbol in weekdaySymbols {
+            weekdays.append(weekdaySymbol.capitalizeFirstLetter())
+        }
+
+        guard let firstDay = weekdays.first else { return }
+        weekdays.append(firstDay)
+        weekdays.remove(at: 0)
+        days = weekdays
     }
 
     @objc private func confirmButtonTapped() {
         for item in list {
             guard item.switcherIsOn() else { continue }
             guard let text = item.getPrimaryText() else { continue }
-            guard let weekday = convertTextToWeekDays(text) else { continue }
+            guard let weekday = getIndexOfWeek(text) else { continue }
             finalList.append(weekday)
         }
-        delegate?.receiveWeekDays(finalList)
+        delegate?.addWeekDays(finalList)
         navigationController?.popViewController(animated: true)
     }
 
-    private func convertTextToWeekDays(_ text: String) -> Weekdays? {
-        switch text {
-        case Weekdays.monday.rawValue:
-            return .monday
-        case Weekdays.tuesday.rawValue:
-            return .tuesday
-        case Weekdays.wednesday.rawValue:
-            return .wednesday
-        case Weekdays.thursday.rawValue:
-            return .thursday
-        case Weekdays.friday.rawValue:
-            return .friday
-        case Weekdays.saturday.rawValue:
-            return .saturday
-        case Weekdays.sunday.rawValue:
-            return .sunday
-        default:
-            return nil
-        }
+    private func getIndexOfWeek(_ text: String) -> Int? {
+        return Calendar.current.weekdaySymbols.firstIndex(of: text.lowercased())
     }
-
 }

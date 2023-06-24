@@ -33,6 +33,18 @@ final class NewTrackerViewController: UIViewController {
     private let scheduleButtonView = ListButtonView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
 
     private var category: String?
+    private var choosedDays: [Int] = []
+    private var dateFormatter: DateFormatter
+
+    // MARK: - Initializers
+    init(dateFormatter: DateFormatter) {
+        self.dateFormatter = dateFormatter
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -99,14 +111,32 @@ final class NewTrackerViewController: UIViewController {
     }
 
     @objc private func scheduleViewButtonTapped() {
-        let viewController = ScheduleViewController()
+        let viewController = ScheduleViewController(dateFormatter: dateFormatter)
+        viewController.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
+// MARK: - CategoryViewControllerDelegate
 extension NewTrackerViewController: CategoryViewControllerDelegate {
     func addCategory(_ category: String) {
         categoryButtonView.addSecondaryText(category)
         self.category = category
+    }
+}
+
+extension NewTrackerViewController: ScheduleViewControllerDelegate {
+    func addWeekDays(_ weekdays: [Int]) {
+        choosedDays = weekdays
+        print(weekdays)
+        var daysView = ""
+        for index in choosedDays {
+            let day = Calendar.current.shortWeekdaySymbols[index]
+            daysView.append(day)
+            daysView.append(", ")
+        }
+        print(daysView)
+        daysView = String(daysView.dropLast(2))
+        scheduleButtonView.addSecondaryText(daysView)
     }
 }

@@ -32,6 +32,7 @@ final class CategoryViewController: UIViewController {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureListView()
         configureView()
         choosedCategoryIndex = 0
     }
@@ -45,8 +46,7 @@ final class CategoryViewController: UIViewController {
         view.addSubview(stackView)
         view.addSubview(addCategoryButton)
 
-        categoriesView.append(ListButtonView(viewMaskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: categories[0], type: .checkmark, action: nil))
-        stackView.addArrangedSubview(categoriesView[0])
+        categoriesView.forEach({ stackView.addArrangedSubview($0) })
 
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
@@ -58,7 +58,29 @@ final class CategoryViewController: UIViewController {
             addCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
         ])
-        categoriesView[0].heightAnchor.constraint(equalToConstant: 75).isActive = true
+        categoriesView.forEach({ $0.heightAnchor.constraint(equalToConstant: 75).isActive = true })
+    }
+
+    private func configureListView() {
+        let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        var bottomDividerIsHidden = false
+
+        for category in 0..<categories.count {
+            var maskedCorners: CACornerMask = []
+            if category == 0 {
+                maskedCorners = upperMaskedCorners
+            }
+            if category == categories.count - 1 {
+                maskedCorners = lowerMaskedCorners
+                bottomDividerIsHidden = true
+            }
+            if categories.count == 1 {
+                maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
+                bottomDividerIsHidden = true
+            }
+            categoriesView.append(ListButtonView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: categories[category], type: .checkmark, action: nil))
+        }
     }
 
     @objc private func categoryButtonTapped() {

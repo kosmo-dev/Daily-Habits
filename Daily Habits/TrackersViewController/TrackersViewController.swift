@@ -9,10 +9,20 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     // MARK: - Private Properties
+
+    private var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        return dateFormatter
+    }()
+
     private let datePickerView: UIDatePicker = {
         let datePickerView = UIDatePicker()
         datePickerView.preferredDatePickerStyle = .compact
         datePickerView.datePickerMode = .date
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "ru_RU")
+        datePickerView.calendar = calendar
         datePickerView.translatesAutoresizingMaskIntoConstraints = false
         return datePickerView
     }()
@@ -83,6 +93,8 @@ final class TrackersViewController: UIViewController {
 
         navigationItem.title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
+
+        datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
     }
 
     private func configureCollectionView() {
@@ -122,7 +134,7 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func leftBarButtonTapped() {
-        let newTrackerViewController = NewTrackerViewController()
+        let newTrackerViewController = NewTrackerViewController(dateFormatter: dateFormatter)
         newTrackerViewController.delegate = self
         let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(newTrackerViewController: newTrackerViewController, newHabitVIewController: nil)
         let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
@@ -130,6 +142,10 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func rightBarButtonTapped() {
+    }
+
+    @objc private func datePickerValueChanged() {
+//        let weekday = dateFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: datePickerView.date)-1]
     }
 }
 
@@ -175,6 +191,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - NewTrackerViewControllerDelegate
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
         var newCategories: [TrackerCategory] = []

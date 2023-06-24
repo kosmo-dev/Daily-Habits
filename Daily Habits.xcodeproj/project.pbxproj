@@ -23,6 +23,7 @@
 		3DB172B12A4301400043A3F1 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B02A4301400043A3F1 /* Tracker.swift */; };
 		3DB172B32A43015A0043A3F1 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B22A43015A0043A3F1 /* TrackerCategory.swift */; };
 		3DB172B52A4301780043A3F1 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B42A4301780043A3F1 /* TrackerRecord.swift */; };
+		3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB998D32A46F8B900EC9069 /* String+Extension.swift */; };
 		3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */; };
 		3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */; };
 		3DEA00E42A3B280300CE2402 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E32A3B280300CE2402 /* TrackersViewController.swift */; };
@@ -47,6 +48,7 @@
 		3DB172B02A4301400043A3F1 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		3DB172B22A43015A0043A3F1 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		3DB172B42A4301780043A3F1 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
+		3DB998D32A46F8B900EC9069 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		3DEA00DC2A3B280300CE2402 /* Daily Habits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Daily Habits.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				3D7BF5C62A3FA9FC007FDAC9 /* UIColor+Extension.swift */,
 				3DB121B72A44B60200CA2EEC /* UITextField+Extensions.swift */,
 				3DB172AD2A42FB7C0043A3F1 /* Constants.swift */,
+				3DB998D32A46F8B900EC9069 /* String+Extension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 				3DB172B52A4301780043A3F1 /* TrackerRecord.swift in Sources */,
 				3DB172B12A4301400043A3F1 /* Tracker.swift in Sources */,
 				3DB172B32A43015A0043A3F1 /* TrackerCategory.swift in Sources */,
+				3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */,
 				3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */,
 				3DB121BA2A44C1A600CA2EEC /* ListButtonView.swift in Sources */,
 				3DB121B82A44B60200CA2EEC /* UITextField+Extensions.swift in Sources */,
