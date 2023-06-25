@@ -23,6 +23,7 @@ final class NewTrackerViewController: UIViewController {
         titleTextField.layer.cornerRadius = 16
         titleTextField.layer.masksToBounds = true
         titleTextField.setLeftPaddingPoints(16)
+        titleTextField.clearButtonMode = .whileEditing
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
         return titleTextField
     }()
@@ -40,6 +41,7 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        titleTextField.delegate = self
     }
 
     // MARK: - Private Methods
@@ -136,5 +138,12 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
         }
         daysView = String(daysView.dropLast(2))
         scheduleButtonView.addSecondaryText(daysView)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension NewTrackerViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        titleTextField.resignFirstResponder()
     }
 }
