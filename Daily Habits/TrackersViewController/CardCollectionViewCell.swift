@@ -90,6 +90,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         daysLabel.text = "\(viewModel.counter) \(dayStringDeclension(for: viewModel.counter))"
         cardView.backgroundColor = viewModel.tracker.color
         self.viewModel = viewModel
+        pinImageView.isHidden = true
         checkButtonState()
         checkIsButtonEnabled()
 
@@ -164,6 +165,9 @@ final class CardCollectionViewCell: UICollectionViewCell {
         if !viewModel.buttonIsEnabled {
             checkButton.backgroundColor = viewModel.tracker.color.withAlphaComponent(0.3)
             checkButton.isEnabled = false
+        } else {
+            checkButton.backgroundColor = viewModel.tracker.color.withAlphaComponent(1)
+            checkButton.isEnabled = true
         }
     }
 

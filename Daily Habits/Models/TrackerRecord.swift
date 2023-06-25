@@ -9,7 +9,7 @@ import Foundation
 
 struct TrackerRecord {
     let id: UUID
-    let date: Date
+    let date: String
 }
 
 extension TrackerRecord: Hashable {

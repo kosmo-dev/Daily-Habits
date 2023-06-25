@@ -10,5 +10,6 @@ import Foundation
 struct C {
     struct UIImages {
         static let emptyTrackersPlaceholder = "EmptyTrackersPlaceholder"
+        static let searchNotFoundPlaceholder = "SearchNotFoundPlaceholder"
     }
 }

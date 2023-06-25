@@ -8,11 +8,14 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
+    enum PlaceholderState {
+        case noTrackers
+        case notFound
+    }
     // MARK: - Private Properties
-
     private var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ru_RU")
+        dateFormatter.dateFormat = "dd/MM/yyyy"
         return dateFormatter
     }()
 
@@ -89,7 +92,7 @@ final class TrackersViewController: UIViewController {
         configureNavigationBar()
         configureCollectionView()
         makeLayout()
-        checkNeedPlaceholder()
+        checkNeedPlaceholder(for: .noTrackers)
         searchField.delegate = self
     }
 
@@ -145,13 +148,26 @@ final class TrackersViewController: UIViewController {
         ])
     }
 
-    private func checkNeedPlaceholder() {
-        placeholderImageView.isHidden = true
-        placeholderText.isHidden = true
+    private func checkNeedPlaceholder(for state: PlaceholderState) {
+        if visibleCategories.isEmpty {
+            placeholderImageView.isHidden = false
+            placeholderText.isHidden = false
+            switch state {
+            case .noTrackers:
+                placeholderImageView.image = UIImage(named: C.UIImages.emptyTrackersPlaceholder)
+                placeholderText.text = "Что будем отслеживать?"
+            case .notFound:
+                placeholderImageView.image = UIImage(named: C.UIImages.searchNotFoundPlaceholder)
+                placeholderText.text = "Ничего не найдено"
+            }
+        } else {
+            placeholderImageView.isHidden = true
+            placeholderText.isHidden = true
+        }
     }
 
     @objc private func leftBarButtonTapped() {
-        let newTrackerViewController = NewTrackerViewController(dateFormatter: dateFormatter)
+        let newTrackerViewController = NewTrackerViewController()
         newTrackerViewController.delegate = self
         let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(newTrackerViewController: newTrackerViewController, newHabitVIewController: nil)
         let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
@@ -181,10 +197,10 @@ final class TrackersViewController: UIViewController {
     private func configureViewModel(for indexPath: IndexPath) -> CardCellViewModel {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let counter = completedTrackers.filter({ $0.id == tracker.id }).count
-        let cardIsChecked = completedTrackers.contains(TrackerRecord(id: tracker.id, date: currentDate))
+        let cardIsChecked = completedTrackers.contains(TrackerRecord(id: tracker.id, date: dateFormatter.string(from: currentDate)))
         let dateComparision = Calendar.current.compare(currentDate, to: Date(), toGranularity: .day)
         var buttonEnabled = true
-        if dateComparision == .orderedDescending {
+        if dateComparision.rawValue == 1 {
             buttonEnabled = false
         }
         return CardCellViewModel(tracker: tracker, counter: counter, buttonIsChecked: cardIsChecked, indexPath: indexPath, buttonIsEnabled: buttonEnabled)
@@ -195,6 +211,7 @@ final class TrackersViewController: UIViewController {
         searchField.resignFirstResponder()
         cancelSearchButton.removeFromSuperview()
         datePickerValueChanged()
+        checkNeedPlaceholder(for: .noTrackers)
     }
 }
 
@@ -224,9 +241,7 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
-extension TrackersViewController: UICollectionViewDelegate {
-
-}
+extension TrackersViewController: UICollectionViewDelegate {}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
@@ -266,7 +281,8 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
 
         categories = newCategories
         datePickerValueChanged()
-        
+
+        checkNeedPlaceholder(for: .noTrackers)
         collectionView.reloadData()
     }
 }
@@ -275,9 +291,9 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
 extension TrackersViewController: CardCollectionViewCellDelegate {
     func checkButtonTapped(viewModel: CardCellViewModel) {
         if viewModel.buttonIsChecked {
-            completedTrackers.insert(TrackerRecord(id: viewModel.tracker.id, date: currentDate))
+            completedTrackers.insert(TrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate)))
         } else {
-            completedTrackers.remove(TrackerRecord(id: viewModel.tracker.id, date: currentDate))
+            completedTrackers.remove(TrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate)))
         }
         collectionView.reloadItems(at: [viewModel.indexPath])
     }
@@ -294,6 +310,7 @@ extension TrackersViewController: UITextFieldDelegate {
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
         visibleCategories = searchedCategories
+        checkNeedPlaceholder(for: .notFound)
         collectionView.reloadData()
     }
 

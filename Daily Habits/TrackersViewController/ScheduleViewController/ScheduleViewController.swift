@@ -18,7 +18,6 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Private Properties
     private var calendar = Calendar.current
     private var days = [String]()
-    private let dateFormatter: DateFormatter
 
     private var list = [ListView]()
     private var finalList: [Int] = []
@@ -33,8 +32,7 @@ final class ScheduleViewController: UIViewController {
     }()
 
     // MARK: - Initializer
-    init(dateFormatter: DateFormatter, choosedDays: [Int]) {
-        self.dateFormatter = dateFormatter
+    init(choosedDays: [Int]) {
         days = calendar.weekdaySymbols
         finalList = choosedDays
         super.init(nibName: nil, bundle: nil)
@@ -100,7 +98,7 @@ final class ScheduleViewController: UIViewController {
                 maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
                 bottomDividerIsHidden = true
             }
-            var view = ListView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day], type: .switcher, action: nil)
+            let view = ListView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day], type: .switcher, action: nil)
             if choosedDays.contains(where: { $0 == days[day].lowercased() }) {
                 view.setSwitcherOn()
             }
