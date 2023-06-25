@@ -145,7 +145,8 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func datePickerValueChanged() {
-        let weekday = Calendar.current.component(.weekday, from: datePickerView.date)-1
+        currentDate = datePickerView.date
+        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         var newCategories: [TrackerCategory] = []
         for category in categories {
             var trackers: [Tracker] = []
@@ -158,6 +159,18 @@ final class TrackersViewController: UIViewController {
         }
         visibleCategories = newCategories
         collectionView.reloadData()
+    }
+
+    private func configureViewModel(for indexPath: IndexPath) -> CardCellViewModel {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        let counter = completedTrackers.filter({ $0.id == tracker.id }).count
+        let cardIsChecked = completedTrackers.contains(TrackerRecord(id: tracker.id, date: currentDate))
+        let dateComparision = Calendar.current.compare(currentDate, to: Date(), toGranularity: .day)
+        var buttonEnabled = true
+        if dateComparision == .orderedDescending {
+            buttonEnabled = false
+        }
+        return CardCellViewModel(tracker: tracker, counter: counter, buttonIsChecked: cardIsChecked, indexPath: indexPath, buttonIsEnabled: buttonEnabled)
     }
 }
 
@@ -173,8 +186,9 @@ extension TrackersViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CardCollectionViewCell
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        cell?.configureCell(with: tracker)
+        cell?.delegate = self
+        let viewModel = configureViewModel(for: indexPath)
+        cell?.configureCell(viewModel: viewModel)
         return cell ?? UICollectionViewCell()
     }
 
@@ -198,6 +212,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let indexPath = IndexPath(row: 0, section: section)
+
+        if visibleCategories[indexPath.section].trackers.count == 0 {
+            return CGSizeZero
+        }
+        
         let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
     }
@@ -221,10 +240,21 @@ extension TrackersViewController: NewTrackerViewControllerDelegate {
             newCategories.append(trackerCategory)
         }
 
-        print(newCategories)
         categories = newCategories
         datePickerValueChanged()
         
         collectionView.reloadData()
+    }
+}
+
+// MARK: - CardCollectionViewCellDelegate
+extension TrackersViewController: CardCollectionViewCellDelegate {
+    func checkButtonTapped(viewModel: CardCellViewModel) {
+        if viewModel.buttonIsChecked {
+            completedTrackers.insert(TrackerRecord(id: viewModel.tracker.id, date: currentDate))
+        } else {
+            completedTrackers.remove(TrackerRecord(id: viewModel.tracker.id, date: currentDate))
+        }
+        collectionView.reloadItems(at: [viewModel.indexPath])
     }
 }

@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol CardCollectionViewCellDelegate: AnyObject {
+    func checkButtonTapped(viewModel: CardCellViewModel)
+}
+
 final class CardCollectionViewCell: UICollectionViewCell {
+    // MARK: - Public Properties
+    weak var delegate: CardCollectionViewCellDelegate?
+
     // MARK: - Private Properties
     private let cardView: UIView = {
         let cardView = UIView()
@@ -74,14 +81,17 @@ final class CardCollectionViewCell: UICollectionViewCell {
         return checkButton
     }()
 
-    private var cardIsChecked = false
+    private var viewModel: CardCellViewModel?
 
     // MARK: - Public Methods
-    func configureCell(with tracker: Tracker) {
-        emojiLabel.text = tracker.emoji
-        cardText.text = tracker.name
-        daysLabel.text = "1 день"
-        cardView.backgroundColor = tracker.color
+    func configureCell(viewModel: CardCellViewModel) {
+        emojiLabel.text = viewModel.tracker.emoji
+        cardText.text = viewModel.tracker.name
+        daysLabel.text = "\(viewModel.counter) \(dayStringDeclension(for: viewModel.counter))"
+        cardView.backgroundColor = viewModel.tracker.color
+        self.viewModel = viewModel
+        checkButtonState()
+        checkIsButtonEnabled()
 
         makeLayout()
     }
@@ -129,14 +139,17 @@ final class CardCollectionViewCell: UICollectionViewCell {
     }
 
     @objc func checkButtonTapped() {
-        cardIsChecked.toggle()
+        viewModel?.buttonIsChecked.toggle()
         checkButtonState()
+        guard let viewModel else { return }
+        delegate?.checkButtonTapped(viewModel: viewModel)
     }
 
     private func checkButtonState() {
         let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)
         var image: UIImage?
-        if cardIsChecked {
+        guard let viewModel else { return }
+        if viewModel.buttonIsChecked {
             image = UIImage(systemName: "checkmark", withConfiguration: imageConfiguration)
             checkButton.layer.opacity = 0.3
         } else {
@@ -144,5 +157,28 @@ final class CardCollectionViewCell: UICollectionViewCell {
             checkButton.layer.opacity = 1
         }
         checkButton.setImage(image, for: .normal)
+    }
+
+    private func checkIsButtonEnabled() {
+        guard let viewModel else { return }
+        if !viewModel.buttonIsEnabled {
+            checkButton.backgroundColor = viewModel.tracker.color.withAlphaComponent(0.3)
+            checkButton.isEnabled = false
+        }
+    }
+
+    private func dayStringDeclension(for counter: Int) -> String {
+        let reminder = counter % 10
+        if counter == 11 || counter == 12 || counter == 13 || counter == 14 {
+            return "дней"
+        }
+        switch reminder {
+        case 1:
+            return "день"
+        case 2, 3, 4:
+            return "дня"
+        default:
+            return "дней"
+        }
     }
 }

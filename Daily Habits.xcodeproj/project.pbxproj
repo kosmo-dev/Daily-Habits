@@ -25,6 +25,7 @@
 		3DB172B52A4301780043A3F1 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B42A4301780043A3F1 /* TrackerRecord.swift */; };
 		3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB998D32A46F8B900EC9069 /* String+Extension.swift */; };
 		3DB998D82A474E1500EC9069 /* ListButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB998D72A474E1400EC9069 /* ListButton.swift */; };
+		3DE04A722A4791BC00AA623B /* CardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */; };
 		3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */; };
 		3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */; };
 		3DEA00E42A3B280300CE2402 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E32A3B280300CE2402 /* TrackersViewController.swift */; };
@@ -51,6 +52,7 @@
 		3DB172B42A4301780043A3F1 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		3DB998D32A46F8B900EC9069 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		3DB998D72A474E1400EC9069 /* ListButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListButton.swift; sourceTree = "<group>"; };
+		3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCellViewModel.swift; sourceTree = "<group>"; };
 		3DEA00DC2A3B280300CE2402 /* Daily Habits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Daily Habits.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 			children = (
 				3DEA00E32A3B280300CE2402 /* TrackersViewController.swift */,
 				3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */,
+				3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */,
 				3D4011022A45A4720015928E /* HeaderCollectionReusableView.swift */,
 				3DB121BF2A44F0EB00CA2EEC /* NewTrackerTypeChoosingViewController */,
 				3DB121C02A44F10A00CA2EEC /* NewTrackerViewController */,
@@ -286,6 +289,7 @@
 				3DB172B32A43015A0043A3F1 /* TrackerCategory.swift in Sources */,
 				3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */,
 				3DB998D82A474E1500EC9069 /* ListButton.swift in Sources */,
+				3DE04A722A4791BC00AA623B /* CardCellViewModel.swift in Sources */,
 				3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */,
 				3DB121BA2A44C1A600CA2EEC /* ListView.swift in Sources */,
 				3DB121B82A44B60200CA2EEC /* UITextField+Extensions.swift in Sources */,
