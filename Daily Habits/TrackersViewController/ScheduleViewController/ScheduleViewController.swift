@@ -33,6 +33,7 @@ final class ScheduleViewController: UIViewController {
 
     // MARK: - Initializer
     init(choosedDays: [Int]) {
+        calendar.locale = Locale(identifier: "ru_RU")
         days = calendar.weekdaySymbols
         finalList = choosedDays
         super.init(nibName: nil, bundle: nil)
@@ -82,7 +83,7 @@ final class ScheduleViewController: UIViewController {
 
         var choosedDays: [String] = []
         for item in finalList {
-            choosedDays.append(Calendar.current.weekdaySymbols[item])
+            choosedDays.append(calendar.weekdaySymbols[item])
         }
 
         for day in 0..<days.count {
@@ -107,7 +108,7 @@ final class ScheduleViewController: UIViewController {
     }
 
     private func configureDaysArray() {
-        let weekdaySymbols = Calendar.current.weekdaySymbols
+        let weekdaySymbols = calendar.weekdaySymbols
         var weekdays: [String] = []
 
         for weekdaySymbol in weekdaySymbols {
@@ -133,6 +134,6 @@ final class ScheduleViewController: UIViewController {
     }
 
     private func getIndexOfWeek(_ text: String) -> Int? {
-        return Calendar.current.weekdaySymbols.firstIndex(of: text.lowercased())
+        return calendar.weekdaySymbols.firstIndex(of: text.lowercased())
     }
 }

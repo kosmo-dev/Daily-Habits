@@ -97,11 +97,13 @@ final class NewTrackerViewController: UIViewController {
     @objc private func categoryViewButtonTapped() {
         let viewController = CategoryViewController(choosedCategoryIndex: choosedCategoryIndex)
         viewController.delegate = self
+        titleTextField.resignFirstResponder()
         navigationController?.pushViewController(viewController, animated: true)
     }
 
     @objc private func scheduleViewButtonTapped() {
         let viewController = ScheduleViewController(choosedDays: choosedDays)
+        titleTextField.resignFirstResponder()
         viewController.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
@@ -126,7 +128,9 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
             return
         }
         for index in choosedDays {
-            let day = Calendar.current.shortWeekdaySymbols[index]
+            var calendar = Calendar.current
+            calendar.locale = Locale(identifier: "ru_RU")
+            let day = calendar.shortWeekdaySymbols[index]
             daysView.append(day)
             daysView.append(", ")
         }
