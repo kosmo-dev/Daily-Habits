@@ -30,10 +30,10 @@ final class TrackersViewController: UIViewController {
     private let searchField: UISearchTextField = {
         let searchField = UISearchTextField()
         searchField.placeholder = "Поиск"
+        searchField.addTarget(nil, action: #selector(searchFieldEditingChanged), for: .editingChanged)
         searchField.translatesAutoresizingMaskIntoConstraints = false
         return searchField
     }()
-
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.showsVerticalScrollIndicator = false
@@ -44,7 +44,20 @@ final class TrackersViewController: UIViewController {
 
     private let cancelSearchButton: UIButton = {
         let cancelSearchButton = UIButton()
+        cancelSearchButton.setTitle("Отменить", for: .normal)
+        cancelSearchButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        cancelSearchButton.setTitleColor(.ypBlue, for: .normal)
+        cancelSearchButton.addTarget(nil, action: #selector(cancelSearchButtonTapped), for: .touchUpInside)
+        cancelSearchButton.translatesAutoresizingMaskIntoConstraints = false
         return cancelSearchButton
+    }()
+
+    private let searchStackView: UIStackView = {
+        let searchStackView = UIStackView()
+        searchStackView.axis = .horizontal
+        searchStackView.spacing = 5
+        searchStackView.translatesAutoresizingMaskIntoConstraints = false
+        return searchStackView
     }()
 
     private let placeholderImageView: UIImageView = {
@@ -77,6 +90,7 @@ final class TrackersViewController: UIViewController {
         configureCollectionView()
         makeLayout()
         checkNeedPlaceholder()
+        searchField.delegate = self
     }
 
     // MARK: - Private Methods
@@ -106,14 +120,15 @@ final class TrackersViewController: UIViewController {
     }
 
     private func makeLayout() {
-        [searchField, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
+        [searchStackView, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
+        searchStackView.addArrangedSubview(searchField)
 
         let padding: CGFloat = 16
 
         NSLayoutConstraint.activate([
-            searchField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            searchField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            searchStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
+            searchStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
 
             collectionView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
@@ -124,7 +139,9 @@ final class TrackersViewController: UIViewController {
             placeholderImageView.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor),
 
             placeholderText.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
-            placeholderText.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8)
+            placeholderText.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
+
+            cancelSearchButton.widthAnchor.constraint(equalToConstant: 83)
         ])
     }
 
@@ -172,6 +189,13 @@ final class TrackersViewController: UIViewController {
         }
         return CardCellViewModel(tracker: tracker, counter: counter, buttonIsChecked: cardIsChecked, indexPath: indexPath, buttonIsEnabled: buttonEnabled)
     }
+
+    @objc private func cancelSearchButtonTapped() {
+        searchField.text = ""
+        searchField.resignFirstResponder()
+        cancelSearchButton.removeFromSuperview()
+        datePickerValueChanged()
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -216,7 +240,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         if visibleCategories[indexPath.section].trackers.count == 0 {
             return CGSizeZero
         }
-        
+
         let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
     }
@@ -256,5 +280,38 @@ extension TrackersViewController: CardCollectionViewCellDelegate {
             completedTrackers.remove(TrackerRecord(id: viewModel.tracker.id, date: currentDate))
         }
         collectionView.reloadItems(at: [viewModel.indexPath])
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension TrackersViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        searchStackView.addArrangedSubview(cancelSearchButton)
+    }
+
+    @objc private func searchFieldEditingChanged() {
+        guard let textToSearch = searchField.text else { return }
+        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
+        let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
+        visibleCategories = searchedCategories
+        collectionView.reloadData()
+    }
+
+    private func searchText(in categories: [TrackerCategory], textToSearch: String, weekday: Int) -> [TrackerCategory] {
+        var searchedCategories: [TrackerCategory] = []
+        for category in categories {
+            var trackers: [Tracker] = []
+            for tracker in category.trackers {
+                let containsName = tracker.name.contains(textToSearch)
+                let containsSchedule = tracker.schedule.contains(weekday)
+                if containsName && containsSchedule {
+                    trackers.append(tracker)
+                }
+            }
+            if !trackers.isEmpty {
+                searchedCategories.append(TrackerCategory(name: category.name, trackers: trackers))
+            }
+        }
+        return searchedCategories
     }
 }

@@ -130,14 +130,12 @@ extension NewTrackerViewController: CategoryViewControllerDelegate {
 extension NewTrackerViewController: ScheduleViewControllerDelegate {
     func addWeekDays(_ weekdays: [Int]) {
         choosedDays = weekdays
-        print(weekdays)
         var daysView = ""
         for index in choosedDays {
             let day = Calendar.current.shortWeekdaySymbols[index]
             daysView.append(day)
             daysView.append(", ")
         }
-        print(daysView)
         daysView = String(daysView.dropLast(2))
         scheduleButtonView.addSecondaryText(daysView)
     }
