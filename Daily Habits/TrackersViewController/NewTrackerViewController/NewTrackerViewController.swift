@@ -36,6 +36,7 @@ final class NewTrackerViewController: UIViewController {
     private var category: String?
     private var choosedDays: [Int] = []
     private var choosedCategoryIndex: Int?
+    private var buttonIsEnabled = false
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -90,6 +91,7 @@ final class NewTrackerViewController: UIViewController {
     }
 
     @objc private func saveButtonTapped() {
+        guard buttonIsEnabled else { return }
         let text: String = titleTextField.text ?? "Tracker"
         let category: String = category ?? "Category"
         delegate?.addNewTracker(TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: .colorSelection5, emoji: "❤️", schedule: choosedDays)]))
@@ -109,6 +111,25 @@ final class NewTrackerViewController: UIViewController {
         viewController.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
+
+    private func checkFormCompletion() {
+        if titleTextField.text?.isEmpty == false,
+           category != nil,
+           choosedDays.isEmpty == false {
+            buttonIsEnabled = true
+        } else {
+            buttonIsEnabled = false
+        }
+        changeButtonView()
+    }
+
+    private func changeButtonView() {
+        if buttonIsEnabled {
+            saveButton.configureButtonType(.primary)
+        } else {
+            saveButton.configureButtonType(.notActive)
+        }
+    }
 }
 
 // MARK: - CategoryViewControllerDelegate
@@ -117,6 +138,7 @@ extension NewTrackerViewController: CategoryViewControllerDelegate {
         categoryButtonView.addSecondaryText(category)
         self.category = category
         choosedCategoryIndex = index
+        checkFormCompletion()
     }
 }
 
@@ -138,12 +160,15 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
         }
         daysView = String(daysView.dropLast(2))
         scheduleButtonView.addSecondaryText(daysView)
+        checkFormCompletion()
     }
 }
 
 // MARK: - UITextFieldDelegate
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        checkFormCompletion()
         titleTextField.resignFirstResponder()
+        return true
     }
 }

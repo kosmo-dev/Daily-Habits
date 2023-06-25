@@ -33,7 +33,7 @@ final class PrimaryButton: UIButton {
         configureButtonType(type)
     }
 
-    private func configureButtonType(_ type: ButtonType) {
+    func configureButtonType(_ type: ButtonType) {
         switch type {
         case .primary:
             setTitleColor(.ypWhite, for: .normal)
