@@ -305,6 +305,10 @@ extension TrackersViewController: UITextFieldDelegate {
         searchStackView.addArrangedSubview(cancelSearchButton)
     }
 
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+    }
+
     @objc private func searchFieldEditingChanged() {
         guard let textToSearch = searchField.text else { return }
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
