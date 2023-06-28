@@ -37,6 +37,7 @@ final class TrackersViewController: UIViewController {
         searchField.translatesAutoresizingMaskIntoConstraints = false
         return searchField
     }()
+
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.showsVerticalScrollIndicator = false
@@ -83,6 +84,11 @@ final class TrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
     private var currentDate: Date = Date()
+
+    private var insertedIndexesInSearch: [IndexPath] = []
+    private var removedIndexesInSearch: [IndexPath] = []
+    private var insertedSectionsInSearch: IndexSet = []
+    private var removedSectionsInSearch: IndexSet = []
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -190,8 +196,9 @@ final class TrackersViewController: UIViewController {
             }
             newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
         }
+        calculateDiff(newCategories: newCategories)
         visibleCategories = newCategories
-        collectionView.reloadData()
+        performBatchUpdates()
     }
 
     private func configureViewModel(for indexPath: IndexPath) -> CardCellViewModel {
@@ -313,13 +320,16 @@ extension TrackersViewController: UITextFieldDelegate {
         guard let textToSearch = searchField.text else { return }
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
+        calculateDiff(newCategories: searchedCategories)
+        
         visibleCategories = searchedCategories
         checkNeedPlaceholder(for: .notFound)
-        collectionView.reloadData()
+        performBatchUpdates()
     }
 
     private func searchText(in categories: [TrackerCategory], textToSearch: String, weekday: Int) -> [TrackerCategory] {
         var searchedCategories: [TrackerCategory] = []
+
         for category in categories {
             var trackers: [Tracker] = []
             for tracker in category.trackers {
@@ -334,5 +344,57 @@ extension TrackersViewController: UITextFieldDelegate {
             }
         }
         return searchedCategories
+    }
+
+    private func calculateDiff(newCategories: [TrackerCategory]) {
+        removedIndexesInSearch.removeAll()
+        insertedIndexesInSearch.removeAll()
+        removedSectionsInSearch.removeAll()
+        insertedSectionsInSearch.removeAll()
+
+        for (section, category) in visibleCategories.enumerated() {
+            for (index, item) in category.trackers.enumerated() {
+                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+                    removedIndexesInSearch.append(IndexPath(item: index, section: section))
+                }
+            }
+        }
+
+        for (section, category) in newCategories.enumerated() {
+            for (index, item) in category.trackers.enumerated() {
+                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+                    insertedIndexesInSearch.append(IndexPath(item: index, section: section))
+                }
+            }
+        }
+
+        for (section, category) in visibleCategories.enumerated() {
+            if !newCategories.contains(where: { $0.name == category.name }) {
+                removedSectionsInSearch.insert(section)
+            }
+        }
+
+        for (section, category) in newCategories.enumerated() {
+            if !visibleCategories.contains(where: { $0.name == category.name }) {
+                insertedSectionsInSearch.insert(section)
+            }
+        }
+    }
+
+    private func performBatchUpdates() {
+        collectionView.performBatchUpdates {
+            if !removedSectionsInSearch.isEmpty {
+                collectionView.deleteSections(removedSectionsInSearch)
+            }
+            if !insertedSectionsInSearch.isEmpty {
+                collectionView.insertSections(insertedSectionsInSearch)
+            }
+            if !removedIndexesInSearch.isEmpty {
+                collectionView.deleteItems(at: removedIndexesInSearch)
+            }
+            if !insertedIndexesInSearch.isEmpty {
+                collectionView.insertItems(at: insertedIndexesInSearch)
+            }
+        }
     }
 }
