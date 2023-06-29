@@ -5,12 +5,20 @@
 //  Created by Вадим Кузьмин on 21.06.2023.
 //
 
-import Foundation
+import UIKit
 
 struct C {
     struct UIImages {
         static let emptyTrackersPlaceholder = "EmptyTrackersPlaceholder"
         static let searchNotFoundPlaceholder = "SearchNotFoundPlaceholder"
+    }
+
+    struct Emojis {
+        static let emojis: [String] = ["🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝️", "😪"]
+    }
+
+    struct Colors {
+        static let colors: [UIColor] = [.colorSelection1, .colorSelection2, .colorSelection3, .colorSelection4, .colorSelection5, .colorSelection6, .colorSelection7, .colorSelection8, .colorSelection9, .colorSelection10, .colorSelection11, .colorSelection12, .colorSelection13, .colorSelection14, .colorSelection15, .colorSelection16, .colorSelection17, .colorSelection18]
     }
 
     struct MockCategories {

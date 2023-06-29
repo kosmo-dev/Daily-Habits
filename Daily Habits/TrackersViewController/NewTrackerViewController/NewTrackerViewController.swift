@@ -28,6 +28,40 @@ final class NewTrackerViewController: UIViewController {
         return titleTextField
     }()
 
+    private let emojiCollectionView: UICollectionView = {
+        let emojiCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        return emojiCollectionView
+    }()
+
+    private let colorsCollectionView: UICollectionView = {
+        let colorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        colorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        return colorsCollectionView
+    }()
+
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+
+    private let emojiLabel: UILabel = {
+        let emojiLabel = UILabel()
+        emojiLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
+        emojiLabel.text = "Emoji"
+        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+        return emojiLabel
+    }()
+
+    private let colorsLabel: UILabel = {
+        let colorsLabel = UILabel()
+        colorsLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
+        colorsLabel.text = "Цвет"
+        colorsLabel.translatesAutoresizingMaskIntoConstraints = false
+        return colorsLabel
+    }()
+
     private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
     private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
     private let categoryButtonView = ListView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
@@ -38,11 +72,20 @@ final class NewTrackerViewController: UIViewController {
     private var choosedCategoryIndex: Int?
     private var buttonIsEnabled = false
 
+    private let emojis = C.Emojis.emojis
+    private let colors = C.Colors.colors
+
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
         titleTextField.delegate = self
+        emojiCollectionView.dataSource = self
+        colorsCollectionView.dataSource = self
+        emojiCollectionView.delegate = self
+        colorsCollectionView.delegate = self
+        emojiCollectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
+        colorsCollectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "colorCell")
     }
 
     // MARK: - Private Methods
@@ -54,33 +97,54 @@ final class NewTrackerViewController: UIViewController {
         categoryButtonView.translatesAutoresizingMaskIntoConstraints = false
         scheduleButtonView.translatesAutoresizingMaskIntoConstraints = false
 
-        [titleTextField, categoryButtonView, scheduleButtonView, cancelButton, saveButton].forEach({ view.addSubview($0) })
+        view.addSubview(scrollView)
+        [titleTextField, categoryButtonView, scheduleButtonView, emojiLabel, emojiCollectionView, colorsLabel, colorsCollectionView, cancelButton, saveButton].forEach({ scrollView.addSubview($0) })
 
         let padding: CGFloat = 16
 
         NSLayoutConstraint.activate([
-            titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            titleTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            titleTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            titleTextField.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor, constant: 24),
+            titleTextField.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: padding),
+            titleTextField.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             titleTextField.heightAnchor.constraint(equalToConstant: 75),
 
             categoryButtonView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24),
-            categoryButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            categoryButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            categoryButtonView.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: padding),
+            categoryButtonView.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             categoryButtonView.heightAnchor.constraint(equalToConstant: 75),
 
             scheduleButtonView.topAnchor.constraint(equalTo: categoryButtonView.bottomAnchor),
-            scheduleButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            scheduleButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            scheduleButtonView.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: padding),
+            scheduleButtonView.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             scheduleButtonView.heightAnchor.constraint(equalToConstant: 75),
 
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            emojiLabel.topAnchor.constraint(equalTo: scheduleButtonView.bottomAnchor, constant: 32),
+            emojiLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 28),
+
+            emojiCollectionView.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 204),
+
+            colorsLabel.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 32),
+            colorsLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 28),
+
+            colorsCollectionView.topAnchor.constraint(equalTo: colorsLabel.bottomAnchor),
+            colorsCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            colorsCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+
+            cancelButton.bottomAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.bottomAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
 
-            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            saveButton.bottomAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.bottomAnchor),
             saveButton.leadingAnchor.constraint(equalTo: cancelButton.trailingAnchor, constant: 8),
-            saveButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            saveButton.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             saveButton.widthAnchor.constraint(equalTo: cancelButton.widthAnchor, multiplier: 1),
             saveButton.heightAnchor.constraint(equalToConstant: 60)
         ])
@@ -170,5 +234,37 @@ extension NewTrackerViewController: UITextFieldDelegate {
         checkFormCompletion()
         titleTextField.resignFirstResponder()
         return true
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension NewTrackerViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if collectionView == emojiCollectionView {
+            return emojis.count
+        } else {
+            return colors.count
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == emojiCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as? CollectionViewCell
+            cell?.configureView(with: emojis[indexPath.row])
+
+            return cell ?? UICollectionViewCell()
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as? CollectionViewCell
+
+            cell?.configureView(with: colors[indexPath.row])
+            return cell ?? UICollectionViewCell()
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 52, height: 52)
     }
 }
