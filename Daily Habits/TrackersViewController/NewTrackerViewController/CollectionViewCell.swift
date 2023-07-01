@@ -8,8 +8,13 @@
 import UIKit
 
 final class CollectionViewCell: UICollectionViewCell {
+    enum CellType {
+        case emoji
+        case color
+    }
     private let label: UILabel = {
         let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -34,6 +39,26 @@ final class CollectionViewCell: UICollectionViewCell {
         label.isHidden = true
         colorView.isHidden = false
         setupView()
+    }
+
+    func cellSelected(type: CellType, color: UIColor?) {
+        switch type {
+        case .emoji:
+            backgroundColor = .ypLightGray
+            layer.cornerRadius = 16
+            layer.masksToBounds = true
+        case .color:
+            guard let color else { return }
+            layer.borderColor = color.cgColor
+            layer.borderWidth = 3
+            layer.cornerRadius = 11
+            layer.masksToBounds = true
+        }
+    }
+
+    func cellDeselected() {
+        backgroundColor = .clear
+        layer.borderColor = UIColor.clear.cgColor
     }
 
     private func setupView() {
