@@ -173,9 +173,7 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func leftBarButtonTapped() {
-        let newTrackerViewController = NewTrackerViewController()
-        newTrackerViewController.delegate = self
-        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(newTrackerViewController: newTrackerViewController, newHabitVIewController: nil)
+        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self)
         let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
         navigationController?.present(modalNavigationController, animated: true)
     }

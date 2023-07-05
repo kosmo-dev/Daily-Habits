@@ -12,14 +12,12 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     private let habitButton = PrimaryButton(title: "Привычка", action: #selector(habitButtonTapped), type: .primary)
     private let eventButton = PrimaryButton(title: "Нерегулярное событие", action: #selector(eventButtonTapped), type: .primary)
 
-    private var newTrackerViewController: UIViewController?
-    private var newHabitVIewController: UIViewController?
+    weak var trackersViewController: NewTrackerViewControllerDelegate?
 
     // MARK: Initializers
-    init(newTrackerViewController: UIViewController?, newHabitVIewController: UIViewController?) {
+    init(trackersViewController: NewTrackerViewControllerDelegate?) {
         super.init(nibName: nil, bundle: nil)
-        self.newTrackerViewController = newTrackerViewController
-        self.newHabitVIewController = newHabitVIewController
+        self.trackersViewController = trackersViewController
     }
 
     required init?(coder: NSCoder) {
@@ -55,12 +53,17 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     }
 
     @objc private func habitButtonTapped() {
-        guard let newTrackerViewController else { return }
+        guard let trackersViewController else { return }
+        let newTrackerViewController = NewTrackerViewController(trackerType: .habit)
+        newTrackerViewController.delegate = trackersViewController
         navigationController?.pushViewController(newTrackerViewController, animated: true)
     }
 
     @objc private func eventButtonTapped() {
-
+        guard let trackersViewController else { return }
+        let newTrackerViewController = NewTrackerViewController(trackerType: .event)
+        newTrackerViewController.delegate = trackersViewController
+        navigationController?.pushViewController(newTrackerViewController, animated: true)
     }
 }
 

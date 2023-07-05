@@ -22,6 +22,11 @@ final class NewTrackerViewController: UIViewController {
         case buttons
     }
 
+    enum TrackerType {
+        case habit
+        case event
+    }
+
     // MARK: - Public Properties
     weak var delegate: NewTrackerViewControllerDelegate?
     
@@ -63,8 +68,11 @@ final class NewTrackerViewController: UIViewController {
 
     private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
     private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
-    private let categoryButtonView = ListView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
-    private let scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
+//    private let categoryButtonView = ListView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: nil)
+//    private let scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
+
+    private var categoryButtonView: ListView?
+    private var scheduleButtonView: ListView?
 
     private var category: String?
     private var choosedDays: [Int] = []
@@ -77,6 +85,17 @@ final class NewTrackerViewController: UIViewController {
     private var selectedColorCellIndexPath: IndexPath?
 
     private let sections: [Sections] = [.textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
+    private let trackerType: TrackerType
+
+    // MARK: - Initializers
+    init(trackerType: TrackerType) {
+        self.trackerType = trackerType
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -87,6 +106,8 @@ final class NewTrackerViewController: UIViewController {
         registerCells()
         collectionView.delegate = self
         collectionView.dataSource = self
+
+        addCategory("Важное", index: 0)
     }
 
     // MARK: - Private Methods
@@ -95,8 +116,8 @@ final class NewTrackerViewController: UIViewController {
         navigationItem.title = "Новая привычка"
         navigationItem.hidesBackButton = true
 
-        categoryButtonView.translatesAutoresizingMaskIntoConstraints = false
-        scheduleButtonView.translatesAutoresizingMaskIntoConstraints = false
+//        categoryButtonView.translatesAutoresizingMaskIntoConstraints = false
+//        scheduleButtonView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(collectionView)
 
@@ -177,7 +198,7 @@ final class NewTrackerViewController: UIViewController {
 // MARK: - CategoryViewControllerDelegate
 extension NewTrackerViewController: CategoryViewControllerDelegate {
     func addCategory(_ category: String, index: Int) {
-        categoryButtonView.addSecondaryText(category)
+        categoryButtonView?.addSecondaryText(category)
         self.category = category
         choosedCategoryIndex = index
         checkFormCompletion()
@@ -191,7 +212,7 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
         var daysView = ""
         if weekdays.count == 7 {
             daysView = "Каждый день"
-            scheduleButtonView.addSecondaryText(daysView)
+            scheduleButtonView?.addSecondaryText(daysView)
             return
         }
         for index in choosedDays {
@@ -202,7 +223,7 @@ extension NewTrackerViewController: ScheduleViewControllerDelegate {
             daysView.append(", ")
         }
         daysView = String(daysView.dropLast(2))
-        scheduleButtonView.addSecondaryText(daysView)
+        scheduleButtonView?.addSecondaryText(daysView)
         checkFormCompletion()
     }
 }
@@ -262,7 +283,11 @@ extension NewTrackerViewController: UICollectionViewDataSource {
         case .textField:
             return 1
         case .listButtonViews:
-            return 2
+            if trackerType == .habit {
+                return 2
+            } else {
+                return 1
+            }
         case .emojiLabel:
             return 1
         case .emojisCollection:
@@ -293,22 +318,32 @@ extension NewTrackerViewController: UICollectionViewDataSource {
 
         case .listButtonViews:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listViewCell", for: indexPath)
-            if indexPath.row == 0 {
-                cell.addSubview(categoryButtonView)
-                NSLayoutConstraint.activate([
-                    categoryButtonView.topAnchor.constraint(equalTo: cell.topAnchor),
-                    categoryButtonView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
-                    categoryButtonView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
-                    categoryButtonView.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
-                ])
+            if trackerType == .habit {
+                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: nil)
+                scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
             } else {
-                cell.addSubview(scheduleButtonView)
-                NSLayoutConstraint.activate([
-                    scheduleButtonView.topAnchor.constraint(equalTo: cell.topAnchor),
-                    scheduleButtonView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
-                    scheduleButtonView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
-                    scheduleButtonView.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
-                ])
+                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: "Категория", type: .disclosure, action: nil)
+            }
+            if indexPath.row == 0 {
+                if let categoryButtonView {
+                    cell.addSubview(categoryButtonView)
+                    NSLayoutConstraint.activate([
+                        categoryButtonView.topAnchor.constraint(equalTo: cell.topAnchor),
+                        categoryButtonView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
+                        categoryButtonView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
+                        categoryButtonView.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
+                    ])
+                }
+            } else {
+                if let scheduleButtonView {
+                    cell.addSubview(scheduleButtonView)
+                    NSLayoutConstraint.activate([
+                        scheduleButtonView.topAnchor.constraint(equalTo: cell.topAnchor),
+                        scheduleButtonView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
+                        scheduleButtonView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
+                        scheduleButtonView.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
+                    ])
+                }
             }
             return cell
 
