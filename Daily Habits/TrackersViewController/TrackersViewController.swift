@@ -90,6 +90,10 @@ final class TrackersViewController: UIViewController {
     private var insertedSectionsInSearch: IndexSet = []
     private var removedSectionsInSearch: IndexSet = []
 
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -197,6 +201,7 @@ final class TrackersViewController: UIViewController {
         calculateDiff(newCategories: newCategories)
         visibleCategories = newCategories
         performBatchUpdates()
+        
     }
 
     private func configureViewModel(for indexPath: IndexPath) -> CardCellViewModel {
@@ -269,6 +274,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - NewTrackerViewControllerDelegate
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
+        dismiss(animated: true)
         var newCategories: [TrackerCategory] = []
 
         if let categoryIndex = categories.firstIndex(where: { $0.name == trackerCategory.name }) {

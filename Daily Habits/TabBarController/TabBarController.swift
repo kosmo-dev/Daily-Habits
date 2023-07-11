@@ -12,8 +12,6 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.tintColor = .ypBlue
-
         let trackersViewController = TrackersViewController()
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         let statisticViewController = StatisticViewController()
@@ -22,5 +20,15 @@ final class TabBarController: UITabBarController {
         statisticViewController.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(systemName: "hare.fill"), selectedImage: nil)
 
         self.viewControllers = [trackersNavigationController, statisticViewController]
+
+        tabBar.isTranslucent = false
+        view.tintColor = .ypBlue
+
+        if #available(iOS 15.0, *) {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            tabBar.standardAppearance = appearance
+            tabBar.scrollEdgeAppearance = appearance
+        }
     }
 }

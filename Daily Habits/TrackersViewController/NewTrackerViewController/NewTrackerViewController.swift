@@ -145,7 +145,6 @@ final class NewTrackerViewController: UIViewController {
         let emoji = emojis[selectedEmojiCellIndexPath.row]
         let color = colors[selectedColorCellIndexPath.row]
         delegate?.addNewTracker(TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: color, emoji: emoji, schedule: choosedDays)]))
-        dismiss(animated: true)
     }
 
     @objc private func categoryViewButtonTapped() {
