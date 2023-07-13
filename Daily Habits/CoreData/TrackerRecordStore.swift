@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct TrackerRecordStore {
+final class TrackerRecordStore {
 
 }

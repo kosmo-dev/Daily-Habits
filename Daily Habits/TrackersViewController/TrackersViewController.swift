@@ -80,7 +80,7 @@ final class TrackersViewController: UIViewController {
         return placeholderText
     }()
 
-    private var categories: [TrackerCategory] = []
+//    private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
     private var currentDate: Date = Date()
@@ -90,9 +90,21 @@ final class TrackersViewController: UIViewController {
     private var insertedSectionsInSearch: IndexSet = []
     private var removedSectionsInSearch: IndexSet = []
 
-    private let trackerStore = TrackerStore()
-    private let trackerCategoryStore = TrackerCategoryStore()
-    private let trackerRecordStore = TrackerRecordStore()
+//    private let trackerStore = TrackerStore()
+//    private let trackerCategoryStore: TrackerCategoryStoreProtocol!
+//    private let trackerRecordStore = TrackerRecordStore()
+
+    private let trackerDataController: TrackerDataControllerProtocol
+
+    // MARK: - Initializers
+    init(trackerDataController: TrackerDataControllerProtocol) {
+        self.trackerDataController = trackerDataController
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -102,8 +114,10 @@ final class TrackersViewController: UIViewController {
         configureNavigationBar()
         configureCollectionView()
         makeLayout()
+        visibleCategories = trackerDataController.categories
         checkNeedPlaceholder(for: .noTrackers)
         searchField.delegate = self
+        trackerDataController.delegate = self
     }
 
     // MARK: - Private Methods
@@ -188,6 +202,7 @@ final class TrackersViewController: UIViewController {
     @objc private func datePickerValueChanged() {
         currentDate = datePickerView.date
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
+        /*
         var newCategories: [TrackerCategory] = []
         for category in categories {
             var trackers: [Tracker] = []
@@ -201,7 +216,9 @@ final class TrackersViewController: UIViewController {
         calculateDiff(newCategories: newCategories)
         visibleCategories = newCategories
         performBatchUpdates()
-        
+         */
+        print(weekday)
+        trackerDataController.fetchCategoriesFor(weekday: weekday)
     }
 
     private func configureViewModel(for indexPath: IndexPath) -> CardCellViewModel {
@@ -275,26 +292,29 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
         dismiss(animated: true)
-        var newCategories: [TrackerCategory] = []
+//        var newCategories: [TrackerCategory] = []
+//
+//        if let categoryIndex = categories.firstIndex(where: { $0.name == trackerCategory.name }) {
+//            for (index, category) in categories.enumerated() {
+//                var trackers = category.trackers
+//                if index == categoryIndex {
+//                    trackers.append(contentsOf: trackerCategory.trackers)
+//                }
+//                newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
+//            }
+//        } else {
+//            newCategories = categories
+//            newCategories.append(trackerCategory)
+//        }
+//
+//        categories = newCategories
+//        datePickerValueChanged()
+//
+//        checkNeedPlaceholder(for: .noTrackers)
+//        collectionView.reloadData()
 
-        if let categoryIndex = categories.firstIndex(where: { $0.name == trackerCategory.name }) {
-            for (index, category) in categories.enumerated() {
-                var trackers = category.trackers
-                if index == categoryIndex {
-                    trackers.append(contentsOf: trackerCategory.trackers)
-                }
-                newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
-            }
-        } else {
-            newCategories = categories
-            newCategories.append(trackerCategory)
-        }
-
-        categories = newCategories
-        datePickerValueChanged()
-
-        checkNeedPlaceholder(for: .noTrackers)
-        collectionView.reloadData()
+        print("1. Will call trackerDataController.addTrackerCategory")
+        try? trackerDataController.addTrackerCategory(trackerCategory)
     }
 }
 
@@ -321,14 +341,14 @@ extension TrackersViewController: UITextFieldDelegate {
     }
 
     @objc private func searchFieldEditingChanged() {
-        guard let textToSearch = searchField.text else { return }
-        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
-        calculateDiff(newCategories: searchedCategories)
-        
-        visibleCategories = searchedCategories
-        checkNeedPlaceholder(for: .notFound)
-        performBatchUpdates()
+//        guard let textToSearch = searchField.text else { return }
+//        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
+//        let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
+//        calculateDiff(newCategories: searchedCategories)
+//
+//        visibleCategories = searchedCategories
+//        checkNeedPlaceholder(for: .notFound)
+//        performBatchUpdates()
     }
 
     private func searchText(in categories: [TrackerCategory], textToSearch: String, weekday: Int) -> [TrackerCategory] {
@@ -350,55 +370,73 @@ extension TrackersViewController: UITextFieldDelegate {
         return searchedCategories
     }
 
-    private func calculateDiff(newCategories: [TrackerCategory]) {
-        removedIndexesInSearch.removeAll()
-        insertedIndexesInSearch.removeAll()
-        removedSectionsInSearch.removeAll()
-        insertedSectionsInSearch.removeAll()
+//    private func calculateDiff(newCategories: [TrackerCategory]) {
+//        removedIndexesInSearch.removeAll()
+//        insertedIndexesInSearch.removeAll()
+//        removedSectionsInSearch.removeAll()
+//        insertedSectionsInSearch.removeAll()
+//
+//        for (section, category) in visibleCategories.enumerated() {
+//            for (index, item) in category.trackers.enumerated() {
+//                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+//                    removedIndexesInSearch.append(IndexPath(item: index, section: section))
+//                }
+//            }
+//        }
+//
+//        for (section, category) in newCategories.enumerated() {
+//            for (index, item) in category.trackers.enumerated() {
+//                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+//                    insertedIndexesInSearch.append(IndexPath(item: index, section: section))
+//                }
+//            }
+//        }
+//
+//        for (section, category) in visibleCategories.enumerated() {
+//            if !newCategories.contains(where: { $0.name == category.name }) {
+//                removedSectionsInSearch.insert(section)
+//            }
+//        }
+//
+//        for (section, category) in newCategories.enumerated() {
+//            if !visibleCategories.contains(where: { $0.name == category.name }) {
+//                insertedSectionsInSearch.insert(section)
+//            }
+//        }
+//    }
 
-        for (section, category) in visibleCategories.enumerated() {
-            for (index, item) in category.trackers.enumerated() {
-                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
-                    removedIndexesInSearch.append(IndexPath(item: index, section: section))
-                }
-            }
-        }
+//    private func performBatchUpdates() {
+//        collectionView.performBatchUpdates {
+//            if !removedSectionsInSearch.isEmpty {
+//                collectionView.deleteSections(removedSectionsInSearch)
+//            }
+//            if !insertedSectionsInSearch.isEmpty {
+//                collectionView.insertSections(insertedSectionsInSearch)
+//            }
+//            if !removedIndexesInSearch.isEmpty {
+//                collectionView.deleteItems(at: removedIndexesInSearch)
+//            }
+//            if !insertedIndexesInSearch.isEmpty {
+//                collectionView.insertItems(at: insertedIndexesInSearch)
+//            }
+//        }
+//    }
+}
 
-        for (section, category) in newCategories.enumerated() {
-            for (index, item) in category.trackers.enumerated() {
-                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
-                    insertedIndexesInSearch.append(IndexPath(item: index, section: section))
-                }
-            }
-        }
-
-        for (section, category) in visibleCategories.enumerated() {
-            if !newCategories.contains(where: { $0.name == category.name }) {
-                removedSectionsInSearch.insert(section)
-            }
-        }
-
-        for (section, category) in newCategories.enumerated() {
-            if !visibleCategories.contains(where: { $0.name == category.name }) {
-                insertedSectionsInSearch.insert(section)
-            }
-        }
-    }
-
-    private func performBatchUpdates() {
-        collectionView.performBatchUpdates {
-            if !removedSectionsInSearch.isEmpty {
-                collectionView.deleteSections(removedSectionsInSearch)
-            }
-            if !insertedSectionsInSearch.isEmpty {
-                collectionView.insertSections(insertedSectionsInSearch)
-            }
-            if !removedIndexesInSearch.isEmpty {
-                collectionView.deleteItems(at: removedIndexesInSearch)
-            }
-            if !insertedIndexesInSearch.isEmpty {
-                collectionView.insertItems(at: insertedIndexesInSearch)
-            }
-        }
+extension TrackersViewController: TrackerDataControllerDelegate {
+    func updateView(_ update: TrackerCategoryStoreUpdate) {
+        visibleCategories = trackerDataController.categories
+        print("7. Will call collectionView.performBatchUpdates")
+        print("VisibleCategories: \(visibleCategories)")
+        print("Update: ", update)
+        collectionView.reloadData()
+//        collectionView.performBatchUpdates {
+//            collectionView.insertItems(at: update.insertedIndexes)
+//            collectionView.deleteItems(at: update.deletedIndexes)
+//            collectionView.reloadItems(at: update.updatedIndexes)
+//            for move in update.movedIndexes {
+//                collectionView.moveItem(at: move.oldIndex, to: move.newIndex)
+//            }
+//        }
     }
 }

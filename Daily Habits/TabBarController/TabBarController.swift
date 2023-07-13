@@ -12,7 +12,13 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let trackersViewController = TrackersViewController()
+        let coreDataPersistentContainer = CoreDataPersistentContainer()
+        let trackerStore = TrackerStore()
+        let trackerCategoryStore = TrackerCategoryStore(context: coreDataPersistentContainer.context)
+        let trackerRecordStore = TrackerRecordStore()
+        let trackerDataController = TrackerDataController(trackerStore: trackerStore, trackerCategoryStore: trackerCategoryStore, trackerRecordStore: trackerRecordStore, context: coreDataPersistentContainer.context)
+
+        let trackersViewController = TrackersViewController(trackerDataController: trackerDataController)
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         let statisticViewController = StatisticViewController()
 

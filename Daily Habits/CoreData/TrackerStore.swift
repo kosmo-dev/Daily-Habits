@@ -8,6 +8,6 @@
 import Foundation
 import CoreData
 
-struct TrackerStore {
+final class TrackerStore {
     
 }
