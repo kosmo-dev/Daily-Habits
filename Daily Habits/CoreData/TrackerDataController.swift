@@ -9,21 +9,28 @@ import Foundation
 import CoreData
 
 protocol TrackerDataControllerDelegate: AnyObject {
-    func updateView(_ update: TrackerCategoryStoreUpdate)
+    func updateViewByController(_ update: TrackerCategoryStoreUpdate)
+    func updateView(categories: [TrackerCategory], animating: Bool)
 }
 
 protocol TrackerDataControllerProtocol: AnyObject {
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws
-    func fetchCategoriesFor(weekday: Int)
+    func fetchCategoriesFor(weekday: Int, animating: Bool)
+    func fetchSearchedCategories(textToSearch: String, weekday: Int)
+
+    func fetchRecordsCountForId(_ id: UUID) -> Int
+    func checkTrackerRecordExist(id: UUID, date: String) -> Bool
+    func addTrackerRecord(id: UUID, date: String)
+    func deleteTrackerRecord(id: UUID, date: String)
+
     var categories: [TrackerCategory] { get }
     var delegate: TrackerDataControllerDelegate? { get set }
 }
 
 final class TrackerDataController: NSObject {
-
-    var trackerStore: TrackerStore
-    var trackerCategoryStore: TrackerCategoryStore
-    var trackerRecordStore: TrackerRecordStore
+    var trackerStore: TrackerStoreProtocol
+    var trackerCategoryStore: TrackerCategoryStoreProtocol
+    var trackerRecordStore: TrackerRecordStoreProtocol
 
     private var insertedIndexes: [IndexPath]?
     private var deletedIndexes: [IndexPath]?
@@ -33,10 +40,9 @@ final class TrackerDataController: NSObject {
     private var context: NSManagedObjectContext
     private var fetchResultController: NSFetchedResultsController<TrackerCategoryCoreData>?
 
-
     weak var delegate: TrackerDataControllerDelegate?
 
-    init(trackerStore: TrackerStore, trackerCategoryStore: TrackerCategoryStore, trackerRecordStore: TrackerRecordStore, context: NSManagedObjectContext) {
+    init(trackerStore: TrackerStoreProtocol, trackerCategoryStore: TrackerCategoryStoreProtocol, trackerRecordStore: TrackerRecordStore, context: NSManagedObjectContext) {
         self.trackerStore = trackerStore
         self.trackerCategoryStore = trackerCategoryStore
         self.trackerRecordStore = trackerRecordStore
@@ -46,7 +52,8 @@ final class TrackerDataController: NSObject {
 
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true)
+            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true),
+            NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)
         ]
         let controller = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -62,14 +69,39 @@ final class TrackerDataController: NSObject {
 
 // MARK: - TrackerDataControllerProtocol
 extension TrackerDataController: TrackerDataControllerProtocol {
-    func fetchCategoriesFor(weekday: Int) {
-        trackerCategoryStore.fetchCategoriesFor(weekday: weekday)
-        try? fetchResultController?.performFetch()
+    func fetchSearchedCategories(textToSearch: String, weekday: Int) {
+        let weekdayPredicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
+        let textPredicate = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(TrackerCoreData.name), textToSearch)
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [weekdayPredicate, textPredicate])
+        let trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
+        delegate?.updateView(categories: trackerCategories, animating: true)
+    }
+
+    func fetchCategoriesFor(weekday: Int, animating: Bool) {
+        let predicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
+        let trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
+        delegate?.updateView(categories: trackerCategories, animating: animating)
     }
 
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws {
         print("2. Will call trackerCategoryStore.addTrackerCategory")
         try? trackerCategoryStore.addTrackerCategory(trackerCategory)
+    }
+
+    func fetchRecordsCountForId(_ id: UUID) -> Int {
+        return trackerRecordStore.fetchRecordsCountForId(id)
+    }
+
+    func checkTrackerRecordExist(id: UUID, date: String) -> Bool {
+        return trackerRecordStore.checkTrackerRecordExist(id: id, date: date)
+    }
+
+    func addTrackerRecord(id: UUID, date: String) {
+        trackerRecordStore.addTrackerRecord(id: id, date: date)
+    }
+
+    func deleteTrackerRecord(id: UUID, date: String) {
+        trackerRecordStore.deleteTrackerRecord(id: id, date: date)
     }
 
     var categories: [TrackerCategory] {
@@ -102,7 +134,7 @@ extension TrackerDataController: NSFetchedResultsControllerDelegate {
             movedIndexes: movedIndexes
         )
         print("6. Will call delegate?.updateView")
-        delegate?.updateView(update)
+        delegate?.updateViewByController(update)
 
         self.insertedIndexes = nil
         self.deletedIndexes = nil

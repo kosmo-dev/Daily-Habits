@@ -10,7 +10,6 @@
 		3D204E712A5DE3D6007A6376 /* CoreDataPersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */; };
 		3D204E732A5DEA8C007A6376 /* TrackerDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */; };
 		3D204E752A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E742A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift */; };
-		3D204E782A5EEFE7007A6376 /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E762A5EEFE7007A6376 /* CoreDataModel.xcdatamodeld */; };
 		3D2998332A40D4C300B42278 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */; };
 		3D2A10F62A58932C00AC7296 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2A10F52A58932C00AC7296 /* TrackerCategoryStore.swift */; };
 		3D2A10F82A58937000AC7296 /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2A10F72A58937000AC7296 /* TrackerRecordStore.swift */; };
@@ -33,6 +32,7 @@
 		3DB172B52A4301780043A3F1 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B42A4301780043A3F1 /* TrackerRecord.swift */; };
 		3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB998D32A46F8B900EC9069 /* String+Extension.swift */; };
 		3DB998D82A474E1500EC9069 /* ListButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB998D72A474E1400EC9069 /* ListButton.swift */; };
+		3DCC16722A60AFFD0061F75D /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3DCC16702A60AFFD0061F75D /* CoreDataModel.xcdatamodeld */; };
 		3DE04A722A4791BC00AA623B /* CardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */; };
 		3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */; };
 		3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */; };
@@ -45,7 +45,6 @@
 		3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPersistentContainer.swift; sourceTree = "<group>"; };
 		3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDataController.swift; sourceTree = "<group>"; };
 		3D204E742A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreUpdate.swift; sourceTree = "<group>"; };
-		3D204E772A5EEFE7007A6376 /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		3D2A10F52A58932C00AC7296 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
 		3D2A10F72A58937000AC7296 /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
@@ -68,6 +67,7 @@
 		3DB172B42A4301780043A3F1 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		3DB998D32A46F8B900EC9069 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		3DB998D72A474E1400EC9069 /* ListButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListButton.swift; sourceTree = "<group>"; };
+		3DCC16712A60AFFD0061F75D /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCellViewModel.swift; sourceTree = "<group>"; };
 		3DEA00DC2A3B280300CE2402 /* Daily Habits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Daily Habits.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -106,7 +106,7 @@
 				3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */,
 				3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */,
 				3D204E742A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift */,
-				3D204E762A5EEFE7007A6376 /* CoreDataModel.xcdatamodeld */,
+				3DCC16702A60AFFD0061F75D /* CoreDataModel.xcdatamodeld */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -325,7 +325,7 @@
 				3D204E732A5DEA8C007A6376 /* TrackerDataController.swift in Sources */,
 				3DB998D82A474E1500EC9069 /* ListButton.swift in Sources */,
 				3DE04A722A4791BC00AA623B /* CardCellViewModel.swift in Sources */,
-				3D204E782A5EEFE7007A6376 /* CoreDataModel.xcdatamodeld in Sources */,
+				3DCC16722A60AFFD0061F75D /* CoreDataModel.xcdatamodeld in Sources */,
 				3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */,
 				3DB121BA2A44C1A600CA2EEC /* ListView.swift in Sources */,
 				3D662C692A56135600148E76 /* TrackerStore.swift in Sources */,
@@ -558,12 +558,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		3D204E762A5EEFE7007A6376 /* CoreDataModel.xcdatamodeld */ = {
+		3DCC16702A60AFFD0061F75D /* CoreDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				3D204E772A5EEFE7007A6376 /* CoreDataModel.xcdatamodel */,
+				3DCC16712A60AFFD0061F75D /* CoreDataModel.xcdatamodel */,
 			);
-			currentVersion = 3D204E772A5EEFE7007A6376 /* CoreDataModel.xcdatamodel */;
+			currentVersion = 3DCC16712A60AFFD0061F75D /* CoreDataModel.xcdatamodel */;
 			path = CoreDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

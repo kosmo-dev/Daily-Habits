@@ -68,8 +68,6 @@ final class NewTrackerViewController: UIViewController {
 
     private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
     private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
-//    private let categoryButtonView = ListView(viewMaskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: nil)
-//    private let scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
 
     private var categoryButtonView: ListView?
     private var scheduleButtonView: ListView?
@@ -115,9 +113,6 @@ final class NewTrackerViewController: UIViewController {
         view.backgroundColor = .ypWhite
         navigationItem.title = "Новая привычка"
         navigationItem.hidesBackButton = true
-
-//        categoryButtonView.translatesAutoresizingMaskIntoConstraints = false
-//        scheduleButtonView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(collectionView)
 
