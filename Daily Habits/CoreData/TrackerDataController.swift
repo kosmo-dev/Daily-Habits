@@ -31,6 +31,7 @@ final class TrackerDataController: NSObject {
     var trackerStore: TrackerStoreProtocol
     var trackerCategoryStore: TrackerCategoryStoreProtocol
     var trackerRecordStore: TrackerRecordStoreProtocol
+    var fetchResultController: NSFetchedResultsController<TrackerCoreData>?
 
     private var insertedIndexes: [IndexPath]?
     private var deletedIndexes: [IndexPath]?
@@ -38,7 +39,6 @@ final class TrackerDataController: NSObject {
     private var movedIndexes: [TrackerCategoryStoreUpdate.Move]?
 
     private var context: NSManagedObjectContext
-    private var fetchResultController: NSFetchedResultsController<TrackerCategoryCoreData>?
 
     weak var delegate: TrackerDataControllerDelegate?
 
@@ -50,9 +50,8 @@ final class TrackerDataController: NSObject {
 
         super.init()
 
-        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true),
             NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)
         ]
         let controller = NSFetchedResultsController(
@@ -105,64 +104,60 @@ extension TrackerDataController: TrackerDataControllerProtocol {
     }
 
     var categories: [TrackerCategory] {
-        guard let objects = self.fetchResultController?.fetchedObjects,
-              let categories = try? trackerCategoryStore.convertTrackerCategoryCoreDataToTrackerCategory(objects)
-        else {
-            return []
-        }
-        return categories
+        guard let objects = self.fetchResultController?.fetchedObjects else { return [] }
+        let trackerCategories = trackerCategoryStore.convertTrackerCoreDataToTrackerCategories(objects)
+        return trackerCategories
     }
 }
+    // MARK: - NSFetchedResultsControllerDelegate
+    extension TrackerDataController: NSFetchedResultsControllerDelegate {
+        func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            print("4. Will call controllerWillChangeContent")
+            insertedIndexes = []
+            deletedIndexes = []
+            updatedIndexes = []
+            movedIndexes = []
+        }
 
-// MARK: - NSFetchedResultsControllerDelegate
-extension TrackerDataController: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("4. Will call controllerWillChangeContent")
-        insertedIndexes = []
-        deletedIndexes = []
-        updatedIndexes = []
-        movedIndexes = []
-    }
+        func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            print("5. Will call controllerDidChangeContent")
+            guard let insertedIndexes, let deletedIndexes, let updatedIndexes, let movedIndexes else { return }
+            let update = TrackerCategoryStoreUpdate(
+                insertedIndexes: insertedIndexes,
+                deletedIndexes: deletedIndexes,
+                updatedIndexes: updatedIndexes,
+                movedIndexes: movedIndexes
+            )
+            print("6. Will call delegate?.updateView")
+            delegate?.updateViewByController(update)
 
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("5. Will call controllerDidChangeContent")
-        guard let insertedIndexes, let deletedIndexes, let updatedIndexes, let movedIndexes else { return }
-        let update = TrackerCategoryStoreUpdate(
-            insertedIndexes: insertedIndexes,
-            deletedIndexes: deletedIndexes,
-            updatedIndexes: updatedIndexes,
-            movedIndexes: movedIndexes
-        )
-        print("6. Will call delegate?.updateView")
-        delegate?.updateViewByController(update)
+            self.insertedIndexes = nil
+            self.deletedIndexes = nil
+            self.updatedIndexes = nil
+            self.movedIndexes = nil
+        }
 
-        self.insertedIndexes = nil
-        self.deletedIndexes = nil
-        self.updatedIndexes = nil
-        self.movedIndexes = nil
-    }
-
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        print("Type:", type.rawValue)
-        switch type {
-        case .insert:
-            if let newIndexPath {
-                insertedIndexes?.append(newIndexPath)
+        func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+            print("Type:", type.rawValue)
+            switch type {
+            case .insert:
+                if let newIndexPath {
+                    insertedIndexes?.append(newIndexPath)
+                }
+            case .delete:
+                if let indexPath {
+                    deletedIndexes?.append(indexPath)
+                }
+            case .move:
+                if let newIndexPath, let indexPath {
+                    movedIndexes?.append(.init(oldIndex: indexPath, newIndex: newIndexPath))
+                }
+            case .update:
+                if let indexPath {
+                    updatedIndexes?.append(indexPath)
+                }
+            @unknown default:
+                break
             }
-        case .delete:
-            if let indexPath {
-                deletedIndexes?.append(indexPath)
-            }
-        case .move:
-            if let newIndexPath, let indexPath {
-                movedIndexes?.append(.init(oldIndex: indexPath, newIndex: newIndexPath))
-            }
-        case .update:
-            if let indexPath {
-                updatedIndexes?.append(indexPath)
-            }
-        @unknown default:
-            break
         }
     }
-}

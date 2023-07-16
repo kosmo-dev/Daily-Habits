@@ -13,12 +13,11 @@ protocol TrackerStoreProtocol {
     func convertTrackerToTrackerCoreData(_ tracker: Tracker) -> TrackerCoreData
 }
 
-final class TrackerStore: NSObject {
+final class TrackerStore {
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {
         self.context = context
-        super.init()
     }
 
     private func convertToScheduleCoreData(_ weekdays: [Int]) -> NSSet {

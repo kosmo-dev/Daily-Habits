@@ -301,12 +301,6 @@ extension TrackersViewController: UITextFieldDelegate {
         guard let textToSearch = searchField.text else { return }
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         trackerDataController.fetchSearchedCategories(textToSearch: textToSearch, weekday: weekday)
-//        let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
-//        calculateDiff(newCategories: searchedCategories)
-//
-//        visibleCategories = searchedCategories
-//        checkNeedPlaceholder(for: .notFound)
-//        performBatchUpdates()
     }
 
     private func searchText(in categories: [TrackerCategory], textToSearch: String, weekday: Int) -> [TrackerCategory] {
@@ -364,6 +358,14 @@ extension TrackersViewController: UITextFieldDelegate {
     }
 
     private func performBatchUpdates() {
+        guard !removedSectionsInSearch.isEmpty,
+              !insertedSectionsInSearch.isEmpty,
+              !removedIndexesInSearch.isEmpty,
+              !insertedIndexesInSearch.isEmpty
+        else {
+            collectionView.reloadData()
+            return
+        }
         collectionView.performBatchUpdates {
             if !removedSectionsInSearch.isEmpty {
                 collectionView.deleteSections(removedSectionsInSearch)
@@ -399,14 +401,13 @@ extension TrackersViewController: TrackerDataControllerDelegate {
         print("7. Will call collectionView.performBatchUpdates")
         print("VisibleCategories: \(visibleCategories)")
         print("Update: ", update)
-        collectionView.reloadData()
-//        collectionView.performBatchUpdates {
-//            collectionView.insertItems(at: update.insertedIndexes)
-//            collectionView.deleteItems(at: update.deletedIndexes)
-//            collectionView.reloadItems(at: update.updatedIndexes)
-//            for move in update.movedIndexes {
-//                collectionView.moveItem(at: move.oldIndex, to: move.newIndex)
-//            }
-//        }
+        collectionView.performBatchUpdates {
+            collectionView.insertItems(at: update.insertedIndexes)
+            collectionView.deleteItems(at: update.deletedIndexes)
+            collectionView.reloadItems(at: update.updatedIndexes)
+            for move in update.movedIndexes {
+                collectionView.moveItem(at: move.oldIndex, to: move.newIndex)
+            }
+        }
     }
 }
