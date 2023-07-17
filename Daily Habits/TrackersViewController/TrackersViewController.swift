@@ -270,7 +270,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
         dismiss(animated: true)
-        print("1. Will call trackerDataController.addTrackerCategory")
         try? trackerDataController.addTrackerCategory(trackerCategory)
     }
 }
@@ -358,14 +357,6 @@ extension TrackersViewController: UITextFieldDelegate {
     }
 
     private func performBatchUpdates() {
-        guard !removedSectionsInSearch.isEmpty,
-              !insertedSectionsInSearch.isEmpty,
-              !removedIndexesInSearch.isEmpty,
-              !insertedIndexesInSearch.isEmpty
-        else {
-            collectionView.reloadData()
-            return
-        }
         collectionView.performBatchUpdates {
             if !removedSectionsInSearch.isEmpty {
                 collectionView.deleteSections(removedSectionsInSearch)
@@ -396,18 +387,10 @@ extension TrackersViewController: TrackerDataControllerDelegate {
     }
 
     func updateViewByController(_ update: TrackerCategoryStoreUpdate) {
-        visibleCategories = trackerDataController.categories
+        let newCategories = trackerDataController.categories
+        calculateDiff(newCategories: newCategories)
+        visibleCategories = newCategories
+        performBatchUpdates()
         checkNeedPlaceholder(for: .noTrackers)
-        print("7. Will call collectionView.performBatchUpdates")
-        print("VisibleCategories: \(visibleCategories)")
-        print("Update: ", update)
-        collectionView.performBatchUpdates {
-            collectionView.insertItems(at: update.insertedIndexes)
-            collectionView.deleteItems(at: update.deletedIndexes)
-            collectionView.reloadItems(at: update.updatedIndexes)
-            for move in update.movedIndexes {
-                collectionView.moveItem(at: move.oldIndex, to: move.newIndex)
-            }
-        }
     }
 }

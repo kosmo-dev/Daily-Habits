@@ -72,18 +72,19 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         let weekdayPredicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
         let textPredicate = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(TrackerCoreData.name), textToSearch)
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [weekdayPredicate, textPredicate])
-        let trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
+        var trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
+        trackerCategories.sort(by: { $0.name < $1.name })
         delegate?.updateView(categories: trackerCategories, animating: true)
     }
 
     func fetchCategoriesFor(weekday: Int, animating: Bool) {
         let predicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
-        let trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
+        var trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
+        trackerCategories.sort(by: { $0.name < $1.name })
         delegate?.updateView(categories: trackerCategories, animating: animating)
     }
 
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws {
-        print("2. Will call trackerCategoryStore.addTrackerCategory")
         try? trackerCategoryStore.addTrackerCategory(trackerCategory)
     }
 
@@ -105,14 +106,14 @@ extension TrackerDataController: TrackerDataControllerProtocol {
 
     var categories: [TrackerCategory] {
         guard let objects = self.fetchResultController?.fetchedObjects else { return [] }
-        let trackerCategories = trackerCategoryStore.convertTrackerCoreDataToTrackerCategories(objects)
+        var trackerCategories = trackerCategoryStore.convertTrackerCoreDataToTrackerCategories(objects)
+        trackerCategories.sort(by: { $0.name < $1.name })
         return trackerCategories
     }
 }
     // MARK: - NSFetchedResultsControllerDelegate
     extension TrackerDataController: NSFetchedResultsControllerDelegate {
         func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            print("4. Will call controllerWillChangeContent")
             insertedIndexes = []
             deletedIndexes = []
             updatedIndexes = []
@@ -120,7 +121,6 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         }
 
         func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            print("5. Will call controllerDidChangeContent")
             guard let insertedIndexes, let deletedIndexes, let updatedIndexes, let movedIndexes else { return }
             let update = TrackerCategoryStoreUpdate(
                 insertedIndexes: insertedIndexes,
@@ -128,7 +128,6 @@ extension TrackerDataController: TrackerDataControllerProtocol {
                 updatedIndexes: updatedIndexes,
                 movedIndexes: movedIndexes
             )
-            print("6. Will call delegate?.updateView")
             delegate?.updateViewByController(update)
 
             self.insertedIndexes = nil
@@ -138,7 +137,6 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         }
 
         func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-            print("Type:", type.rawValue)
             switch type {
             case .insert:
                 if let newIndexPath {

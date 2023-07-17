@@ -233,9 +233,9 @@
 				3DB172AF2A43012D0043A3F1 /* Models */,
 				3D7BF5C02A3F6C49007FDAC9 /* StatisticViewController */,
 				3D7BF5C32A3F6CB9007FDAC9 /* Helpers */,
+				3D662C672A56133900148E76 /* CoreData */,
 				3DEA00EA2A3B280300CE2402 /* LaunchScreen.storyboard */,
 				3DEA00E82A3B280300CE2402 /* Assets.xcassets */,
-				3D662C672A56133900148E76 /* CoreData */,
 				3DEA00ED2A3B280300CE2402 /* Info.plist */,
 			);
 			path = "Daily Habits";
