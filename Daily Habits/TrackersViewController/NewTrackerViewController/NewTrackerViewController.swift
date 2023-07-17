@@ -106,6 +106,10 @@ final class NewTrackerViewController: UIViewController {
         collectionView.dataSource = self
 
         addCategory("Важное", index: 0)
+
+        if trackerType == .event {
+            choosedDays = [0, 1, 2, 3, 4, 5, 6]
+        }
     }
 
     // MARK: - Private Methods

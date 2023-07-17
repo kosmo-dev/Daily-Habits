@@ -357,6 +357,14 @@ extension TrackersViewController: UITextFieldDelegate {
     }
 
     private func performBatchUpdates() {
+        if removedSectionsInSearch.isEmpty &&
+            insertedSectionsInSearch.isEmpty &&
+            removedIndexesInSearch.isEmpty &&
+            insertedIndexesInSearch.isEmpty
+        {
+            collectionView.reloadData()
+        }
+
         collectionView.performBatchUpdates {
             if !removedSectionsInSearch.isEmpty {
                 collectionView.deleteSections(removedSectionsInSearch)
