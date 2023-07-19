@@ -11,6 +11,9 @@ struct C {
     struct UIImages {
         static let emptyTrackersPlaceholder = "EmptyTrackersPlaceholder"
         static let searchNotFoundPlaceholder = "SearchNotFoundPlaceholder"
+        
+        static let onboardingFirst = "Onboarding1"
+        static let onboardingSecond = "Onboarding2"
     }
 
     struct Emojis {

@@ -112,6 +112,8 @@ final class TrackersViewController: UIViewController {
         trackerDataController.delegate = self
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         trackerDataController.fetchCategoriesFor(weekday: weekday, animating: false)
+        checkNeedPlaceholder(for: .noTrackers)
+        checkNeedOnboardingScreen()
     }
 
     // MARK: - Private Methods
@@ -217,6 +219,13 @@ final class TrackersViewController: UIViewController {
         cancelSearchButton.removeFromSuperview()
         datePickerValueChanged()
         checkNeedPlaceholder(for: .noTrackers)
+    }
+
+    private func checkNeedOnboardingScreen() {
+        guard visibleCategories.isEmpty else { return }
+        let pageViewController = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        pageViewController.modalPresentationStyle = .fullScreen
+        present(pageViewController, animated: true)
     }
 }
 
