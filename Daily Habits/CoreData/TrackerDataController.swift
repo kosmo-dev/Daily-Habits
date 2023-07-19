@@ -20,8 +20,8 @@ protocol TrackerDataControllerProtocol: AnyObject {
 
     func fetchRecordsCountForId(_ id: UUID) -> Int
     func checkTrackerRecordExist(id: UUID, date: String) -> Bool
-    func addTrackerRecord(id: UUID, date: String)
-    func deleteTrackerRecord(id: UUID, date: String)
+    func addTrackerRecord(id: UUID, date: String) throws
+    func deleteTrackerRecord(id: UUID, date: String) throws
 
     var categories: [TrackerCategory] { get }
     var delegate: TrackerDataControllerDelegate? { get set }
@@ -85,23 +85,23 @@ extension TrackerDataController: TrackerDataControllerProtocol {
     }
 
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws {
-        try? trackerCategoryStore.addTrackerCategory(trackerCategory)
+        try trackerCategoryStore.addTrackerCategory(trackerCategory)
     }
 
     func fetchRecordsCountForId(_ id: UUID) -> Int {
-        return trackerRecordStore.fetchRecordsCountForId(id)
+        trackerRecordStore.fetchRecordsCountForId(id)
     }
 
     func checkTrackerRecordExist(id: UUID, date: String) -> Bool {
-        return trackerRecordStore.checkTrackerRecordExist(id: id, date: date)
+        trackerRecordStore.checkTrackerRecordExist(id: id, date: date)
     }
 
-    func addTrackerRecord(id: UUID, date: String) {
-        trackerRecordStore.addTrackerRecord(id: id, date: date)
+    func addTrackerRecord(id: UUID, date: String) throws {
+        try trackerRecordStore.addTrackerRecord(id: id, date: date)
     }
 
-    func deleteTrackerRecord(id: UUID, date: String) {
-        trackerRecordStore.deleteTrackerRecord(id: id, date: date)
+    func deleteTrackerRecord(id: UUID, date: String) throws {
+        try trackerRecordStore.deleteTrackerRecord(id: id, date: date)
     }
 
     var categories: [TrackerCategory] {

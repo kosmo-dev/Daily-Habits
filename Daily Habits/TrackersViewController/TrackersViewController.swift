@@ -270,19 +270,27 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
         dismiss(animated: true)
-        try? trackerDataController.addTrackerCategory(trackerCategory)
+        do {
+            try trackerDataController.addTrackerCategory(trackerCategory)
+        } catch {
+            showAlertController(with: "Ошибка добавления нового трекера. Попробуйте еще раз")
+        }
     }
 }
 
 // MARK: - CardCollectionViewCellDelegate
 extension TrackersViewController: CardCollectionViewCellDelegate {
     func checkButtonTapped(viewModel: CardCellViewModel) {
-        if viewModel.buttonIsChecked {
-            trackerDataController.addTrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate))
-        } else {
-            trackerDataController.deleteTrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+        do {
+            if viewModel.buttonIsChecked {
+                try trackerDataController.addTrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+            } else {
+                try trackerDataController.deleteTrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+            }
+            collectionView.reloadItems(at: [viewModel.indexPath])
+        } catch {
+            showAlertController(with: "Ошибка добавления записи. Попробуйте еще раз")
         }
-        collectionView.reloadItems(at: [viewModel.indexPath])
     }
 }
 
@@ -400,5 +408,15 @@ extension TrackersViewController: TrackerDataControllerDelegate {
         visibleCategories = newCategories
         performBatchUpdates()
         checkNeedPlaceholder(for: .noTrackers)
+    }
+}
+
+// MARK: - Alert Presentation
+extension TrackersViewController {
+    func showAlertController(with message: String) {
+        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Закрыть", style: .default)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
 }

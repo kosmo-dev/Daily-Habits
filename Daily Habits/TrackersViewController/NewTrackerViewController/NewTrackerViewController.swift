@@ -108,7 +108,7 @@ final class NewTrackerViewController: UIViewController {
         addCategory("Важное", index: 0)
 
         if trackerType == .event {
-            choosedDays = [0, 1, 2, 3, 4, 5, 6]
+            choosedDays = Array(0...6)
         }
     }
 
@@ -262,11 +262,7 @@ extension NewTrackerViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         let section = sections[indexPath.section]
-        if section == .colorCollection || section == .emojisCollection {
-            return true
-        } else {
-            return false
-        }
+        return section == .colorCollection || section == .emojisCollection
     }
 }
 
@@ -430,15 +426,15 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return .zero
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         let section = sections[section]
 
         switch section {
-        case .textField:
-            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        case .textField, .buttons:
+            return UIEdgeInsets.zero
         case .listButtonViews:
             return UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
         case .emojiLabel:
@@ -449,8 +445,6 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
             return UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         case .colorCollection:
             return UIEdgeInsets(top: 24, left: 0, bottom: 24, right: 0)
-        case .buttons:
-            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         }
     }
 

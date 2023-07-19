@@ -45,20 +45,16 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
 
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.name), trackerCategory.name)
-        do {
-            let categories = try context.fetch(request)
+        let categories = try context.fetch(request)
 
-            if let category = categories.first {
-                category.addToTrackers(trackerCoreData)
-            } else {
-                let newCategoryCoreData = TrackerCategoryCoreData(context: context)
-                newCategoryCoreData.name = trackerCategory.name
-                newCategoryCoreData.addToTrackers(trackerCoreData)
-            }
-            try context.save()
-        } catch {
-            print("Could not save. Error \(error)")
+        if let category = categories.first {
+            category.addToTrackers(trackerCoreData)
+        } else {
+            let newCategoryCoreData = TrackerCategoryCoreData(context: context)
+            newCategoryCoreData.name = trackerCategory.name
+            newCategoryCoreData.addToTrackers(trackerCoreData)
         }
+        try context.save()
     }
 
     func fetchCategoriesWithPredicate(_ predicate: NSPredicate) -> [TrackerCategory] {
@@ -103,7 +99,9 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
             else {
                 throw TrackerCategoryStoreError.decodingError
             }
-            let trackers = Array(trackersSet.compactMap({ try? trackerStore.convertTrackerCoreDataToTracker($0 as! TrackerCoreData) }))
+            let trackers = Array(trackersSet
+                .compactMap{ $0 as? TrackerCoreData }
+                .compactMap{ try? trackerStore.convertTrackerCoreDataToTracker($0) })
             let category = TrackerCategory(name: name, trackers: trackers)
             categories.append(category)
         }
