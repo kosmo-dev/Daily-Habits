@@ -12,9 +12,14 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.tintColor = .ypBlue
+        let coreDataPersistentContainer = CoreDataPersistentContainer()
+        let trackerStore = TrackerStore(context: coreDataPersistentContainer.context)
+        let trackerCategoryStore = TrackerCategoryStore(context: coreDataPersistentContainer.context, trackerStore: trackerStore)
+        let trackerRecordStore = TrackerRecordStore(context: coreDataPersistentContainer.context)
+        let trackerDataController = TrackerDataController(trackerStore: trackerStore, trackerCategoryStore: trackerCategoryStore, trackerRecordStore: trackerRecordStore, context: coreDataPersistentContainer.context)
+        trackerCategoryStore.setTrackerDataController(trackerDataController.fetchResultController)
 
-        let trackersViewController = TrackersViewController()
+        let trackersViewController = TrackersViewController(trackerDataController: trackerDataController)
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         let statisticViewController = StatisticViewController()
 
@@ -22,5 +27,15 @@ final class TabBarController: UITabBarController {
         statisticViewController.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(systemName: "hare.fill"), selectedImage: nil)
 
         self.viewControllers = [trackersNavigationController, statisticViewController]
+
+        tabBar.isTranslucent = false
+        view.tintColor = .ypBlue
+
+        if #available(iOS 15.0, *) {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            tabBar.standardAppearance = appearance
+            tabBar.scrollEdgeAppearance = appearance
+        }
     }
 }

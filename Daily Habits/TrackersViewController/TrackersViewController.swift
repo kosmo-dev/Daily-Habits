@@ -80,15 +80,25 @@ final class TrackersViewController: UIViewController {
         return placeholderText
     }()
 
-    private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
-    private var completedTrackers: Set<TrackerRecord> = []
     private var currentDate: Date = Date()
 
     private var insertedIndexesInSearch: [IndexPath] = []
     private var removedIndexesInSearch: [IndexPath] = []
     private var insertedSectionsInSearch: IndexSet = []
     private var removedSectionsInSearch: IndexSet = []
+
+    private let trackerDataController: TrackerDataControllerProtocol
+
+    // MARK: - Initializers
+    init(trackerDataController: TrackerDataControllerProtocol) {
+        self.trackerDataController = trackerDataController
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - View Life Cycle
     override func viewDidLoad() {
@@ -98,8 +108,10 @@ final class TrackersViewController: UIViewController {
         configureNavigationBar()
         configureCollectionView()
         makeLayout()
-        checkNeedPlaceholder(for: .noTrackers)
         searchField.delegate = self
+        trackerDataController.delegate = self
+        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
+        trackerDataController.fetchCategoriesFor(weekday: weekday, animating: false)
     }
 
     // MARK: - Private Methods
@@ -173,9 +185,7 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func leftBarButtonTapped() {
-        let newTrackerViewController = NewTrackerViewController()
-        newTrackerViewController.delegate = self
-        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(newTrackerViewController: newTrackerViewController, newHabitVIewController: nil)
+        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self)
         let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
         navigationController?.present(modalNavigationController, animated: true)
     }
@@ -186,25 +196,13 @@ final class TrackersViewController: UIViewController {
     @objc private func datePickerValueChanged() {
         currentDate = datePickerView.date
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        var newCategories: [TrackerCategory] = []
-        for category in categories {
-            var trackers: [Tracker] = []
-            for tracker in category.trackers {
-                if tracker.schedule.contains(where: { $0 == weekday }) {
-                    trackers.append(tracker)
-                }
-            }
-            newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
-        }
-        calculateDiff(newCategories: newCategories)
-        visibleCategories = newCategories
-        performBatchUpdates()
+        trackerDataController.fetchCategoriesFor(weekday: weekday, animating: true)
     }
 
     private func configureViewModel(for indexPath: IndexPath) -> CardCellViewModel {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        let counter = completedTrackers.filter({ $0.id == tracker.id }).count
-        let cardIsChecked = completedTrackers.contains(TrackerRecord(id: tracker.id, date: dateFormatter.string(from: currentDate)))
+        let counter = trackerDataController.fetchRecordsCountForId(tracker.id)
+        let cardIsChecked = trackerDataController.checkTrackerRecordExist(id: tracker.id, date: dateFormatter.string(from: currentDate))
         let dateComparision = Calendar.current.compare(currentDate, to: Date(), toGranularity: .day)
         var buttonEnabled = true
         if dateComparision.rawValue == 1 {
@@ -271,38 +269,28 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - NewTrackerViewControllerDelegate
 extension TrackersViewController: NewTrackerViewControllerDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
-        var newCategories: [TrackerCategory] = []
-
-        if let categoryIndex = categories.firstIndex(where: { $0.name == trackerCategory.name }) {
-            for (index, category) in categories.enumerated() {
-                var trackers = category.trackers
-                if index == categoryIndex {
-                    trackers.append(contentsOf: trackerCategory.trackers)
-                }
-                newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
-            }
-        } else {
-            newCategories = categories
-            newCategories.append(trackerCategory)
+        dismiss(animated: true)
+        do {
+            try trackerDataController.addTrackerCategory(trackerCategory)
+        } catch {
+            showAlertController(with: "Ошибка добавления нового трекера. Попробуйте еще раз")
         }
-
-        categories = newCategories
-        datePickerValueChanged()
-
-        checkNeedPlaceholder(for: .noTrackers)
-        collectionView.reloadData()
     }
 }
 
 // MARK: - CardCollectionViewCellDelegate
 extension TrackersViewController: CardCollectionViewCellDelegate {
     func checkButtonTapped(viewModel: CardCellViewModel) {
-        if viewModel.buttonIsChecked {
-            completedTrackers.insert(TrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate)))
-        } else {
-            completedTrackers.remove(TrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate)))
+        do {
+            if viewModel.buttonIsChecked {
+                try trackerDataController.addTrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+            } else {
+                try trackerDataController.deleteTrackerRecord(id: viewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+            }
+            collectionView.reloadItems(at: [viewModel.indexPath])
+        } catch {
+            showAlertController(with: "Ошибка добавления записи. Попробуйте еще раз")
         }
-        collectionView.reloadItems(at: [viewModel.indexPath])
     }
 }
 
@@ -319,12 +307,7 @@ extension TrackersViewController: UITextFieldDelegate {
     @objc private func searchFieldEditingChanged() {
         guard let textToSearch = searchField.text else { return }
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        let searchedCategories = searchText(in: categories, textToSearch: textToSearch, weekday: weekday)
-        calculateDiff(newCategories: searchedCategories)
-        
-        visibleCategories = searchedCategories
-        checkNeedPlaceholder(for: .notFound)
-        performBatchUpdates()
+        trackerDataController.fetchSearchedCategories(textToSearch: textToSearch, weekday: weekday)
     }
 
     private func searchText(in categories: [TrackerCategory], textToSearch: String, weekday: Int) -> [TrackerCategory] {
@@ -382,6 +365,14 @@ extension TrackersViewController: UITextFieldDelegate {
     }
 
     private func performBatchUpdates() {
+        if removedSectionsInSearch.isEmpty &&
+            insertedSectionsInSearch.isEmpty &&
+            removedIndexesInSearch.isEmpty &&
+            insertedIndexesInSearch.isEmpty
+        {
+            collectionView.reloadData()
+        }
+
         collectionView.performBatchUpdates {
             if !removedSectionsInSearch.isEmpty {
                 collectionView.deleteSections(removedSectionsInSearch)
@@ -396,5 +387,36 @@ extension TrackersViewController: UITextFieldDelegate {
                 collectionView.insertItems(at: insertedIndexesInSearch)
             }
         }
+    }
+}
+
+extension TrackersViewController: TrackerDataControllerDelegate {
+    func updateView(categories: [TrackerCategory], animating: Bool) {
+        calculateDiff(newCategories: categories)
+        visibleCategories = categories
+        if animating {
+            performBatchUpdates()
+        } else {
+            collectionView.reloadData()
+        }
+        checkNeedPlaceholder(for: .notFound)
+    }
+
+    func updateViewByController(_ update: TrackerCategoryStoreUpdate) {
+        let newCategories = trackerDataController.categories
+        calculateDiff(newCategories: newCategories)
+        visibleCategories = newCategories
+        performBatchUpdates()
+        checkNeedPlaceholder(for: .noTrackers)
+    }
+}
+
+// MARK: - Alert Presentation
+extension TrackersViewController {
+    func showAlertController(with message: String) {
+        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Закрыть", style: .default)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
 }
