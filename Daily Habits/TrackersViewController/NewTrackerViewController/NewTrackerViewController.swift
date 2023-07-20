@@ -105,8 +105,6 @@ final class NewTrackerViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
 
-        addCategory("Важное", index: 0)
-
         if trackerType == .event {
             choosedDays = Array(0...6)
         }
@@ -313,10 +311,10 @@ extension NewTrackerViewController: UICollectionViewDataSource {
         case .listButtonViews:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listViewCell", for: indexPath)
             if trackerType == .habit {
-                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: nil)
+                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
                 scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
             } else {
-                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: "Категория", type: .disclosure, action: nil)
+                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
             }
             if indexPath.row == 0 {
                 if let categoryButtonView {

@@ -75,15 +75,22 @@ final class ListView: UIView {
 
     // MARK: - Initializers
     init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, type: ViewType, action: Selector?) {
-        buttonView = ListButton(primaryText: primaryText)
+        self.buttonView = ListButton(primaryText: primaryText)
         super.init(frame: .zero)
-        layer.maskedCorners = viewMaskedCorners
-        bottomDivider.isHidden = bottomDividerIsHidden
+        self.layer.maskedCorners = viewMaskedCorners
+        self.bottomDivider.isHidden = bottomDividerIsHidden
         self.primaryText.text = primaryText
-        buttonView.delegate = self
+        self.buttonView.delegate = self
         if let action {
             buttonView.addTarget(nil, action: action, for: .touchUpInside)
         }
+        viewType = type
+        configureView()
+    }
+
+    init(type: ViewType) {
+        self.buttonView = ListButton(primaryText: "")
+        super.init(frame: .zero)
         viewType = type
         configureView()
     }
@@ -96,6 +103,10 @@ final class ListView: UIView {
     func addSecondaryText(_ text: String) {
         secondaryText.text = text
         stackView.addArrangedSubview(secondaryText)
+    }
+
+    func addPrimaryText(_ text: String) {
+        primaryText.text = text
     }
 
     func updateSecondaryText(_ text: String) {
@@ -116,6 +127,14 @@ final class ListView: UIView {
 
     func hideCheckMarkImage(_ hide: Bool) {
         checkmarkImageView.isHidden = hide
+    }
+
+    func setMaskedCorners(_ corners: CACornerMask) {
+        layer.maskedCorners = corners
+    }
+
+    func setBottomDividerHidded(_ hidden: Bool) {
+        bottomDivider.isHidden = hidden
     }
 
     // MARK: - Private Methods
