@@ -92,9 +92,13 @@ final class CategoryViewController: UIViewController {
     }
 
     @objc private func addCategoryButtonTapped() {
+        let addCategoryViewController = NewCategoryViewController()
+        addCategoryViewController.delegate = self
+        navigationController?.pushViewController(addCategoryViewController, animated: true)
     }
 }
 
+// MARK: - UITableViewDelegate
 extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
@@ -106,8 +110,8 @@ extension CategoryViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension CategoryViewController: UITableViewDataSource {
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories.count
     }
@@ -125,5 +129,13 @@ extension CategoryViewController: UITableViewDataSource {
             cell.hideCheckMarkImage(true)
         }
         return cell
+    }
+}
+
+// MARK: - NewCategoryViewControllerDelegate
+extension CategoryViewController: NewCategoryViewControllerDelegate {
+    func addNewCategory(_ category: String) {
+        categories.append(category)
+        tableView.reloadData()
     }
 }
