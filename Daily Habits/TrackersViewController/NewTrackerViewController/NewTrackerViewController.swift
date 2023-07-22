@@ -12,21 +12,6 @@ protocol NewTrackerViewControllerDelegate: AnyObject {
 }
 
 final class NewTrackerViewController: UIViewController {
-    enum Sections {
-        case textField
-        case listButtonViews
-        case emojiLabel
-        case emojisCollection
-        case colorLabel
-        case colorCollection
-        case buttons
-    }
-
-    enum TrackerType {
-        case habit
-        case event
-    }
-
     // MARK: - Public Properties
     weak var delegate: NewTrackerViewControllerDelegate?
     
@@ -39,6 +24,7 @@ final class NewTrackerViewController: UIViewController {
         titleTextField.layer.masksToBounds = true
         titleTextField.setLeftPaddingPoints(16)
         titleTextField.clearButtonMode = .whileEditing
+        titleTextField.addTarget(nil, action: #selector(didChangeTitleTextField), for: .editingChanged)
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
         return titleTextField
     }()
@@ -72,22 +58,11 @@ final class NewTrackerViewController: UIViewController {
     private var categoryButtonView: ListView?
     private var scheduleButtonView: ListView?
 
-    private var category: String?
-    private var choosedDays: [Int] = []
-    private var choosedCategoryIndex: Int?
-    private var buttonIsEnabled = false
-
-    private let emojis = C.Emojis.emojis
-    private let colors = C.Colors.colors
-    private var selectedEmojiCellIndexPath: IndexPath?
-    private var selectedColorCellIndexPath: IndexPath?
-
-    private let sections: [Sections] = [.textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
-    private let trackerType: TrackerType
+    private var viewModel: NewTrackerViewModel
 
     // MARK: - Initializers
-    init(trackerType: TrackerType) {
-        self.trackerType = trackerType
+    init(trackerType: NewTrackerViewModel.TrackerType) {
+        viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: nil)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -99,15 +74,14 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        viewModel.navigationController = navigationController
         titleTextField.delegate = self
 
         registerCells()
         collectionView.delegate = self
         collectionView.dataSource = self
 
-        if trackerType == .event {
-            choosedDays = Array(0...6)
-        }
+        setBindings()
     }
 
     // MARK: - Private Methods
@@ -131,53 +105,22 @@ final class NewTrackerViewController: UIViewController {
     }
 
     @objc private func saveButtonTapped() {
-        guard buttonIsEnabled else { return }
         guard let text = titleTextField.text,
-              let category = category,
-              let selectedEmojiCellIndexPath,
-              let selectedColorCellIndexPath
+              let newTracker = viewModel.saveButtonTapped(text: text)
         else {
             return
         }
-        let emoji = emojis[selectedEmojiCellIndexPath.row]
-        let color = colors[selectedColorCellIndexPath.row]
-        delegate?.addNewTracker(TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: color, emoji: emoji, schedule: choosedDays)]))
+        delegate?.addNewTracker(newTracker)
     }
 
     @objc private func categoryViewButtonTapped() {
-        let viewController = CategoryViewController(choosedCategoryIndex: choosedCategoryIndex)
-        viewController.delegate = self
         titleTextField.resignFirstResponder()
-        navigationController?.pushViewController(viewController, animated: true)
+        viewModel.categoryViewButtonTapped()
     }
 
     @objc private func scheduleViewButtonTapped() {
-        let viewController = ScheduleViewController(choosedDays: choosedDays)
         titleTextField.resignFirstResponder()
-        viewController.delegate = self
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    private func checkFormCompletion() {
-        if titleTextField.text?.isEmpty == false,
-           category != nil,
-           choosedDays.isEmpty == false,
-           selectedEmojiCellIndexPath != nil,
-           selectedColorCellIndexPath != nil
-        {
-            buttonIsEnabled = true
-        } else {
-            buttonIsEnabled = false
-        }
-        changeButtonView()
-    }
-
-    private func changeButtonView() {
-        if buttonIsEnabled {
-            saveButton.configureButtonType(.primary)
-        } else {
-            saveButton.configureButtonType(.notActive)
-        }
+        viewModel.scheduleViewButtonTapped()
     }
 
     private func registerCells() {
@@ -189,45 +132,58 @@ final class NewTrackerViewController: UIViewController {
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "buttonCell")
     }
-}
 
-// MARK: - CategoryViewControllerDelegate
-extension NewTrackerViewController: CategoryViewControllerDelegate {
-    func addCategory(_ category: String, index: Int) {
-        categoryButtonView?.addSecondaryText(category)
-        self.category = category
-        choosedCategoryIndex = index
-        checkFormCompletion()
+    @objc private func didChangeTitleTextField() {
+        viewModel.setTitleText(text: titleTextField.text)
     }
-}
 
-// MARK: - ScheduleViewControllerDelegate
-extension NewTrackerViewController: ScheduleViewControllerDelegate {
-    func addWeekDays(_ weekdays: [Int]) {
-        choosedDays = weekdays
-        var daysView = ""
-        if weekdays.count == 7 {
-            daysView = "Каждый день"
-            scheduleButtonView?.addSecondaryText(daysView)
-            return
+    private func setBindings() {
+        viewModel.$buttonIsEnabled.bind { [weak self] enabled in
+            enabled ? self?.saveButton.configureButtonType(.primary) : self?.saveButton.configureButtonType(.notActive)
         }
-        for index in choosedDays {
-            var calendar = Calendar.current
-            calendar.locale = Locale(identifier: "ru_RU")
-            let day = calendar.shortWeekdaySymbols[index]
-            daysView.append(day)
-            daysView.append(", ")
+
+        viewModel.$category.bind { [weak self] category in
+            guard let self, let category else { return }
+            self.categoryButtonView?.addSecondaryText(category)
         }
-        daysView = String(daysView.dropLast(2))
-        scheduleButtonView?.addSecondaryText(daysView)
-        checkFormCompletion()
+
+        viewModel.$weekdaysTitle.bind { [weak self] weekdaysTitle in
+            guard let self, let weekdaysTitle else { return }
+            self.scheduleButtonView?.addSecondaryText(weekdaysTitle)
+        }
+
+        viewModel.$selectedEmojiCellIndexPath.bind { [weak self] oldIndexPath in
+            self?.deselectCell(at: oldIndexPath)
+        } didAction: { [weak self] newIndexPath in
+            self?.selectCell(at: newIndexPath, type: .emoji)
+        }
+
+        viewModel.$selectedColorCellIndexPath.bind { [weak self] oldIndexPath in
+            self?.deselectCell(at: oldIndexPath)
+        } didAction: { [weak self] newIndexPath in
+            self?.selectCell(at: newIndexPath, type: .color)
+        }
+    }
+
+    private func deselectCell(at indexPath: IndexPath?) {
+        guard let indexPath, let previousCell = collectionView.cellForItem(at: indexPath) as? CollectionViewCell else { return }
+        previousCell.cellDeselected()
+    }
+
+    private func selectCell(at indexPath: IndexPath?, type: CollectionViewCell.CellType) {
+        guard let indexPath, let cell = collectionView.cellForItem(at: indexPath) as? CollectionViewCell else { return }
+        var color: UIColor? = nil
+        if type == .color {
+            color = viewModel.colors[indexPath.row].withAlphaComponent(0.3)
+        }
+        cell.cellSelected(type: type, color: color)
     }
 }
 
 // MARK: - UITextFieldDelegate
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        checkFormCompletion()
+        viewModel.checkFormCompletion()
         titleTextField.resignFirstResponder()
         return true
     }
@@ -235,31 +191,11 @@ extension NewTrackerViewController: UITextFieldDelegate {
 
 extension NewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let section = sections[indexPath.section]
-        if section == .emojisCollection  {
-            if let selectedEmojiCellIndexPath,
-               let previousCell = collectionView.cellForItem(at: selectedEmojiCellIndexPath) as? CollectionViewCell {
-                previousCell.cellDeselected()
-            }
-            guard let cell = collectionView.cellForItem(at: indexPath) as? CollectionViewCell else { return }
-            cell.cellSelected(type: .emoji, color: nil)
-            selectedEmojiCellIndexPath = indexPath
-
-        } else if section == .colorCollection {
-            if let selectedColorCellIndexPath,
-               let previousCell = collectionView.cellForItem(at: selectedColorCellIndexPath) as? CollectionViewCell {
-                previousCell.cellDeselected()
-            }
-            guard let cell = collectionView.cellForItem(at: indexPath) as? CollectionViewCell else { return }
-            let color = colors[indexPath.row].withAlphaComponent(0.3)
-            cell.cellSelected(type: .color, color: color)
-            selectedColorCellIndexPath = indexPath
-        }
-        checkFormCompletion()
+        viewModel.didSelectItem(at: indexPath)
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        let section = sections[indexPath.section]
+        let section = viewModel.sections[indexPath.section]
         return section == .colorCollection || section == .emojisCollection
     }
 }
@@ -267,34 +203,14 @@ extension NewTrackerViewController: UICollectionViewDelegate {
 // MARK: - UICollectionViewDataSource
 extension NewTrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        return viewModel.sections.count
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let section = sections[section]
-        switch section {
-        case .textField:
-            return 1
-        case .listButtonViews:
-            if trackerType == .habit {
-                return 2
-            } else {
-                return 1
-            }
-        case .emojiLabel:
-            return 1
-        case .emojisCollection:
-            return emojis.count
-        case .colorLabel:
-            return 1
-        case .colorCollection:
-            return colors.count
-        case .buttons:
-            return 2
-        }
+        return viewModel.numberOfItemsInSection(section)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let section = sections[indexPath.section]
+        let section = viewModel.sections[indexPath.section]
         let padding: CGFloat = 16
         switch section {
         case .textField:
@@ -310,7 +226,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
 
         case .listButtonViews:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listViewCell", for: indexPath)
-            if trackerType == .habit {
+            if viewModel.trackerType == .habit {
                 categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
                 scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
             } else {
@@ -351,7 +267,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
 
         case .emojisCollection:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as? CollectionViewCell
-            cell?.configureView(with: emojis[indexPath.row])
+            cell?.configureView(with: viewModel.emojis[indexPath.row])
             return cell ?? UICollectionViewCell()
 
         case .colorLabel:
@@ -366,7 +282,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
 
         case .colorCollection:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorsCell", for: indexPath) as? CollectionViewCell
-            cell?.configureView(with: colors[indexPath.row])
+            cell?.configureView(with: viewModel.colors[indexPath.row])
             return cell ?? UICollectionViewCell()
 
         case .buttons:
@@ -402,7 +318,7 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
         let availableWidth = collectionWidth - CGFloat(cellCount - 1) * cellSpacing
         let cellWidth = availableWidth / CGFloat(cellCount)
 
-        let section = sections[indexPath.section]
+        let section = viewModel.sections[indexPath.section]
         switch section {
         case .textField:
             return CGSize(width: view.bounds.width, height: 75)
@@ -428,7 +344,7 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let section = sections[section]
+        let section = viewModel.sections[section]
 
         switch section {
         case .textField, .buttons:
@@ -447,7 +363,7 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        let sectionEnum = sections[section]
+        let sectionEnum = viewModel.sections[section]
         if sectionEnum == .emojisCollection || sectionEnum == .colorCollection {
             return 5
         } else {

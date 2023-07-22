@@ -1,0 +1,167 @@
+//
+//  NewTrackerViewModel.swift
+//  Daily Habits
+//
+//  Created by Вадим Кузьмин on 22.07.2023.
+//
+
+import UIKit
+
+//enum TrackerType {
+//    case habit
+//    case event
+//}
+//
+//enum Sections {
+//    case textField
+//    case listButtonViews
+//    case emojiLabel
+//    case emojisCollection
+//    case colorLabel
+//    case colorCollection
+//    case buttons
+//}
+
+final class NewTrackerViewModel {
+    enum Sections {
+        case textField
+        case listButtonViews
+        case emojiLabel
+        case emojisCollection
+        case colorLabel
+        case colorCollection
+        case buttons
+    }
+
+    enum TrackerType {
+        case habit
+        case event
+    }
+    
+    var navigationController: UINavigationController?
+
+    @Observable private(set) var category: String?
+    private var choosedDays: [Int] = []
+    private var choosedCategoryIndex: Int?
+    @Observable private(set) var buttonIsEnabled = false
+    private var titleTextFieldText: String?
+    @Observable private(set) var weekdaysTitle: String?
+
+    let emojis = C.Emojis.emojis
+    let colors = C.Colors.colors
+    @ObservableWithOldValue private(set) var selectedEmojiCellIndexPath: IndexPath?
+    @ObservableWithOldValue private(set) var selectedColorCellIndexPath: IndexPath?
+
+    let sections: [Sections] = [.textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
+    let trackerType: TrackerType
+
+    init(trackerType: TrackerType, navigationController: UINavigationController?) {
+        self.trackerType = trackerType
+        self.navigationController = navigationController
+        
+        if trackerType == .event {
+            choosedDays = Array(0...6)
+        }
+    }
+
+    func saveButtonTapped(text: String) -> TrackerCategory? {
+        guard buttonIsEnabled else { return nil }
+        guard let category = category,
+              let selectedEmojiCellIndexPath,
+              let selectedColorCellIndexPath
+        else {
+            return nil
+        }
+        let emoji = emojis[selectedEmojiCellIndexPath.row]
+        let color = colors[selectedColorCellIndexPath.row]
+        return TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: color, emoji: emoji, schedule: choosedDays)])
+    }
+
+    func categoryViewButtonTapped() {
+        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController)
+        let viewController = CategoryViewController(viewModel: categoryViewModel)
+        categoryViewModel.delegate = self
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+
+    func scheduleViewButtonTapped() {
+        let viewController = ScheduleViewController(choosedDays: choosedDays)
+        viewController.delegate = self
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+
+    func setTitleText(text: String?) {
+        titleTextFieldText = text
+        checkFormCompletion()
+    }
+
+    func checkFormCompletion() {
+        if titleTextFieldText?.isEmpty == false,
+           category != nil,
+           choosedDays.isEmpty == false,
+           selectedEmojiCellIndexPath != nil,
+           selectedColorCellIndexPath != nil
+        {
+            buttonIsEnabled = true
+        } else {
+            buttonIsEnabled = false
+        }
+    }
+
+    func didSelectItem(at indexPath: IndexPath) {
+        let section = sections[indexPath.section]
+        if section == .emojisCollection  {
+            selectedEmojiCellIndexPath = indexPath
+        } else if section == .colorCollection {
+            selectedColorCellIndexPath = indexPath
+        }
+    }
+
+    func numberOfItemsInSection(_ section: Int) -> Int {
+        let section = sections[section]
+        switch section {
+        case .textField, .emojiLabel, .colorLabel:
+            return 1
+        case .listButtonViews:
+            if trackerType == .habit {
+                return 2
+            } else {
+                return 1
+            }
+        case .emojisCollection:
+            return emojis.count
+        case .colorCollection:
+            return colors.count
+        case .buttons:
+            return 2
+        }
+    }
+}
+
+extension NewTrackerViewModel: CategoryViewModelDelegate {
+    func addCategory(_ category: String, index: Int) {
+        self.category = category
+        choosedCategoryIndex = index
+        checkFormCompletion()
+    }
+}
+
+extension NewTrackerViewModel: ScheduleViewControllerDelegate {
+    func addWeekDays(_ weekdays: [Int]) {
+        choosedDays = weekdays
+        if weekdays.count == 7 {
+            weekdaysTitle = "Каждый день"
+            return
+        }
+        var daysView = ""
+        for index in choosedDays {
+            var calendar = Calendar.current
+            calendar.locale = Locale(identifier: "ru_RU")
+            let day = calendar.shortWeekdaySymbols[index]
+            daysView.append(day)
+            daysView.append(", ")
+        }
+        weekdaysTitle = String(daysView.dropLast(2))
+        checkFormCompletion()
+    }
+}

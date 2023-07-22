@@ -7,17 +7,16 @@
 
 import UIKit
 
-protocol CategoryViewControllerDelegate: AnyObject {
-    func addCategory(_ category: String, index: Int)
-}
+//protocol CategoryViewControllerDelegate: AnyObject {
+//    func addCategory(_ category: String, index: Int)
+//}
 
 final class CategoryViewController: UIViewController {
     // MARK: - Public Properties
-    weak var delegate: CategoryViewControllerDelegate?
+//    weak var delegate: CategoryViewControllerDelegate?
 
     // MARK: - Private Properties
-    private var categories = ["Важное", "Не важное"]
-    private var choosedCategoryIndex: Int?
+    private var viewModel: CategoryViewModel
 
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -29,9 +28,9 @@ final class CategoryViewController: UIViewController {
     private let addCategoryButton = PrimaryButton(title: "Добавить категорию", action: #selector(addCategoryButtonTapped), type: .primary)
 
     // MARK: - Initializers
-    init(choosedCategoryIndex: Int?) {
+    init(viewModel: CategoryViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.choosedCategoryIndex = choosedCategoryIndex
     }
     
     required init?(coder: NSCoder) {
@@ -42,6 +41,7 @@ final class CategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        setBindings()
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -78,11 +78,11 @@ final class CategoryViewController: UIViewController {
         if indexPath.row == 0 {
             maskedCorners = upperMaskedCorners
         }
-        if indexPath.row == categories.count - 1 {
+        if indexPath.row == viewModel.categories.count - 1 {
             maskedCorners = lowerMaskedCorners
             bottomDividerIsHidden = true
         }
-        if categories.count == 1 {
+        if viewModel.categories.count == 1 {
             maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
             bottomDividerIsHidden = true
         }
@@ -92,9 +92,14 @@ final class CategoryViewController: UIViewController {
     }
 
     @objc private func addCategoryButtonTapped() {
-        let addCategoryViewController = NewCategoryViewController()
-        addCategoryViewController.delegate = self
-        navigationController?.pushViewController(addCategoryViewController, animated: true)
+        viewModel.addCategoryButtonTapped()
+    }
+
+    private func setBindings() {
+        viewModel.$categories.bind { [weak self] _ in
+            guard let self else { return }
+            self.tableView.reloadData()
+        }
     }
 }
 
@@ -105,37 +110,27 @@ extension CategoryViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate?.addCategory(categories[indexPath.row], index: indexPath.row)
-        navigationController?.popViewController(animated: true)
+//        delegate?.addCategory(viewModel.categories[indexPath.row], index: indexPath.row)
+//        navigationController?.popViewController(animated: true)
+        viewModel.didSelectRow(at: indexPath)
     }
 }
 
 // MARK: - UITableViewDataSource
 extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return viewModel.categories.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryTableViewCell") as? CategoryTableViewCell else {
             return UITableViewCell()
         }
-        let text = categories[indexPath.row]
+        let text = viewModel.categories[indexPath.row]
+        let hideCheckMarkImage = viewModel.hideCheckMarkImage(for: indexPath)
         cell.setPrimaryText(text: text)
+        cell.hideCheckMarkImage(hideCheckMarkImage)
         configureMaskedCornersAndBottomDivider(for: cell, at: indexPath)
-        if let choosedCategoryIndex, choosedCategoryIndex == indexPath.row {
-            cell.hideCheckMarkImage(false)
-        } else {
-            cell.hideCheckMarkImage(true)
-        }
         return cell
-    }
-}
-
-// MARK: - NewCategoryViewControllerDelegate
-extension CategoryViewController: NewCategoryViewControllerDelegate {
-    func addNewCategory(_ category: String) {
-        categories.append(category)
-        tableView.reloadData()
     }
 }

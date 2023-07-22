@@ -12,7 +12,7 @@ protocol ListButtonDelegate: AnyObject {
     func hideCheckMarkImage(_ hide: Bool)
 }
 
-class ListButton: UIButton {
+final class ListButton: UIButton {
     weak var delegate: ListButtonDelegate?
 
     init(primaryText: String) {
