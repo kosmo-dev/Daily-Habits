@@ -7,21 +7,6 @@
 
 import UIKit
 
-//enum TrackerType {
-//    case habit
-//    case event
-//}
-//
-//enum Sections {
-//    case textField
-//    case listButtonViews
-//    case emojiLabel
-//    case emojisCollection
-//    case colorLabel
-//    case colorCollection
-//    case buttons
-//}
-
 final class NewTrackerViewModel {
     enum Sections {
         case textField
@@ -85,8 +70,9 @@ final class NewTrackerViewModel {
     }
 
     func scheduleViewButtonTapped() {
-        let viewController = ScheduleViewController(choosedDays: choosedDays)
-        viewController.delegate = self
+        let viewModel = ScheduleViewModel(choosedDays: choosedDays, navigationController: navigationController)
+        let viewController = ScheduleViewController(viewModel: viewModel)
+        viewModel.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
 
@@ -115,6 +101,7 @@ final class NewTrackerViewModel {
         } else if section == .colorCollection {
             selectedColorCellIndexPath = indexPath
         }
+        checkFormCompletion()
     }
 
     func numberOfItemsInSection(_ section: Int) -> Int {
@@ -146,7 +133,7 @@ extension NewTrackerViewModel: CategoryViewModelDelegate {
     }
 }
 
-extension NewTrackerViewModel: ScheduleViewControllerDelegate {
+extension NewTrackerViewModel: ScheduleViewModelDelegate {
     func addWeekDays(_ weekdays: [Int]) {
         choosedDays = weekdays
         if weekdays.count == 7 {

@@ -74,17 +74,24 @@ final class ListView: UIView {
     private var viewType: ViewType?
 
     // MARK: - Initializers
-    init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, type: ViewType, action: Selector?) {
-        self.buttonView = ListButton(primaryText: primaryText)
+//    init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, type: ViewType, action: Selector?) {
+    init(listViewModel: ListViewModel) {
+        self.buttonView = ListButton(primaryText: listViewModel.primaryText)
         super.init(frame: .zero)
-        self.layer.maskedCorners = viewMaskedCorners
-        self.bottomDivider.isHidden = bottomDividerIsHidden
-        self.primaryText.text = primaryText
+        self.layer.maskedCorners = listViewModel.maskedCorners
+        self.bottomDivider.isHidden = listViewModel.bottomDividerIsHidden
+        self.primaryText.text = listViewModel.primaryText
         self.buttonView.delegate = self
-        if let action {
+        if let action = listViewModel.action {
             buttonView.addTarget(nil, action: action, for: .touchUpInside)
         }
-        viewType = type
+        viewType = listViewModel.type
+        if viewType == .switcher,
+           let switcher = listViewModel.switcherIsOn,
+           switcher == true
+        {
+            setSwitcherOn()
+        }
         configureView()
     }
 

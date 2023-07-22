@@ -227,10 +227,13 @@ extension NewTrackerViewController: UICollectionViewDataSource {
         case .listButtonViews:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listViewCell", for: indexPath)
             if viewModel.trackerType == .habit {
-                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
-                scheduleButtonView = ListView(viewMaskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped))
+                let categoryButtonViewModel = ListViewModel(maskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped), switcherIsOn: nil)
+                let scheduleButtonViewModel = ListViewModel(maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped), switcherIsOn: nil)
+                categoryButtonView = ListView(listViewModel: categoryButtonViewModel)
+                scheduleButtonView = ListView(listViewModel: scheduleButtonViewModel)
             } else {
-                categoryButtonView = ListView(viewMaskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped))
+                let categoryButtonViewModel = ListViewModel(maskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped), switcherIsOn: nil)
+                categoryButtonView = ListView(listViewModel: categoryButtonViewModel)
             }
             if indexPath.row == 0 {
                 if let categoryButtonView {

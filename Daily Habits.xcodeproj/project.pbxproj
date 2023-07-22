@@ -46,6 +46,8 @@
 		3DEA00E92A3B280300CE2402 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DEA00E82A3B280300CE2402 /* Assets.xcassets */; };
 		3DEA00EC2A3B280300CE2402 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3DEA00EA2A3B280300CE2402 /* LaunchScreen.storyboard */; };
 		3DEBA5562A6BAAE6008D31A4 /* NewTrackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEBA5552A6BAAE6008D31A4 /* NewTrackerViewModel.swift */; };
+		3DEBA5582A6BC5F5008D31A4 /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEBA5572A6BC5F5008D31A4 /* ScheduleViewModel.swift */; };
+		3DEBA55A2A6BC6F6008D31A4 /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEBA5592A6BC6F6008D31A4 /* ListViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +92,8 @@
 		3DEA00EB2A3B280300CE2402 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3DEA00ED2A3B280300CE2402 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3DEBA5552A6BAAE6008D31A4 /* NewTrackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewModel.swift; sourceTree = "<group>"; };
+		3DEBA5572A6BC5F5008D31A4 /* ScheduleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewModel.swift; sourceTree = "<group>"; };
+		3DEBA5592A6BC6F6008D31A4 /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				3DB121BD2A44DDED00CA2EEC /* ScheduleViewController.swift */,
+				3DEBA5572A6BC5F5008D31A4 /* ScheduleViewModel.swift */,
 			);
 			path = ScheduleViewController;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				3DB121B92A44C1A600CA2EEC /* ListView.swift */,
+				3DEBA5592A6BC6F6008D31A4 /* ListViewModel.swift */,
 				3DB998D72A474E1400EC9069 /* ListButton.swift */,
 				3DB121BB2A44D72100CA2EEC /* PrimaryButton.swift */,
 			);
@@ -369,11 +375,13 @@
 				3D204E752A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift in Sources */,
 				3D4011032A45A4720015928E /* HeaderCollectionReusableView.swift in Sources */,
 				3D2998332A40D4C300B42278 /* CardCollectionViewCell.swift in Sources */,
+				3DEBA5582A6BC5F5008D31A4 /* ScheduleViewModel.swift in Sources */,
 				3D3D03442A67B0740073DE2C /* OnboardingPageViewController.swift in Sources */,
 				3D7BF5BE2A3F6B83007FDAC9 /* StatisticViewController.swift in Sources */,
 				3D44CA102A43998600B7AF05 /* NewTrackerViewController.swift in Sources */,
 				3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */,
 				3D44CA0E2A4381E600B7AF05 /* NewTrackerTypeChoosingViewController.swift in Sources */,
+				3DEBA55A2A6BC6F6008D31A4 /* ListViewModel.swift in Sources */,
 				3D204E712A5DE3D6007A6376 /* CoreDataPersistentContainer.swift in Sources */,
 				3DB121BC2A44D72100CA2EEC /* PrimaryButton.swift in Sources */,
 				3DB172AE2A42FB7C0043A3F1 /* Constants.swift in Sources */,
