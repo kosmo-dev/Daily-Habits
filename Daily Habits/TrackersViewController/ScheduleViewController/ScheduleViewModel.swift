@@ -16,9 +16,9 @@ final class ScheduleViewModel {
     var navigationController: UINavigationController?
 
     private var calendar = Calendar.current
-    private var days = [String]()
+    private var days: [String] = []
 
-    private(set) var list = [ListViewModel]()
+    private(set) var list: [ListViewModel]  = []
     private(set) var finalList: [Int] = []
 
     init(choosedDays: [Int], navigationController: UINavigationController?) {

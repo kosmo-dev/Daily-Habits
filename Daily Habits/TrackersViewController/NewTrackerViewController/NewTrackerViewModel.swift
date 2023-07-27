@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol NewTrackerViewModelDelegate: AnyObject {
+    func addNewTracker(_ trackerCategory: TrackerCategory)
+}
+
 final class NewTrackerViewModel {
     enum Sections {
         case textField
@@ -24,21 +28,22 @@ final class NewTrackerViewModel {
     }
     
     var navigationController: UINavigationController?
-
-    @Observable private(set) var category: String?
-    private var choosedDays: [Int] = []
-    private var choosedCategoryIndex: Int?
-    @Observable private(set) var buttonIsEnabled = false
-    private var titleTextFieldText: String?
-    @Observable private(set) var weekdaysTitle: String?
-
     let emojis = C.Emojis.emojis
     let colors = C.Colors.colors
-    @ObservableWithOldValue private(set) var selectedEmojiCellIndexPath: IndexPath?
-    @ObservableWithOldValue private(set) var selectedColorCellIndexPath: IndexPath?
 
     let sections: [Sections] = [.textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
     let trackerType: TrackerType
+    weak var delegate: NewTrackerViewModelDelegate?
+
+    @Observable private(set) var category: String?
+    @Observable private(set) var buttonIsEnabled = false
+    @Observable private(set) var weekdaysTitle: String?
+    @ObservableWithOldValue private(set) var selectedEmojiCellIndexPath: IndexPath?
+    @ObservableWithOldValue private(set) var selectedColorCellIndexPath: IndexPath?
+
+    private var titleTextFieldText: String?
+    private var choosedDays: [Int] = []
+    private var choosedCategoryIndex: Int?
 
     init(trackerType: TrackerType, navigationController: UINavigationController?) {
         self.trackerType = trackerType
@@ -49,17 +54,18 @@ final class NewTrackerViewModel {
         }
     }
 
-    func saveButtonTapped(text: String) -> TrackerCategory? {
-        guard buttonIsEnabled else { return nil }
+    func saveButtonTapped(text: String) {
+        guard buttonIsEnabled else { return }
         guard let category = category,
               let selectedEmojiCellIndexPath,
               let selectedColorCellIndexPath
         else {
-            return nil
+            return
         }
         let emoji = emojis[selectedEmojiCellIndexPath.row]
         let color = colors[selectedColorCellIndexPath.row]
-        return TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: color, emoji: emoji, schedule: choosedDays)])
+        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: UUID(), name: text, color: color, emoji: emoji, schedule: choosedDays)])
+        delegate?.addNewTracker(newTracker)
     }
 
     func categoryViewButtonTapped() {

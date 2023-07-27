@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D17BC752A727B6C00652304 /* TrackersCollectionViewUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */; };
 		3D204E712A5DE3D6007A6376 /* CoreDataPersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */; };
 		3D204E732A5DEA8C007A6376 /* TrackerDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */; };
 		3D204E752A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E742A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift */; };
@@ -40,6 +41,7 @@
 		3DC0BC382A69C237008C1080 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC0BC372A69C237008C1080 /* Observable.swift */; };
 		3DCC16722A60AFFD0061F75D /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3DCC16702A60AFFD0061F75D /* CoreDataModel.xcdatamodeld */; };
 		3DE04A722A4791BC00AA623B /* CardCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */; };
+		3DE22DE02A6C467F00C80730 /* TrackersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE22DDF2A6C467F00C80730 /* TrackersViewModel.swift */; };
 		3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */; };
 		3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */; };
 		3DEA00E42A3B280300CE2402 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEA00E32A3B280300CE2402 /* TrackersViewController.swift */; };
@@ -51,6 +53,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCollectionViewUpdate.swift; sourceTree = "<group>"; };
 		3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPersistentContainer.swift; sourceTree = "<group>"; };
 		3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDataController.swift; sourceTree = "<group>"; };
 		3D204E742A5EC828007A6376 /* TrackerCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreUpdate.swift; sourceTree = "<group>"; };
@@ -84,6 +87,7 @@
 		3DC0BC372A69C237008C1080 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		3DCC16712A60AFFD0061F75D /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCellViewModel.swift; sourceTree = "<group>"; };
+		3DE22DDF2A6C467F00C80730 /* TrackersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewModel.swift; sourceTree = "<group>"; };
 		3DEA00DC2A3B280300CE2402 /* Daily Habits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Daily Habits.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DEA00DF2A3B280300CE2402 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DEA00E12A3B280300CE2402 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -145,9 +149,11 @@
 			isa = PBXGroup;
 			children = (
 				3DEA00E32A3B280300CE2402 /* TrackersViewController.swift */,
+				3DE22DDF2A6C467F00C80730 /* TrackersViewModel.swift */,
 				3D2998322A40D4C300B42278 /* CardCollectionViewCell.swift */,
 				3DE04A712A4791BC00AA623B /* CardCellViewModel.swift */,
 				3D4011022A45A4720015928E /* HeaderCollectionReusableView.swift */,
+				3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */,
 				3DB121BF2A44F0EB00CA2EEC /* NewTrackerTypeChoosingViewController */,
 				3DB121C02A44F10A00CA2EEC /* NewTrackerViewController */,
 				3D4011042A45AA0B0015928E /* CategoryViewController */,
@@ -355,6 +361,7 @@
 				3D2A10F82A58937000AC7296 /* TrackerRecordStore.swift in Sources */,
 				3DB172B52A4301780043A3F1 /* TrackerRecord.swift in Sources */,
 				3D72686A2A693EE900540D6B /* CategoryViewModel.swift in Sources */,
+				3D17BC752A727B6C00652304 /* TrackersCollectionViewUpdate.swift in Sources */,
 				3D6556EB2A4E2329008C1241 /* CollectionViewCell.swift in Sources */,
 				3D3D03462A67B10D0073DE2C /* OnboardingFirstViewController.swift in Sources */,
 				3DB172B12A4301400043A3F1 /* Tracker.swift in Sources */,
@@ -367,6 +374,7 @@
 				3DCC16722A60AFFD0061F75D /* CoreDataModel.xcdatamodeld in Sources */,
 				3DEA00E02A3B280300CE2402 /* AppDelegate.swift in Sources */,
 				3D7268662A686B2200540D6B /* CategoryTableViewCell.swift in Sources */,
+				3DE22DE02A6C467F00C80730 /* TrackersViewModel.swift in Sources */,
 				3DB121BA2A44C1A600CA2EEC /* ListView.swift in Sources */,
 				3D662C692A56135600148E76 /* TrackerStore.swift in Sources */,
 				3DB121B82A44B60200CA2EEC /* UITextField+Extensions.swift in Sources */,

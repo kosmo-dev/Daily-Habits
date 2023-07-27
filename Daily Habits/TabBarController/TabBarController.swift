@@ -19,8 +19,10 @@ final class TabBarController: UITabBarController {
         let trackerDataController = TrackerDataController(trackerStore: trackerStore, trackerCategoryStore: trackerCategoryStore, trackerRecordStore: trackerRecordStore, context: coreDataPersistentContainer.context)
         trackerCategoryStore.setTrackerDataController(trackerDataController.fetchResultController)
 
-        let trackersViewController = TrackersViewController(trackerDataController: trackerDataController)
+        let trackersViewModel = TrackersViewModel(trackerDataController: trackerDataController)
+        let trackersViewController = TrackersViewController(viewModel: trackersViewModel)
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
+        trackersViewModel.navigationController = trackersNavigationController
         let statisticViewController = StatisticViewController()
 
         trackersViewController.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(systemName: "record.circle.fill"), selectedImage: nil)

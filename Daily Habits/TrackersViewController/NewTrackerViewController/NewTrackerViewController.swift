@@ -7,14 +7,7 @@
 
 import UIKit
 
-protocol NewTrackerViewControllerDelegate: AnyObject {
-    func addNewTracker(_ trackerCategory: TrackerCategory)
-}
-
 final class NewTrackerViewController: UIViewController {
-    // MARK: - Public Properties
-    weak var delegate: NewTrackerViewControllerDelegate?
-    
     // MARK: - Private Properties
     private let titleTextField: UITextField = {
         let titleTextField = UITextField()
@@ -61,8 +54,8 @@ final class NewTrackerViewController: UIViewController {
     private var viewModel: NewTrackerViewModel
 
     // MARK: - Initializers
-    init(trackerType: NewTrackerViewModel.TrackerType) {
-        viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: nil)
+    init(viewModel: NewTrackerViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -105,12 +98,8 @@ final class NewTrackerViewController: UIViewController {
     }
 
     @objc private func saveButtonTapped() {
-        guard let text = titleTextField.text,
-              let newTracker = viewModel.saveButtonTapped(text: text)
-        else {
-            return
-        }
-        delegate?.addNewTracker(newTracker)
+        guard let text = titleTextField.text else { return }
+        viewModel.saveButtonTapped(text: text)
     }
 
     @objc private func categoryViewButtonTapped() {
