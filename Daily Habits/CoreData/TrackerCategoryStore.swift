@@ -12,13 +12,16 @@ enum TrackerCategoryStoreError: Error {
     case noTrackerInTrackerCategory
     case decodingError
     case fetchError
+    case categoryExist
 }
 
 protocol TrackerCategoryStoreProtocol {
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws
+    func addNewCategory(_ category: String) throws
     func convertTrackerCategoryCoreDataToTrackerCategory(_ objects: [TrackerCategoryCoreData]) throws -> [TrackerCategory]
     func convertTrackerCoreDataToTrackerCategories(_ trackersCoreData: [TrackerCoreData]) -> [TrackerCategory]
     func fetchCategoriesWithPredicate(_ predicate: NSPredicate) -> [TrackerCategory]
+    func fetchAllCategories() -> [TrackerCategory]
     func setTrackerDataController(_ controller: NSFetchedResultsController<TrackerCoreData>?)
 }
 
@@ -57,6 +60,19 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         try context.save()
     }
 
+    func addNewCategory(_ category: String) throws {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let categories = try context.fetch(request)
+
+        if categories.contains(where: { $0.name == category }) {
+            throw TrackerCategoryStoreError.categoryExist
+        } else {
+            let newCategoryCoreData = TrackerCategoryCoreData(context: context)
+            newCategoryCoreData.name = category
+        }
+        try context.save()
+    }
+
     func fetchCategoriesWithPredicate(_ predicate: NSPredicate) -> [TrackerCategory] {
         guard let fetchRequest = trackerDataController?.fetchRequest else { return [] }
         fetchRequest.returnsObjectsAsFaults = false
@@ -70,6 +86,19 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
             guard let trackersCoreData = trackerDataController?.fetchedObjects else { return [] }
             let trackerCategories = convertTrackerCoreDataToTrackerCategories(trackersCoreData)
             return trackerCategories
+        } catch {
+            return []
+        }
+    }
+
+    func fetchAllCategories() -> [TrackerCategory] {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = true
+        request.sortDescriptors = [ NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true) ]
+        do {
+            let categoriesCoreData = try context.fetch(request)
+            let categories = try convertTrackerCategoryCoreDataToTrackerCategory(categoriesCoreData)
+            return categories
         } catch {
             return []
         }

@@ -17,7 +17,7 @@ protocol TrackerDataControllerProtocol: AnyObject {
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws
     func fetchCategoriesFor(weekday: Int, animating: Bool)
     func fetchSearchedCategories(textToSearch: String, weekday: Int)
-    func addNewCategory(_ category: String)
+    func addNewCategory(_ category: String) throws
     func fetchCategoriesList() -> [String]
 
     func fetchRecordsCountForId(_ id: UUID) -> Int
@@ -106,12 +106,13 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         try trackerRecordStore.deleteTrackerRecord(id: id, date: date)
     }
 
-    func addNewCategory(_ category: String) {
-        
+    func addNewCategory(_ category: String) throws {
+        try trackerCategoryStore.addNewCategory(category)
     }
 
     func fetchCategoriesList() -> [String] {
-        return []
+        let categories = trackerCategoryStore.fetchAllCategories().map { $0.name }
+        return categories
     }
 
     var categories: [TrackerCategory] {

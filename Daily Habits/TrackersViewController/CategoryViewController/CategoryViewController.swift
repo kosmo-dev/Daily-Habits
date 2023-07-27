@@ -100,6 +100,11 @@ final class CategoryViewController: UIViewController {
             guard let self else { return }
             self.tableView.reloadData()
         }
+
+        viewModel.$alertText.bind { [weak self] text in
+            guard let self, let text else { return }
+            self.showAlertController(with: text)
+        }
     }
 }
 
@@ -110,8 +115,6 @@ extension CategoryViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        delegate?.addCategory(viewModel.categories[indexPath.row], index: indexPath.row)
-//        navigationController?.popViewController(animated: true)
         viewModel.didSelectRow(at: indexPath)
     }
 }
@@ -132,5 +135,15 @@ extension CategoryViewController: UITableViewDataSource {
         cell.hideCheckMarkImage(hideCheckMarkImage)
         configureMaskedCornersAndBottomDivider(for: cell, at: indexPath)
         return cell
+    }
+}
+
+// MARK: - Alert Presentation
+extension CategoryViewController {
+    func showAlertController(with message: String) {
+        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Закрыть", style: .default)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
 }

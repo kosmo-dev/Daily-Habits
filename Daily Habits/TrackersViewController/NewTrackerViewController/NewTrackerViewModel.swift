@@ -27,7 +27,7 @@ final class NewTrackerViewModel {
         case event
     }
     
-    var navigationController: UINavigationController?
+    private var navigationController: UINavigationController?
     let emojis = C.Emojis.emojis
     let colors = C.Colors.colors
 
@@ -44,10 +44,12 @@ final class NewTrackerViewModel {
     private var titleTextFieldText: String?
     private var choosedDays: [Int] = []
     private var choosedCategoryIndex: Int?
+    private var dataController: TrackerDataControllerProtocol
 
-    init(trackerType: TrackerType, navigationController: UINavigationController?) {
+    init(trackerType: TrackerType, navigationController: UINavigationController?, dataController: TrackerDataControllerProtocol) {
         self.trackerType = trackerType
         self.navigationController = navigationController
+        self.dataController = dataController
         
         if trackerType == .event {
             choosedDays = Array(0...6)
@@ -69,7 +71,7 @@ final class NewTrackerViewModel {
     }
 
     func categoryViewButtonTapped() {
-        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController)
+        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController, dataController: dataController)
         let viewController = CategoryViewController(viewModel: categoryViewModel)
         categoryViewModel.delegate = self
         navigationController?.pushViewController(viewController, animated: true)

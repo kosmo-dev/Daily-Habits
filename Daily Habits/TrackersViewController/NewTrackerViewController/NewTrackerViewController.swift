@@ -67,7 +67,7 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        viewModel.navigationController = navigationController
+//        viewModel.navigationController = navigationController
         titleTextField.delegate = self
 
         registerCells()

@@ -8,14 +8,16 @@
 import UIKit
 
 final class NewTrackerTypeChoosingViewController: UIViewController {
+    weak var trackersViewController: NewTrackerViewModelDelegate?
+
     // MARK: - Private Properties
     private let habitButton = PrimaryButton(title: "Привычка", action: #selector(habitButtonTapped), type: .primary)
     private let eventButton = PrimaryButton(title: "Нерегулярное событие", action: #selector(eventButtonTapped), type: .primary)
-
-    weak var trackersViewController: NewTrackerViewModelDelegate?
+    private let dataController: TrackerDataControllerProtocol
 
     // MARK: Initializers
-    init(trackersViewController: NewTrackerViewModelDelegate?) {
+    init(trackersViewController: NewTrackerViewModelDelegate?, dataController: TrackerDataControllerProtocol) {
+        self.dataController = dataController
         super.init(nibName: nil, bundle: nil)
         self.trackersViewController = trackersViewController
     }
@@ -61,7 +63,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     }
 
     private func showViewController(trackerType: NewTrackerViewModel.TrackerType) {
-        let viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: navigationController)
+        let viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: navigationController, dataController: dataController)
         viewModel.delegate = trackersViewController
         let newTrackerViewController = NewTrackerViewController(viewModel: viewModel)
         navigationController?.pushViewController(newTrackerViewController, animated: true)

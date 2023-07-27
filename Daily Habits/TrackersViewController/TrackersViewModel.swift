@@ -12,8 +12,18 @@ final class TrackersViewModel {
         case noTrackers
         case notFound
     }
-    
+
+    // MARK: - Public Properties
+    var navigationController: UINavigationController?
     private(set) var visibleCategories: [TrackerCategory] = []
+
+    @Observable private(set) var placeholderImage: UIImage?
+    @Observable private(set) var placeholderText: String?
+    @Observable private(set) var alertText: String?
+    @Observable private(set) var itemsToReload: [IndexPath]?
+    @Observable private(set) var trackersCollectionViewUpdate: TrackersCollectionViewUpdate?
+
+    // MARK: - Private Properties
     private var currentDate: Date = Date()
 
     private var insertedIndexesInSearch: [IndexPath] = []
@@ -22,14 +32,7 @@ final class TrackersViewModel {
     private var removedSectionsInSearch: IndexSet = []
 
     private let trackerDataController: TrackerDataControllerProtocol
-    var navigationController: UINavigationController?
     private var trackersUpdate: TrackersCollectionViewUpdate?
-
-    @Observable private(set) var placeholderImage: UIImage?
-    @Observable private(set) var placeholderText: String?
-    @Observable private(set) var alertText: String?
-    @Observable private(set) var itemsToReload: [IndexPath]?
-    @Observable private(set) var trackersCollectionViewUpdate: TrackersCollectionViewUpdate?
 
     private var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -37,28 +40,17 @@ final class TrackersViewModel {
         return dateFormatter
     }()
 
+    // MARK: - Initializer
     init(trackerDataController: TrackerDataControllerProtocol) {
         self.trackerDataController = trackerDataController
         configure()
     }
 
+    // MARK: - Public Methods
     func datePickerValueChanged(_ date: Date) {
         currentDate = date
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         trackerDataController.fetchCategoriesFor(weekday: weekday, animating: true)
-    }
-
-    private func configure() {
-        self.trackerDataController.delegate = self
-        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        trackerDataController.fetchCategoriesFor(weekday: weekday, animating: false)
-    }
-
-    private func checkNeedOnboardingScreen() {
-        guard visibleCategories.isEmpty else { return }
-        let pageViewController = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        pageViewController.modalPresentationStyle = .fullScreen
-        navigationController?.present(pageViewController, animated: true)
     }
 
     func checkNeedPlaceholder(for state: PlaceholderState) {
@@ -93,6 +85,43 @@ final class TrackersViewModel {
     func performSearchFor(text: String) {
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
         trackerDataController.fetchSearchedCategories(textToSearch: text, weekday: weekday)
+    }
+
+    func leftBarButtonTapped() {
+        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self, dataController: trackerDataController)
+        let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
+        navigationController?.present(modalNavigationController, animated: true)
+    }
+
+    func configureCellViewModel(for indexPath: IndexPath) -> CardCellViewModel {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        let counter = trackerDataController.fetchRecordsCountForId(tracker.id)
+        let cardIsChecked = trackerDataController.checkTrackerRecordExist(id: tracker.id, date: dateFormatter.string(from: currentDate))
+        let dateComparision = Calendar.current.compare(currentDate, to: Date(), toGranularity: .day)
+        var buttonEnabled = true
+        if dateComparision.rawValue == 1 {
+            buttonEnabled = false
+        }
+        return CardCellViewModel(tracker: tracker, counter: counter, buttonIsChecked: cardIsChecked, indexPath: indexPath, buttonIsEnabled: buttonEnabled)
+    }
+
+    func viewControllerDidLoad() {
+        checkNeedPlaceholder(for: .noTrackers)
+        checkNeedOnboardingScreen()
+    }
+
+    // MARK: - Private methods
+    private func configure() {
+        self.trackerDataController.delegate = self
+        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
+        trackerDataController.fetchCategoriesFor(weekday: weekday, animating: false)
+    }
+
+    private func checkNeedOnboardingScreen() {
+        guard visibleCategories.isEmpty else { return }
+        let pageViewController = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        pageViewController.modalPresentationStyle = .fullScreen
+        navigationController?.present(pageViewController, animated: true)
     }
 
     private func calculateDiff(newCategories: [TrackerCategory]) {
@@ -145,31 +174,9 @@ final class TrackersViewModel {
             insertedSectionsInSearch: insertedSections,
             removedSectionsInSearch: removedSections)
     }
-
-    func leftBarButtonTapped() {
-        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self)
-        let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
-        navigationController?.present(modalNavigationController, animated: true)
-    }
-
-    func configureCellViewModel(for indexPath: IndexPath) -> CardCellViewModel {
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        let counter = trackerDataController.fetchRecordsCountForId(tracker.id)
-        let cardIsChecked = trackerDataController.checkTrackerRecordExist(id: tracker.id, date: dateFormatter.string(from: currentDate))
-        let dateComparision = Calendar.current.compare(currentDate, to: Date(), toGranularity: .day)
-        var buttonEnabled = true
-        if dateComparision.rawValue == 1 {
-            buttonEnabled = false
-        }
-        return CardCellViewModel(tracker: tracker, counter: counter, buttonIsChecked: cardIsChecked, indexPath: indexPath, buttonIsEnabled: buttonEnabled)
-    }
-
-    func viewControllerDidLoad() {
-        checkNeedPlaceholder(for: .noTrackers)
-        checkNeedOnboardingScreen()
-    }
 }
 
+// MARK: - TrackerDataControllerDelegate
 extension TrackersViewModel: TrackerDataControllerDelegate {
     func updateViewByController(_ update: TrackerCategoryStoreUpdate) {
         let newCategories = trackerDataController.categories
@@ -191,6 +198,7 @@ extension TrackersViewModel: TrackerDataControllerDelegate {
     }
 }
 
+// MARK: - NewTrackerViewModelDelegate
 extension TrackersViewModel: NewTrackerViewModelDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
         navigationController?.dismiss(animated: true)

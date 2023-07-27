@@ -14,14 +14,18 @@ protocol CategoryViewModelDelegate: AnyObject {
 final class CategoryViewModel {
     weak var delegate: CategoryViewModelDelegate?
 
-    @Observable private (set) var categories: [String] = ["Важное", "Не важное"]
+    @Observable private (set) var categories: [String] = []
+    @Observable private(set) var alertText: String?
 
     private var choosedCategoryIndex: Int?
     private var navigationController: UINavigationController?
+    private var dataController: TrackerDataControllerProtocol
 
-    init(choosedCategoryIndex: Int?, navigationController: UINavigationController?) {
+    init(choosedCategoryIndex: Int?, navigationController: UINavigationController?, dataController: TrackerDataControllerProtocol) {
         self.choosedCategoryIndex = choosedCategoryIndex
         self.navigationController = navigationController
+        self.dataController = dataController
+        fetchCategories()
     }
 
     func addCategoryButtonTapped() {
@@ -42,10 +46,26 @@ final class CategoryViewModel {
         delegate?.addCategory(categories[indexPath.row], index: indexPath.row)
         navigationController?.popViewController(animated: true)
     }
+
+    private func fetchCategories() {
+        categories = dataController.fetchCategoriesList()
+    }
 }
 
 extension CategoryViewModel: NewCategoryViewControllerDelegate {
     func addNewCategory(_ category: String) {
-        categories.append(category)
+        do {
+            try dataController.addNewCategory(category)
+            categories.append(category)
+        } catch let error as TrackerCategoryStoreError {
+            switch error {
+            case .categoryExist:
+                alertText = "Категория уже существует"
+            default:
+                alertText = "Ошибка добавления новой категории"
+            }
+        } catch {
+            alertText = "Ошибка добавления новой категории"
+        }
     }
 }
