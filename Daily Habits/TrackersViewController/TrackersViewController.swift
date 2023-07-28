@@ -270,7 +270,12 @@ extension TrackersViewController: UITextFieldDelegate {
 
     @objc private func searchFieldEditingChanged() {
         guard let textToSearch = searchField.text else { return }
-        viewModel.performSearchFor(text: textToSearch)
+        if textToSearch != "" {
+            viewModel.performSearchFor(text: textToSearch)
+        } else {
+            datePickerValueChanged()
+            viewModel.checkNeedPlaceholder(for: .noTrackers)
+        }
     }
 
     private func searchText(in categories: [TrackerCategory], textToSearch: String, weekday: Int) -> [TrackerCategory] {

@@ -124,7 +124,7 @@ final class TrackersViewModel {
         navigationController?.present(pageViewController, animated: true)
     }
 
-    private func calculateDiff(newCategories: [TrackerCategory]) {
+    private func calculateDiff(newCategories: [TrackerCategory], withDateChange: Bool) {
         var insertedIndexes: [IndexPath] = []
         var removedIndexes: [IndexPath] = []
         var reloadedIndexes: [IndexPath] = []
@@ -147,10 +147,12 @@ final class TrackersViewModel {
             }
         }
 
-        for (section, category) in visibleCategories.enumerated() {
-            for (index, item) in category.trackers.enumerated() {
-                if newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
-                    reloadedIndexes.append(IndexPath(item: index, section: section))
+        if withDateChange {
+            for (section, category) in visibleCategories.enumerated() {
+                for (index, item) in category.trackers.enumerated() {
+                    if newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+                        reloadedIndexes.append(IndexPath(item: index, section: section))
+                    }
                 }
             }
         }
@@ -180,14 +182,14 @@ final class TrackersViewModel {
 extension TrackersViewModel: TrackerDataControllerDelegate {
     func updateViewByController(_ update: TrackerCategoryStoreUpdate) {
         let newCategories = trackerDataController.categories
-        calculateDiff(newCategories: newCategories)
+        calculateDiff(newCategories: newCategories, withDateChange: true)
         visibleCategories = newCategories
         trackersCollectionViewUpdate = trackersUpdate
         checkNeedPlaceholder(for: .noTrackers)
     }
 
-    func updateView(categories: [TrackerCategory], animating: Bool) {
-        calculateDiff(newCategories: categories)
+    func updateView(categories: [TrackerCategory], animating: Bool, withDateChange: Bool) {
+        calculateDiff(newCategories: categories, withDateChange: withDateChange)
         visibleCategories = categories
         if animating {
             trackersCollectionViewUpdate = trackersUpdate

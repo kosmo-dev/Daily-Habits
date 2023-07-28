@@ -10,7 +10,7 @@ import CoreData
 
 protocol TrackerDataControllerDelegate: AnyObject {
     func updateViewByController(_ update: TrackerCategoryStoreUpdate)
-    func updateView(categories: [TrackerCategory], animating: Bool)
+    func updateView(categories: [TrackerCategory], animating: Bool, withDateChange: Bool)
 }
 
 protocol TrackerDataControllerProtocol: AnyObject {
@@ -76,14 +76,14 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [weekdayPredicate, textPredicate])
         var trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
         trackerCategories.sort(by: { $0.name < $1.name })
-        delegate?.updateView(categories: trackerCategories, animating: true)
+        delegate?.updateView(categories: trackerCategories, animating: true, withDateChange: false)
     }
 
     func fetchCategoriesFor(weekday: Int, animating: Bool) {
         let predicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
         var trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
         trackerCategories.sort(by: { $0.name < $1.name })
-        delegate?.updateView(categories: trackerCategories, animating: animating)
+        delegate?.updateView(categories: trackerCategories, animating: animating, withDateChange: true)
     }
 
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws {
