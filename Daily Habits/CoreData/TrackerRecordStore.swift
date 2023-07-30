@@ -33,7 +33,7 @@ extension TrackerRecordStore: TrackerRecordStoreProtocol {
     }
 
     func deleteTrackerRecord(id: UUID, date: String) throws {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: C.CoreDataEntityNames.trackerRecordCoreData)
         let idPredicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), id.uuidString)
         let datePredicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.date), date)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, datePredicate])
@@ -44,7 +44,7 @@ extension TrackerRecordStore: TrackerRecordStoreProtocol {
     }
 
     func fetchRecordsCountForId(_ id: UUID) -> Int {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: C.CoreDataEntityNames.trackerRecordCoreData)
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), id.uuidString)
         do {
             let count = try context.count(for: request)
@@ -55,7 +55,7 @@ extension TrackerRecordStore: TrackerRecordStoreProtocol {
     }
 
     func checkTrackerRecordExist(id: UUID, date: String) -> Bool {
-        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: C.CoreDataEntityNames.trackerRecordCoreData)
         let idPredicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), id.uuidString)
         let datePredicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.date), date)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, datePredicate])

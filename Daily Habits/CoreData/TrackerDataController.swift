@@ -10,13 +10,15 @@ import CoreData
 
 protocol TrackerDataControllerDelegate: AnyObject {
     func updateViewByController(_ update: TrackerCategoryStoreUpdate)
-    func updateView(categories: [TrackerCategory], animating: Bool)
+    func updateView(categories: [TrackerCategory], animating: Bool, withDateChange: Bool)
 }
 
 protocol TrackerDataControllerProtocol: AnyObject {
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws
     func fetchCategoriesFor(weekday: Int, animating: Bool)
     func fetchSearchedCategories(textToSearch: String, weekday: Int)
+    func addNewCategory(_ category: String) throws
+    func fetchCategoriesList() -> [String]
 
     func fetchRecordsCountForId(_ id: UUID) -> Int
     func checkTrackerRecordExist(id: UUID, date: String) -> Bool
@@ -74,14 +76,14 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [weekdayPredicate, textPredicate])
         var trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
         trackerCategories.sort(by: { $0.name < $1.name })
-        delegate?.updateView(categories: trackerCategories, animating: true)
+        delegate?.updateView(categories: trackerCategories, animating: true, withDateChange: false)
     }
 
     func fetchCategoriesFor(weekday: Int, animating: Bool) {
         let predicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
         var trackerCategories = trackerCategoryStore.fetchCategoriesWithPredicate(predicate)
         trackerCategories.sort(by: { $0.name < $1.name })
-        delegate?.updateView(categories: trackerCategories, animating: animating)
+        delegate?.updateView(categories: trackerCategories, animating: animating, withDateChange: true)
     }
 
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws {
@@ -104,6 +106,15 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         try trackerRecordStore.deleteTrackerRecord(id: id, date: date)
     }
 
+    func addNewCategory(_ category: String) throws {
+        try trackerCategoryStore.addNewCategory(category)
+    }
+
+    func fetchCategoriesList() -> [String] {
+        let categories = trackerCategoryStore.fetchAllCategories().map { $0.name }
+        return categories
+    }
+
     var categories: [TrackerCategory] {
         guard let objects = self.fetchResultController?.fetchedObjects else { return [] }
         var trackerCategories = trackerCategoryStore.convertTrackerCoreDataToTrackerCategories(objects)
@@ -111,51 +122,51 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         return trackerCategories
     }
 }
-    // MARK: - NSFetchedResultsControllerDelegate
-    extension TrackerDataController: NSFetchedResultsControllerDelegate {
-        func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            insertedIndexes = []
-            deletedIndexes = []
-            updatedIndexes = []
-            movedIndexes = []
-        }
+// MARK: - NSFetchedResultsControllerDelegate
+extension TrackerDataController: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        insertedIndexes = []
+        deletedIndexes = []
+        updatedIndexes = []
+        movedIndexes = []
+    }
 
-        func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            guard let insertedIndexes, let deletedIndexes, let updatedIndexes, let movedIndexes else { return }
-            let update = TrackerCategoryStoreUpdate(
-                insertedIndexes: insertedIndexes,
-                deletedIndexes: deletedIndexes,
-                updatedIndexes: updatedIndexes,
-                movedIndexes: movedIndexes
-            )
-            delegate?.updateViewByController(update)
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        guard let insertedIndexes, let deletedIndexes, let updatedIndexes, let movedIndexes else { return }
+        let update = TrackerCategoryStoreUpdate(
+            insertedIndexes: insertedIndexes,
+            deletedIndexes: deletedIndexes,
+            updatedIndexes: updatedIndexes,
+            movedIndexes: movedIndexes
+        )
+        delegate?.updateViewByController(update)
 
-            self.insertedIndexes = nil
-            self.deletedIndexes = nil
-            self.updatedIndexes = nil
-            self.movedIndexes = nil
-        }
+        self.insertedIndexes = nil
+        self.deletedIndexes = nil
+        self.updatedIndexes = nil
+        self.movedIndexes = nil
+    }
 
-        func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-            switch type {
-            case .insert:
-                if let newIndexPath {
-                    insertedIndexes?.append(newIndexPath)
-                }
-            case .delete:
-                if let indexPath {
-                    deletedIndexes?.append(indexPath)
-                }
-            case .move:
-                if let newIndexPath, let indexPath {
-                    movedIndexes?.append(.init(oldIndex: indexPath, newIndex: newIndexPath))
-                }
-            case .update:
-                if let indexPath {
-                    updatedIndexes?.append(indexPath)
-                }
-            @unknown default:
-                break
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            if let newIndexPath {
+                insertedIndexes?.append(newIndexPath)
             }
+        case .delete:
+            if let indexPath {
+                deletedIndexes?.append(indexPath)
+            }
+        case .move:
+            if let newIndexPath, let indexPath {
+                movedIndexes?.append(.init(oldIndex: indexPath, newIndex: newIndexPath))
+            }
+        case .update:
+            if let indexPath {
+                updatedIndexes?.append(indexPath)
+            }
+        @unknown default:
+            break
         }
     }
+}

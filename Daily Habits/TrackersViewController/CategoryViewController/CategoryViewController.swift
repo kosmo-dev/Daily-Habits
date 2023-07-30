@@ -7,34 +7,24 @@
 
 import UIKit
 
-protocol CategoryViewControllerDelegate: AnyObject {
-    func addCategory(_ category: String, index: Int)
-}
-
 final class CategoryViewController: UIViewController {
-    // MARK: - Public Properties
-    weak var delegate: CategoryViewControllerDelegate?
-
     // MARK: - Private Properties
-    private var categories = ["Важное", "Не важное"]
-    private var categoriesView = [ListView]()
-    private var choosedCategoryIndex: Int?
+    private var viewModel: CategoryViewModel
+
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.showsVerticalScrollIndicator = false
+        tableView.separatorStyle = .none
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
 
     private let addCategoryButton = PrimaryButton(title: "Добавить категорию", action: #selector(addCategoryButtonTapped), type: .primary)
 
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
-    private let tableView = UITableView()
-
     // MARK: - Initializers
-    init(choosedCategoryIndex: Int?) {
+    init(viewModel: CategoryViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.choosedCategoryIndex = choosedCategoryIndex
     }
     
     required init?(coder: NSCoder) {
@@ -44,71 +34,85 @@ final class CategoryViewController: UIViewController {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureListView()
         configureView()
+        setBindings()
+
+        tableView.dataSource = self
+        tableView.delegate = self
     }
 
     // MARK: - Private Methods
     private func configureView() {
+        tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: "categoryTableViewCell")
         view.backgroundColor = .ypWhite
         navigationItem.title = "Категория"
         navigationItem.hidesBackButton = true
 
-        view.addSubview(stackView)
         view.addSubview(addCategoryButton)
-
-        categoriesView.forEach({ stackView.addArrangedSubview($0) })
+        view.addSubview(tableView)
 
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-
             addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
+
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24)
         ])
-        categoriesView.forEach({ $0.heightAnchor.constraint(equalToConstant: 75).isActive = true })
-    }
-
-    private func configureListView() {
-        let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        var bottomDividerIsHidden = false
-
-        for category in 0..<categories.count {
-            var maskedCorners: CACornerMask = []
-            if category == 0 {
-                maskedCorners = upperMaskedCorners
-            }
-            if category == categories.count - 1 {
-                maskedCorners = lowerMaskedCorners
-                bottomDividerIsHidden = true
-            }
-            if categories.count == 1 {
-                maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
-                bottomDividerIsHidden = true
-            }
-            let view = ListView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: categories[category], type: .checkmark, action: #selector(categoryButtonTapped))
-            view.hideCheckMarkImage(true)
-            if category == choosedCategoryIndex {
-                view.hideCheckMarkImage(false)
-            }
-            categoriesView.append(view)
-        }
-    }
-
-    @objc private func categoryButtonTapped(sender: ListButton) {
-        guard let primaryText = sender.getPrimaryText(), let index = categories.firstIndex(where: { $0 == primaryText }) else { return }
-        choosedCategoryIndex = index
-        sender.hideCheckMarkImage(false)
-        if let choosedCategoryIndex {
-            delegate?.addCategory(categories[choosedCategoryIndex], index: index)
-        }
-        navigationController?.popViewController(animated: true)
     }
 
     @objc private func addCategoryButtonTapped() {
+        viewModel.addCategoryButtonTapped()
+    }
+
+    private func setBindings() {
+        viewModel.$categoriesModel.bind { [weak self] _ in
+            guard let self else { return }
+            self.tableView.reloadData()
+        }
+
+        viewModel.$alertText.bind { [weak self] text in
+            guard let self, let text else { return }
+            self.showAlertController(with: text)
+        }
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectRow(at: indexPath)
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension CategoryViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.categoriesModel.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryTableViewCell") as? CategoryTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.configureCell(viewModel.categoriesModel[indexPath.row])
+        return cell
+    }
+}
+
+// MARK: - Alert Presentation
+extension CategoryViewController {
+    func showAlertController(with message: String) {
+        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Закрыть", style: .default)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
 }

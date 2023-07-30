@@ -56,7 +56,7 @@ extension TrackerStore: TrackerStoreProtocol {
         let tracker = Tracker(
             id: id,
             name: name,
-            color: UIColor().color(from: colorString),
+            color: UIColor.color(from: colorString),
             emoji: emoji,
             schedule: schedule
         )

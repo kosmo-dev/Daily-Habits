@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CardCollectionViewCellDelegate: AnyObject {
-    func checkButtonTapped(viewModel: CardCellViewModel)
+    func checkButtonTapped(cellViewModel: CardCellViewModel)
 }
 
 final class CardCollectionViewCell: UICollectionViewCell {
@@ -83,6 +83,15 @@ final class CardCollectionViewCell: UICollectionViewCell {
 
     private var viewModel: CardCellViewModel?
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        makeLayout()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Public Methods
     func configureCell(viewModel: CardCellViewModel) {
         emojiLabel.text = viewModel.tracker.emoji
@@ -93,8 +102,6 @@ final class CardCollectionViewCell: UICollectionViewCell {
         pinImageView.isHidden = true
         checkButtonState()
         checkIsButtonEnabled()
-
-        makeLayout()
     }
 
     // MARK: - Private Methods
@@ -135,15 +142,13 @@ final class CardCollectionViewCell: UICollectionViewCell {
             daysLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             daysLabel.centerYAnchor.constraint(equalTo: checkButton.centerYAnchor)
         ])
-
-        checkButtonState()
     }
 
     @objc func checkButtonTapped() {
         viewModel?.buttonIsChecked.toggle()
         checkButtonState()
         guard let viewModel else { return }
-        delegate?.checkButtonTapped(viewModel: viewModel)
+        delegate?.checkButtonTapped(cellViewModel: viewModel)
     }
 
     private func checkButtonState() {

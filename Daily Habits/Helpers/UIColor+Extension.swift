@@ -104,7 +104,7 @@ extension UIColor {
         )
     }
 
-    func color(from hex: String) -> UIColor {
+    static func color(from hex: String) -> UIColor {
         var rgbValue:UInt64 = 0
         Scanner(string: hex).scanHexInt64(&rgbValue)
         return UIColor(
