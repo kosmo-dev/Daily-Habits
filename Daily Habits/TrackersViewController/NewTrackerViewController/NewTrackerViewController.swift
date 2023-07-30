@@ -216,7 +216,6 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             var hideBottomDivider = false
             var maskedCorners: CACornerMask = []
-            var hideCheckMark = true
             var primaryText: String = ""
             if indexPath.row == 0 {
                 maskedCorners = upperMaskedCorners
