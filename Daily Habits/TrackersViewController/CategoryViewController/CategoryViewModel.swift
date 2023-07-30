@@ -21,7 +21,11 @@ final class CategoryViewModel {
     private var navigationController: UINavigationController?
     private var dataController: TrackerDataControllerProtocol
 
-    init(choosedCategoryIndex: Int?, navigationController: UINavigationController?, dataController: TrackerDataControllerProtocol) {
+    init(
+        choosedCategoryIndex: Int?,
+        navigationController: UINavigationController?,
+        dataController: TrackerDataControllerProtocol
+    ) {
         self.choosedCategoryIndex = choosedCategoryIndex
         self.navigationController = navigationController
         self.dataController = dataController

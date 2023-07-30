@@ -46,7 +46,7 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
         guard let tracker = trackerCategory.trackers.first else { throw TrackerCategoryStoreError.noTrackerInTrackerCategory}
         let trackerCoreData = trackerStore.convertTrackerToTrackerCoreData(tracker)
 
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: C.CoreDataEntityNames.trackerCategoryCoreData)
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.name), trackerCategory.name)
         let categories = try context.fetch(request)
 
@@ -61,7 +61,7 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     }
 
     func addNewCategory(_ category: String) throws {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: C.CoreDataEntityNames.trackerCategoryCoreData)
         let categories = try context.fetch(request)
 
         if categories.contains(where: { $0.name == category }) {
@@ -92,7 +92,7 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     }
 
     func fetchAllCategories() -> [TrackerCategory] {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: C.CoreDataEntityNames.trackerCategoryCoreData)
         request.returnsObjectsAsFaults = true
         request.sortDescriptors = [ NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true) ]
         do {
