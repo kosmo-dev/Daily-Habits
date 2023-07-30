@@ -20,22 +20,13 @@ final class CategoryTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setPrimaryText(text: String) {
-        listView.addPrimaryText(text)
+    func configureCell(_ model: CategoryCellModel) {
+        listView.addPrimaryText(model.title)
+        listView.hideCheckMarkImage(model.hideCheckmark)
+        listView.setMaskedCorners(model.maskedCorners)
+        listView.setBottomDividerHidden(model.hideBottomDivider)
     }
-
-    func hideCheckMarkImage(_ hide: Bool) {
-        listView.hideCheckMarkImage(hide)
-    }
-
-    func setMaskedCorners(_ corners: CACornerMask) {
-        listView.setMaskedCorners(corners)
-    }
-
-    func setBottomDividerHidded(_ hidden: Bool) {
-        listView.setBottomDividerHidded(hidden)
-    }
-
+    
     private func configureView() {
         addSubview(listView)
         listView.translatesAutoresizingMaskIntoConstraints = false

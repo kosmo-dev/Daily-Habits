@@ -70,20 +70,6 @@ final class NewTrackerViewModel {
         delegate?.addNewTracker(newTracker)
     }
 
-    func categoryViewButtonTapped() {
-        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController, dataController: dataController)
-        let viewController = CategoryViewController(viewModel: categoryViewModel)
-        categoryViewModel.delegate = self
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    func scheduleViewButtonTapped() {
-        let viewModel = ScheduleViewModel(choosedDays: choosedDays, navigationController: navigationController)
-        let viewController = ScheduleViewController(viewModel: viewModel)
-        viewModel.delegate = self
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
     func setTitleText(text: String?) {
         titleTextFieldText = text
         checkFormCompletion()
@@ -108,6 +94,14 @@ final class NewTrackerViewModel {
             selectedEmojiCellIndexPath = indexPath
         } else if section == .colorCollection {
             selectedColorCellIndexPath = indexPath
+        } else if section == .listButtonViews {
+            if trackerType == .event {
+                categoryViewButtonTapped()
+            } else if indexPath.row == 0 {
+                categoryViewButtonTapped()
+            } else {
+                scheduleViewButtonTapped()
+            }
         }
         checkFormCompletion()
     }
@@ -130,6 +124,20 @@ final class NewTrackerViewModel {
         case .buttons:
             return 2
         }
+    }
+
+    private func categoryViewButtonTapped() {
+        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController, dataController: dataController)
+        let viewController = CategoryViewController(viewModel: categoryViewModel)
+        categoryViewModel.delegate = self
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+
+    private func scheduleViewButtonTapped() {
+        let viewModel = ScheduleViewModel(choosedDays: choosedDays, navigationController: navigationController)
+        let viewController = ScheduleViewController(viewModel: viewModel)
+        viewModel.delegate = self
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

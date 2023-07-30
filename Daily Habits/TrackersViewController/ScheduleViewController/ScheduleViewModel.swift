@@ -63,7 +63,6 @@ final class ScheduleViewModel {
                 maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
                 bottomDividerIsHidden = true
             }
-//            let viewModel = ListView(viewMaskedCorners: maskedCorners, bottomDividerIsHidden: bottomDividerIsHidden, primaryText: days[day], type: .switcher, action: nil)
             var switcherIsOn = false
             if choosedDays.contains(where: { $0 == days[day].lowercased() }) {
                 switcherIsOn = true

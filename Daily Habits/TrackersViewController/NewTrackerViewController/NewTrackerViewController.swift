@@ -48,9 +48,6 @@ final class NewTrackerViewController: UIViewController {
     private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
     private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
 
-    private var categoryButtonView: ListView?
-    private var scheduleButtonView: ListView?
-
     private var viewModel: NewTrackerViewModel
 
     // MARK: - Initializers
@@ -67,7 +64,6 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-//        viewModel.navigationController = navigationController
         titleTextField.delegate = self
 
         registerCells()
@@ -102,19 +98,9 @@ final class NewTrackerViewController: UIViewController {
         viewModel.saveButtonTapped(text: text)
     }
 
-    @objc private func categoryViewButtonTapped() {
-        titleTextField.resignFirstResponder()
-        viewModel.categoryViewButtonTapped()
-    }
-
-    @objc private func scheduleViewButtonTapped() {
-        titleTextField.resignFirstResponder()
-        viewModel.scheduleViewButtonTapped()
-    }
-
     private func registerCells() {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "textFieldCell")
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "listViewCell")
+        collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: "listViewCell")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiLabelCell")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsLabelCell")
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
@@ -133,12 +119,12 @@ final class NewTrackerViewController: UIViewController {
 
         viewModel.$category.bind { [weak self] category in
             guard let self, let category else { return }
-            self.categoryButtonView?.addSecondaryText(category)
+            self.updateCategoryViewSecondaryText(category)
         }
 
         viewModel.$weekdaysTitle.bind { [weak self] weekdaysTitle in
             guard let self, let weekdaysTitle else { return }
-            self.scheduleButtonView?.addSecondaryText(weekdaysTitle)
+            self.updateScheduleViewSecondaryText(weekdaysTitle)
         }
 
         viewModel.$selectedEmojiCellIndexPath.bind { [weak self] oldIndexPath in
@@ -167,6 +153,17 @@ final class NewTrackerViewController: UIViewController {
         }
         cell.cellSelected(type: type, color: color)
     }
+
+    private func updateCategoryViewSecondaryText(_ text: String) {
+        let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 1)) as? ListCollectionViewCell
+        cell?.addSecondaryText(text)
+    }
+
+    private func updateScheduleViewSecondaryText(_ text: String) {
+        let indexPath = viewModel.trackerType == .habit ? IndexPath(item: 1, section: 1) : IndexPath(item: 0, section: 2)
+        let cell = collectionView.cellForItem(at: indexPath) as? ListCollectionViewCell
+        cell?.addSecondaryText(text)
+    }
 }
 
 // MARK: - UITextFieldDelegate
@@ -185,7 +182,7 @@ extension NewTrackerViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         let section = viewModel.sections[indexPath.section]
-        return section == .colorCollection || section == .emojisCollection
+        return section == .colorCollection || section == .emojisCollection || section == .listButtonViews
     }
 }
 
@@ -214,38 +211,29 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             return cell
 
         case .listButtonViews:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listViewCell", for: indexPath)
-            if viewModel.trackerType == .habit {
-                let categoryButtonViewModel = ListViewModel(maskedCorners: [.layerMaxXMinYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: false, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped), switcherIsOn: nil)
-                let scheduleButtonViewModel = ListViewModel(maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], bottomDividerIsHidden: true, primaryText: "Расписание", type: .disclosure, action: #selector(scheduleViewButtonTapped), switcherIsOn: nil)
-                categoryButtonView = ListView(listViewModel: categoryButtonViewModel)
-                scheduleButtonView = ListView(listViewModel: scheduleButtonViewModel)
-            } else {
-                let categoryButtonViewModel = ListViewModel(maskedCorners: [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner], bottomDividerIsHidden: true, primaryText: "Категория", type: .disclosure, action: #selector(categoryViewButtonTapped), switcherIsOn: nil)
-                categoryButtonView = ListView(listViewModel: categoryButtonViewModel)
-            }
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listViewCell", for: indexPath) as? ListCollectionViewCell
+            let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            var hideBottomDivider = false
+            var maskedCorners: CACornerMask = []
+            var hideCheckMark = true
+            var primaryText: String = ""
             if indexPath.row == 0 {
-                if let categoryButtonView {
-                    cell.addSubview(categoryButtonView)
-                    NSLayoutConstraint.activate([
-                        categoryButtonView.topAnchor.constraint(equalTo: cell.topAnchor),
-                        categoryButtonView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
-                        categoryButtonView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
-                        categoryButtonView.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
-                    ])
-                }
-            } else {
-                if let scheduleButtonView {
-                    cell.addSubview(scheduleButtonView)
-                    NSLayoutConstraint.activate([
-                        scheduleButtonView.topAnchor.constraint(equalTo: cell.topAnchor),
-                        scheduleButtonView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
-                        scheduleButtonView.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
-                        scheduleButtonView.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
-                    ])
-                }
+                maskedCorners = upperMaskedCorners
+                primaryText = "Категория"
             }
-            return cell
+            if indexPath.row == 1 {
+                maskedCorners = lowerMaskedCorners
+                hideBottomDivider = true
+                primaryText = "Расписание"
+            }
+            if viewModel.trackerType == .event {
+                maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
+                hideBottomDivider = true
+            }
+            let cellViewModel = ListViewModel(maskedCorners: maskedCorners, bottomDividerIsHidden: hideBottomDivider, primaryText: primaryText, type: .disclosure, action: nil, switcherIsOn: nil)
+            cell?.configureCell(cellViewModel)
+            return cell ?? UICollectionViewCell()
 
         case .emojiLabel:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiLabelCell", for: indexPath)

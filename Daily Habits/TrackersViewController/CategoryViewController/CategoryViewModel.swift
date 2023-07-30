@@ -14,7 +14,7 @@ protocol CategoryViewModelDelegate: AnyObject {
 final class CategoryViewModel {
     weak var delegate: CategoryViewModelDelegate?
 
-    @Observable private (set) var categories: [String] = []
+    @Observable private (set) var categoriesModel: [CategoryCellModel] = []
     @Observable private(set) var alertText: String?
 
     private var choosedCategoryIndex: Int?
@@ -43,12 +43,35 @@ final class CategoryViewModel {
     }
 
     func didSelectRow(at indexPath: IndexPath) {
-        delegate?.addCategory(categories[indexPath.row], index: indexPath.row)
+        delegate?.addCategory(categoriesModel[indexPath.row].title, index: indexPath.row)
         navigationController?.popViewController(animated: true)
     }
 
     private func fetchCategories() {
-        categories = dataController.fetchCategoriesList()
+        categoriesModel.removeAll()
+        let categories = dataController.fetchCategoriesList()
+        for (index, category) in categories.enumerated() {
+            let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            var hideBottomDivider = false
+            var maskedCorners: CACornerMask = []
+            var hideCheckMark = true
+            if index == 0 {
+                maskedCorners = upperMaskedCorners
+            }
+            if index == categories.count - 1 {
+                maskedCorners = lowerMaskedCorners
+                hideBottomDivider = true
+            }
+            if categories.count == 1 {
+                maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
+                hideBottomDivider = true
+            }
+            if index == choosedCategoryIndex {
+                hideCheckMark = false
+            }
+            categoriesModel.append(CategoryCellModel(title: category, hideCheckmark: hideCheckMark, hideBottomDivider: hideBottomDivider, maskedCorners: maskedCorners))
+        }
     }
 }
 
@@ -56,7 +79,7 @@ extension CategoryViewModel: NewCategoryViewControllerDelegate {
     func addNewCategory(_ category: String) {
         do {
             try dataController.addNewCategory(category)
-            categories.append(category)
+            fetchCategories()
         } catch let error as TrackerCategoryStoreError {
             switch error {
             case .categoryExist:

@@ -7,19 +7,13 @@
 
 import UIKit
 
-//protocol CategoryViewControllerDelegate: AnyObject {
-//    func addCategory(_ category: String, index: Int)
-//}
-
 final class CategoryViewController: UIViewController {
-    // MARK: - Public Properties
-//    weak var delegate: CategoryViewControllerDelegate?
-
     // MARK: - Private Properties
     private var viewModel: CategoryViewModel
 
     private let tableView: UITableView = {
         let tableView = UITableView()
+        tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -70,33 +64,12 @@ final class CategoryViewController: UIViewController {
         ])
     }
 
-    private func configureMaskedCornersAndBottomDivider(for cell: CategoryTableViewCell, at indexPath: IndexPath) {
-        let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        var bottomDividerIsHidden = false
-        var maskedCorners: CACornerMask = []
-        if indexPath.row == 0 {
-            maskedCorners = upperMaskedCorners
-        }
-        if indexPath.row == viewModel.categories.count - 1 {
-            maskedCorners = lowerMaskedCorners
-            bottomDividerIsHidden = true
-        }
-        if viewModel.categories.count == 1 {
-            maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
-            bottomDividerIsHidden = true
-        }
-
-        cell.setBottomDividerHidded(bottomDividerIsHidden)
-        cell.setMaskedCorners(maskedCorners)
-    }
-
     @objc private func addCategoryButtonTapped() {
         viewModel.addCategoryButtonTapped()
     }
 
     private func setBindings() {
-        viewModel.$categories.bind { [weak self] _ in
+        viewModel.$categoriesModel.bind { [weak self] _ in
             guard let self else { return }
             self.tableView.reloadData()
         }
@@ -122,18 +95,14 @@ extension CategoryViewController: UITableViewDelegate {
 // MARK: - UITableViewDataSource
 extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.categories.count
+        return viewModel.categoriesModel.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryTableViewCell") as? CategoryTableViewCell else {
             return UITableViewCell()
         }
-        let text = viewModel.categories[indexPath.row]
-        let hideCheckMarkImage = viewModel.hideCheckMarkImage(for: indexPath)
-        cell.setPrimaryText(text: text)
-        cell.hideCheckMarkImage(hideCheckMarkImage)
-        configureMaskedCornersAndBottomDivider(for: cell, at: indexPath)
+        cell.configureCell(viewModel.categoriesModel[indexPath.row])
         return cell
     }
 }

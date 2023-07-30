@@ -39,7 +39,7 @@ final class ListView: UIView {
         return checkmarkImageView
     }()
 
-    let stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 2
@@ -70,21 +70,15 @@ final class ListView: UIView {
         return secondaryText
     }()
 
-    private var buttonView: ListButton
     private var viewType: ViewType?
+    private var secondaryTextDidAdd: Bool = false
 
     // MARK: - Initializers
-//    init(viewMaskedCorners: CACornerMask, bottomDividerIsHidden: Bool, primaryText: String, type: ViewType, action: Selector?) {
     init(listViewModel: ListViewModel) {
-        self.buttonView = ListButton(primaryText: listViewModel.primaryText)
         super.init(frame: .zero)
         self.layer.maskedCorners = listViewModel.maskedCorners
         self.bottomDivider.isHidden = listViewModel.bottomDividerIsHidden
         self.primaryText.text = listViewModel.primaryText
-        self.buttonView.delegate = self
-        if let action = listViewModel.action {
-            buttonView.addTarget(nil, action: action, for: .touchUpInside)
-        }
         viewType = listViewModel.type
         if viewType == .switcher,
            let switcher = listViewModel.switcherIsOn,
@@ -96,7 +90,6 @@ final class ListView: UIView {
     }
 
     init(type: ViewType) {
-        self.buttonView = ListButton(primaryText: "")
         super.init(frame: .zero)
         viewType = type
         configureView()
@@ -109,15 +102,14 @@ final class ListView: UIView {
     // MARK: - Public Methods
     func addSecondaryText(_ text: String) {
         secondaryText.text = text
-        stackView.addArrangedSubview(secondaryText)
+        if !secondaryTextDidAdd {
+            stackView.addArrangedSubview(secondaryText)
+            secondaryTextDidAdd = true
+        }
     }
 
     func addPrimaryText(_ text: String) {
         primaryText.text = text
-    }
-
-    func updateSecondaryText(_ text: String) {
-        secondaryText.text = text
     }
 
     func switcherIsOn() -> Bool {
@@ -140,7 +132,7 @@ final class ListView: UIView {
         layer.maskedCorners = corners
     }
 
-    func setBottomDividerHidded(_ hidden: Bool) {
+    func setBottomDividerHidden(_ hidden: Bool) {
         bottomDivider.isHidden = hidden
     }
 
@@ -154,7 +146,6 @@ final class ListView: UIView {
         addSubview(stackView)
         addSubview(bottomDivider)
         stackView.addArrangedSubview(primaryText)
-        addSubview(buttonView)
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
@@ -163,12 +154,7 @@ final class ListView: UIView {
             bottomDivider.bottomAnchor.constraint(equalTo: bottomAnchor),
             bottomDivider.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             bottomDivider.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            bottomDivider.heightAnchor.constraint(equalToConstant: 0.5),
-
-            buttonView.topAnchor.constraint(equalTo: topAnchor),
-            buttonView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            buttonView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            buttonView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            bottomDivider.heightAnchor.constraint(equalToConstant: 0.5)
         ])
         
         configureViewType()
@@ -205,5 +191,3 @@ final class ListView: UIView {
         }
     }
 }
-
-extension ListView: ListButtonDelegate {}
