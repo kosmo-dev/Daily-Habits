@@ -22,8 +22,8 @@ final class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        appInitialConfiguration.trackersViewController.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(systemName: "record.circle.fill"), selectedImage: nil)
-        appInitialConfiguration.statisticViewController.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(systemName: "hare.fill"), selectedImage: nil)
+        appInitialConfiguration.trackersViewController.tabBarItem = UITabBarItem(title: S.TabBarController.trackersTabBarItem, image: UIImage(systemName: "record.circle.fill"), selectedImage: nil)
+        appInitialConfiguration.statisticViewController.tabBarItem = UITabBarItem(title: S.TabBarController.statisticsTabBarItem, image: UIImage(systemName: "hare.fill"), selectedImage: nil)
 
         self.viewControllers = [appInitialConfiguration.trackersNavigationController, appInitialConfiguration.statisticViewController]
 

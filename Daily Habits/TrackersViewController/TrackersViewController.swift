@@ -22,7 +22,7 @@ final class TrackersViewController: UIViewController {
 
     private let searchField: UISearchTextField = {
         let searchField = UISearchTextField()
-        searchField.placeholder = "Поиск"
+        searchField.placeholder = S.TrackersViewController.searchPlaceholder
         searchField.addTarget(nil, action: #selector(searchFieldEditingChanged), for: .editingChanged)
         searchField.translatesAutoresizingMaskIntoConstraints = false
         return searchField
@@ -38,7 +38,7 @@ final class TrackersViewController: UIViewController {
 
     private let cancelSearchButton: UIButton = {
         let cancelSearchButton = UIButton()
-        cancelSearchButton.setTitle("Отменить", for: .normal)
+        cancelSearchButton.setTitle(S.cancelButton, for: .normal)
         cancelSearchButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         cancelSearchButton.setTitleColor(.ypBlue, for: .normal)
         cancelSearchButton.addTarget(nil, action: #selector(cancelSearchButtonTapped), for: .touchUpInside)
@@ -64,7 +64,7 @@ final class TrackersViewController: UIViewController {
 
     private let placeholderText: UILabel = {
         let placeholderText = UILabel()
-        placeholderText.text = "Что будем отслеживать?"
+        placeholderText.text = S.TrackersViewController.emptyTrackersPlaceholder
         placeholderText.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         placeholderText.textColor = .ypBlack
         placeholderText.isHidden = true
@@ -109,7 +109,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.rightBarButtonItem = rightBarButtonItem
 
-        navigationItem.title = "Трекеры"
+        navigationItem.title = S.TrackersViewController.navigationTitle
         navigationController?.navigationBar.prefersLargeTitles = true
 
         datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
@@ -329,8 +329,8 @@ extension TrackersViewController: UITextFieldDelegate {
 // MARK: - Alert Presentation
 extension TrackersViewController {
     func showAlertController(with message: String) {
-        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Закрыть", style: .default)
+        let alertController = UIAlertController(title: S.TrackersViewController.alertControllerTitle, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: S.TrackersViewController.alertControllerAction, style: .default)
         alertController.addAction(action)
         present(alertController, animated: true)
     }

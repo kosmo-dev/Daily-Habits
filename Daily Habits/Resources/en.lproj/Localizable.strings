@@ -1,0 +1,36 @@
+/* 
+  Localizable.strings
+  Daily Habits
+
+  Created by Вадим Кузьмин on 03.08.2023.
+  
+*/
+"CancelButton" = "Cancel";
+"OnboardingViewControllerFirstViewControllerText" = "Track only what you want";
+"OnboardingViewControllerSecondViewControllerText" = "Even if it's not quarts of water and yoga";
+"OnboardingViewControllerButton" = "That's technology!";
+"TabBarControllerTrackersTabBarItem"= "Trackers";
+"TabBarControllerStatisticsTabBarItem" = "Statistic";
+"TrackersViewControllerSearchPlaceholder" = "Search";
+"TrackersViewControllerEmptyTrackersPlaceholder" = "What will we track?";
+"TrackersViewControllerNotFoundPlaceholder" = "Nothing found";
+"TrackersViewControllerNavigationTitle" = "Trackers";
+"TrackersViewControllerAlertControllerTitle" = "Error";
+"TrackersViewControllerAlertControllerErrorAddingTracker" = "Error adding record. Try again";
+"TrackersViewControllerAlertControllerAction" = "Close";
+"NewTrackerTypeChoosingViewControllerHabitButton" = "Habit";
+"NewTrackerTypeChoosingViewControllerEventButton" = "Event";
+"NewTrackerTypeChoosingViewControllerNavigationTitle" = "Tracker Creation";
+"NewTrackerViewControllerTitleTextFieldPlaceholder" = "Enter tracker name";
+"NewTrackerViewControllerEmojiTitle" = "Emoji";
+"NewTrackerViewControllerColorsTitle" = "Color";
+"NewTrackerViewControllerCreateButton" = "Create";
+"NewTrackerViewControllerNavigationTitle" = "New Tracker";
+"NewTrackerViewControllerCategoryHeader" = "Category";
+"NewTrackerViewControllerScheduleHeader" = "Schedule";
+"NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Every day";
+"CategoryViewControllerAddCategoryButton" = "Add Category";
+"CategoryViewControllerAlertControllerErrorCategoryExist" = "Category already exists";
+"NewCategoryViewControllerTextFieldPlaceholder" = "Enter category name";
+"NewCategoryViewControllerNavigationTitle" = "New Category";
+"ScheduleViewControllerConfirmButton" = "Confirm";

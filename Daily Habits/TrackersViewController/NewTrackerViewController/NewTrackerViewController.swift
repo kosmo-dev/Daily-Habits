@@ -11,7 +11,7 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Private Properties
     private let titleTextField: UITextField = {
         let titleTextField = UITextField()
-        titleTextField.placeholder = "Введите название трекера"
+        titleTextField.placeholder = S.NewTrackerViewController.titleTextFieldPlaceholder
         titleTextField.backgroundColor = .ypBackground
         titleTextField.layer.cornerRadius = 16
         titleTextField.layer.masksToBounds = true
@@ -32,7 +32,7 @@ final class NewTrackerViewController: UIViewController {
     private let emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        emojiLabel.text = "Emoji"
+        emojiLabel.text = S.NewTrackerViewController.emojiTitle
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         return emojiLabel
     }()
@@ -40,13 +40,13 @@ final class NewTrackerViewController: UIViewController {
     private let colorsLabel: UILabel = {
         let colorsLabel = UILabel()
         colorsLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        colorsLabel.text = "Цвет"
+        colorsLabel.text = S.NewTrackerViewController.colorsTitle
         colorsLabel.translatesAutoresizingMaskIntoConstraints = false
         return colorsLabel
     }()
 
-    private let cancelButton = PrimaryButton(title: "Отменить", action: #selector(cancelButtonTapped), type: .cancel)
-    private let saveButton = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
+    private let cancelButton = PrimaryButton(title: S.cancelButton, action: #selector(cancelButtonTapped), type: .cancel)
+    private let saveButton = PrimaryButton(title: S.NewTrackerViewController.createButton, action: #selector(saveButtonTapped), type: .notActive)
 
     private var viewModel: NewTrackerViewModel
 
@@ -76,7 +76,7 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Private Methods
     private func configureView() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Новая привычка"
+        navigationItem.title = S.NewTrackerViewController.navigationTitle
         navigationItem.hidesBackButton = true
 
         view.addSubview(collectionView)
@@ -219,12 +219,12 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             var primaryText: String = ""
             if indexPath.row == 0 {
                 maskedCorners = upperMaskedCorners
-                primaryText = "Категория"
+                primaryText = S.NewTrackerViewController.categoryHeader
             }
             if indexPath.row == 1 {
                 maskedCorners = lowerMaskedCorners
                 hideBottomDivider = true
-                primaryText = "Расписание"
+                primaryText = S.NewTrackerViewController.scheduleHeader
             }
             if viewModel.trackerType == .event {
                 maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]

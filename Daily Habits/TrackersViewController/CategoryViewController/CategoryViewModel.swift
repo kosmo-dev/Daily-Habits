@@ -87,12 +87,12 @@ extension CategoryViewModel: NewCategoryViewControllerDelegate {
         } catch let error as TrackerCategoryStoreError {
             switch error {
             case .categoryExist:
-                alertText = "Категория уже существует"
+                alertText = S.CategoryViewController.alertControllerErrorCategoryExist
             default:
-                alertText = "Ошибка добавления новой категории"
+                alertText = S.TrackersViewController.alertControllerErrorAddingTracker
             }
         } catch {
-            alertText = "Ошибка добавления новой категории"
+            alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }
     }
 }

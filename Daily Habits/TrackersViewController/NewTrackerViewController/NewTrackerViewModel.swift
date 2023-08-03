@@ -153,7 +153,7 @@ extension NewTrackerViewModel: ScheduleViewModelDelegate {
     func addWeekDays(_ weekdays: [Int]) {
         choosedDays = weekdays
         if weekdays.count == 7 {
-            weekdaysTitle = "Каждый день"
+            weekdaysTitle = S.NewTrackerViewController.scheduleEveryDaySecondaryText
             return
         }
         var daysView = ""

@@ -9,7 +9,7 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
     // MARK: - Private Properties
-    private let confirmButton = PrimaryButton(title: "Готово", action: #selector(confirmButtonTapped), type: .primary)
+    private let confirmButton = PrimaryButton(title: S.ScheduleViewController.confirmButton, action: #selector(confirmButtonTapped), type: .primary)
     private var viewModel: ScheduleViewModel
 
     private let stackView: UIStackView = {
@@ -38,7 +38,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Private Methods
     private func configureView() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Расписание"
+        navigationItem.title = S.NewTrackerViewController.scheduleHeader
         navigationItem.hidesBackButton = true
 
         view.addSubview(stackView)

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Daily Habits
+
+  Created by Вадим Кузьмин on 03.08.2023.
+  
+*/
+
+"CancelButton" = "Отменить";
+"OnboardingViewControllerFirstViewControllerText" = "Отслеживайте только то, что хотите";
+"OnboardingViewControllerSecondViewControllerText" = "Даже если это не литры воды и йога";
+"OnboardingViewControllerButton" = "Вот это технологии!";
+"TabBarControllerTrackersTabBarItem"= "Трекеры";
+"TabBarControllerStatisticsTabBarItem" = "Статистика";
+"TrackersViewControllerSearchPlaceholder" = "Поиск";
+"TrackersViewControllerEmptyTrackersPlaceholder" = "Что будем отслеживать?";
+"TrackersViewControllerNotFoundPlaceholder" = "Ничего не найдено";
+"TrackersViewControllerNavigationTitle" = "Трекеры";
+"TrackersViewControllerAlertControllerTitle" = "Ошибка";
+"TrackersViewControllerAlertControllerErrorAddingTracker" = "Ошибка добавления записи. Попробуйте еще раз";
+"TrackersViewControllerAlertControllerAction" = "Закрыть";
+"NewTrackerTypeChoosingViewControllerHabitButton" = "Привычка";
+"NewTrackerTypeChoosingViewControllerEventButton" = "Нерегулярное событие";
+"NewTrackerTypeChoosingViewControllerNavigationTitle" = "Создание трекера";
+"NewTrackerViewControllerTitleTextFieldPlaceholder" = "Введите название трекера";
+"NewTrackerViewControllerEmojiTitle" = "Emoji";
+"NewTrackerViewControllerColorsTitle" = "Цвет";
+"NewTrackerViewControllerCreateButton" = "Создать";
+"NewTrackerViewControllerNavigationTitle" = "Новая привычка";
+"NewTrackerViewControllerCategoryHeader" = "Категория";
+"NewTrackerViewControllerScheduleHeader" = "Расписание";
+"NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Каждый день";
+"CategoryViewControllerAddCategoryButton" = "Добавить категорию";
+"CategoryViewControllerAlertControllerErrorCategoryExist" = "Категория уже существует"; 
+"NewCategoryViewControllerTextFieldPlaceholder" = "Введите название категории";
+"NewCategoryViewControllerNavigationTitle" = "Новая категория";
+"ScheduleViewControllerConfirmButton" = "Готово"; 

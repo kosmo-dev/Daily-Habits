@@ -11,8 +11,8 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     weak var trackersViewController: NewTrackerViewModelDelegate?
 
     // MARK: - Private Properties
-    private let habitButton = PrimaryButton(title: "Привычка", action: #selector(habitButtonTapped), type: .primary)
-    private let eventButton = PrimaryButton(title: "Нерегулярное событие", action: #selector(eventButtonTapped), type: .primary)
+    private let habitButton = PrimaryButton(title: S.NewTrackerTypeChoosingViewController.habitButton, action: #selector(habitButtonTapped), type: .primary)
+    private let eventButton = PrimaryButton(title: S.NewTrackerTypeChoosingViewController.eventButton, action: #selector(eventButtonTapped), type: .primary)
     private let dataController: TrackerDataControllerProtocol
 
     // MARK: Initializers
@@ -36,7 +36,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     private func configureView() {
         view.backgroundColor = .ypWhite
         
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = S.NewTrackerTypeChoosingViewController.navigationTitle
         navigationController?.navigationBar.prefersLargeTitles = false
         view.addSubview(habitButton)
         view.addSubview(eventButton)

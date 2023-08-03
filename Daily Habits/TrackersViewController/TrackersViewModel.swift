@@ -58,10 +58,10 @@ final class TrackersViewModel {
             switch state {
             case .noTrackers:
                 placeholderImage = UIImage(named: C.UIImages.emptyTrackersPlaceholder)
-                placeholderText = "Что будем отслеживать?"
+                placeholderText = S.TrackersViewController.emptyTrackersPlaceholder
             case .notFound:
                 placeholderImage = UIImage(named: C.UIImages.searchNotFoundPlaceholder)
-                placeholderText = "Ничего не найдено"
+                placeholderText = S.TrackersViewController.notFoundPlaceholder
             }
         } else {
             placeholderImage = nil
@@ -78,7 +78,7 @@ final class TrackersViewModel {
             }
             itemsToReload = [cellViewModel.indexPath]
         } catch {
-            alertText = "Ошибка добавления записи. Попробуйте еще раз"
+            alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }
     }
 
@@ -207,7 +207,7 @@ extension TrackersViewModel: NewTrackerViewModelDelegate {
         do {
             try trackerDataController.addTrackerCategory(trackerCategory)
         } catch {
-            alertText = "Ошибка добавления нового трекера. Попробуйте еще раз"
+            alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }
     }
 }
