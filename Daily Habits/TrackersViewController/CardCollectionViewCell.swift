@@ -96,7 +96,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
     func configureCell(viewModel: CardCellViewModel) {
         emojiLabel.text = viewModel.tracker.emoji
         cardText.text = viewModel.tracker.name
-        daysLabel.text = "\(viewModel.counter) \(dayStringDeclension(for: viewModel.counter))"
+//        daysLabel.text = "\(viewModel.counter) \(dayStringDeclension(for: viewModel.counter))"
+        daysLabel.text = String.localizedStringWithFormat(NSLocalizedString("%d days", comment: ""), viewModel.counter)
         cardView.backgroundColor = viewModel.tracker.color
         self.viewModel = viewModel
         pinImageView.isHidden = true

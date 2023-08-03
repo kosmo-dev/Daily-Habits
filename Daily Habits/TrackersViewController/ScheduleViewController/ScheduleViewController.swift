@@ -62,9 +62,9 @@ final class ScheduleViewController: UIViewController {
     @objc private func confirmButtonTapped() {
         var list: [String] = []
         for item in stackView.arrangedSubviews {
-            guard let view = item as? ListView else { continue }
-            guard view.switcherIsOn() else { continue }
-            guard let text = view.getPrimaryText() else { continue }
+            guard let view = item as? ListView,
+                  view.switcherIsOn(),
+                  let text = view.getPrimaryText() else { continue }
             list.append(text)
         }
         viewModel.configureButtonTapped(text: list)

@@ -158,8 +158,7 @@ extension NewTrackerViewModel: ScheduleViewModelDelegate {
         }
         var daysView = ""
         for index in choosedDays {
-            var calendar = Calendar.current
-            calendar.locale = Locale(identifier: "ru_RU")
+            let calendar = Calendar.current
             let day = calendar.shortWeekdaySymbols[index]
             daysView.append(day)
             daysView.append(", ")

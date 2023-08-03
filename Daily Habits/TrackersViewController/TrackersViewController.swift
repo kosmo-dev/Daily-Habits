@@ -13,9 +13,7 @@ final class TrackersViewController: UIViewController {
         let datePickerView = UIDatePicker()
         datePickerView.preferredDatePickerStyle = .compact
         datePickerView.datePickerMode = .date
-        var calendar = Calendar.current
-        calendar.locale = Locale(identifier: "ru_RU")
-        datePickerView.calendar = calendar
+        datePickerView.calendar = Calendar.current
         datePickerView.translatesAutoresizingMaskIntoConstraints = false
         return datePickerView
     }()
