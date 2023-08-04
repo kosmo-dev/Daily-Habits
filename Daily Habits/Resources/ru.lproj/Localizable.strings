@@ -19,6 +19,11 @@
 "TrackersViewControllerAlertControllerTitle" = "Ошибка";
 "TrackersViewControllerAlertControllerErrorAddingTracker" = "Ошибка добавления записи. Попробуйте еще раз";
 "TrackersViewControllerAlertControllerAction" = "Закрыть";
+"TrackersViewControllerPinnedHeader" = "Закрепленные";
+"TrackersViewControllerPinAction" = "Закрепить";
+"TrackersViewControllerUnPinAction" = "Открепить";
+"TrackersViewControllerEditAction" = "Редактировать";
+"TrackersViewControllerDeleteAction" = "Удалить";
 "NewTrackerTypeChoosingViewControllerHabitButton" = "Привычка";
 "NewTrackerTypeChoosingViewControllerEventButton" = "Нерегулярное событие";
 "NewTrackerTypeChoosingViewControllerNavigationTitle" = "Создание трекера";

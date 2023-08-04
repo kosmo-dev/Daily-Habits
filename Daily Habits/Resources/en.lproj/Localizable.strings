@@ -18,6 +18,11 @@
 "TrackersViewControllerAlertControllerTitle" = "Error";
 "TrackersViewControllerAlertControllerErrorAddingTracker" = "Error adding record. Try again";
 "TrackersViewControllerAlertControllerAction" = "Close";
+"TrackersViewControllerPinnedHeader" = "Pinned";
+"TrackersViewControllerPinAction" = "Pin";
+"TrackersViewControllerUnPinAction" = "Unpin";
+"TrackersViewControllerEditAction" = "Edit";
+"TrackersViewControllerDeleteAction" = "Delete";
 "NewTrackerTypeChoosingViewControllerHabitButton" = "Habit";
 "NewTrackerTypeChoosingViewControllerEventButton" = "Event";
 "NewTrackerTypeChoosingViewControllerNavigationTitle" = "Tracker Creation";
@@ -34,3 +39,4 @@
 "NewCategoryViewControllerTextFieldPlaceholder" = "Enter category name";
 "NewCategoryViewControllerNavigationTitle" = "New Category";
 "ScheduleViewControllerConfirmButton" = "Confirm";
+

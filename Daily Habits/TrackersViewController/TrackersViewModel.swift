@@ -110,6 +110,22 @@ final class TrackersViewModel {
         checkNeedOnboardingScreen()
     }
 
+    func pinButtonTapped(for cellIndexPath: IndexPath) {
+        
+    }
+
+    func unPinButtonTapped(for cellIndexPath: IndexPath) {
+
+    }
+
+    func editButtonTapped(for cellIndexPath: IndexPath) {
+
+    }
+
+    func deleteButtonTapped(for cellIndexPath: IndexPath) {
+
+    }
+
     // MARK: - Private methods
     private func configure() {
         self.trackerDataController.delegate = self

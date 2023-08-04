@@ -8,6 +8,9 @@
 import UIKit
 
 struct C {
+    struct Constants {
+        static let pinnedHeader = "pinnedHeader"
+    }
     struct UIImages {
         static let emptyTrackersPlaceholder = "EmptyTrackersPlaceholder"
         static let searchNotFoundPlaceholder = "SearchNotFoundPlaceholder"

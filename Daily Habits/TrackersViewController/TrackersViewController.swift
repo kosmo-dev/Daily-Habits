@@ -229,7 +229,41 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
-extension TrackersViewController: UICollectionViewDelegate {}
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return makeCellContextMenuConfiguration(for: indexPath)
+    }
+
+    private func makeCellContextMenuConfiguration(for indexPath: IndexPath) -> UIContextMenuConfiguration {
+        let category = viewModel.visibleCategories[indexPath.section]
+        let pinMenu = UIAction(title: S.TrackersViewController.pinAction) { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.pinButtonTapped(for: indexPath)
+        }
+        let unPinMenu = UIAction(title: S.TrackersViewController.unPinAction) { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.unPinButtonTapped(for: indexPath)
+        }
+        let editMenu = UIAction(title: S.TrackersViewController.editAction) { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.editButtonTapped(for: indexPath)
+        }
+        let deleteMenu = UIAction(title: S.TrackersViewController.deleteAction, attributes: .destructive) { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.deleteButtonTapped(for: indexPath)
+        }
+        let cellFirstMenu = category.name == C.Constants.pinnedHeader ? unPinMenu : pinMenu
+
+        let uiContextMenuConfiguration = UIContextMenuConfiguration(actionProvider:  { actions in
+            return UIMenu(children: [
+                cellFirstMenu,
+                editMenu,
+                deleteMenu
+            ])
+        })
+        return uiContextMenuConfiguration
+    }
+}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {

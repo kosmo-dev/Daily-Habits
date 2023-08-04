@@ -19,6 +19,11 @@
 "TrackersViewControllerAlertControllerTitle" = "Error";
 "TrackersViewControllerAlertControllerErrorAddingTracker" = "Error al agregar registro. Intentar otra vez";
 "TrackersViewControllerAlertControllerAction" = "Cerca";
+"TrackersViewControllerPinnedHeader" = "Fijado";
+"TrackersViewControllerPinAction" = "Alfiler";
+"TrackersViewControllerUnPinAction" = "Desprender";
+"TrackersViewControllerEditAction" = "Editar";
+"TrackersViewControllerDeleteAction" = "Borrar";
 "NewTrackerTypeChoosingViewControllerHabitButton" = "Hábito";
 "NewTrackerTypeChoosingViewControllerEventButton" = "Evento";
 "NewTrackerTypeChoosingViewControllerNavigationTitle" = "Crear un rastreador";

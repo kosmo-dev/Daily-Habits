@@ -27,6 +27,11 @@ struct S {
         static let alertControllerTitle = NSLocalizedString("TrackersViewControllerAlertControllerTitle", comment: "")
         static let alertControllerAction = NSLocalizedString("TrackersViewControllerAlertControllerAction", comment: "")
         static let alertControllerErrorAddingTracker = NSLocalizedString("TrackersViewControllerAlertControllerErrorAddingTracker", comment: "")
+        static let pinnedHeader = NSLocalizedString("TrackersViewControllerPinnedHeader", comment: "")
+        static let pinAction = NSLocalizedString("TrackersViewControllerPinAction", comment: "")
+        static let unPinAction = NSLocalizedString("TrackersViewControllerUnPinAction", comment: "")
+        static let editAction = NSLocalizedString("TrackersViewControllerEditAction", comment: "")
+        static let deleteAction = NSLocalizedString("TrackersViewControllerDeleteAction", comment: "")
     }
 
     struct NewTrackerTypeChoosingViewController {
