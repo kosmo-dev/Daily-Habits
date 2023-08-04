@@ -44,12 +44,15 @@ final class NewTrackerViewModel {
     private var titleTextFieldText: String?
     private var choosedDays: [Int] = []
     private var choosedCategoryIndex: Int?
-    private var dataController: TrackerDataControllerProtocol
+    private var categoriesController: TrackerDataControllerCategoriesProtocol
 
-    init(trackerType: TrackerType, navigationController: UINavigationController?, dataController: TrackerDataControllerProtocol) {
+    init(trackerType: TrackerType,
+         navigationController: UINavigationController?,
+         categoriesController: TrackerDataControllerCategoriesProtocol
+    ) {
         self.trackerType = trackerType
         self.navigationController = navigationController
-        self.dataController = dataController
+        self.categoriesController = categoriesController
         
         if trackerType == .event {
             choosedDays = Array(0...6)
@@ -127,7 +130,7 @@ final class NewTrackerViewModel {
     }
 
     private func categoryViewButtonTapped() {
-        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController, dataController: dataController)
+        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController, categoriesController: categoriesController)
         let viewController = CategoryViewController(viewModel: categoryViewModel)
         categoryViewModel.delegate = self
         navigationController?.pushViewController(viewController, animated: true)

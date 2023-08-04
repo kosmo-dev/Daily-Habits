@@ -20,7 +20,6 @@ final class TrackersViewModel {
     @Observable private(set) var placeholderImage: UIImage?
     @Observable private(set) var placeholderText: String?
     @Observable private(set) var alertText: String?
-    @Observable private(set) var itemsToReload: [IndexPath]?
     @Observable private(set) var trackersCollectionViewUpdate: TrackersCollectionViewUpdate?
 
     // MARK: - Private Properties
@@ -31,7 +30,9 @@ final class TrackersViewModel {
     private var insertedSectionsInSearch: IndexSet = []
     private var removedSectionsInSearch: IndexSet = []
 
-    private let trackerDataController: TrackerDataControllerProtocol
+    private var categoriesController: TrackerDataControllerCategoriesProtocol
+    private var recordsController: TrackerDataControllerRecordsProtocol
+
     private var trackersUpdate: TrackersCollectionViewUpdate?
 
     private var dateFormatter: DateFormatter = {
@@ -41,8 +42,9 @@ final class TrackersViewModel {
     }()
 
     // MARK: - Initializer
-    init(trackerDataController: TrackerDataControllerProtocol) {
-        self.trackerDataController = trackerDataController
+    init(categoriesController: TrackerDataControllerCategoriesProtocol, recordsController: TrackerDataControllerRecordsProtocol) {
+        self.categoriesController = categoriesController
+        self.recordsController = recordsController
         configure()
     }
 
@@ -50,7 +52,7 @@ final class TrackersViewModel {
     func datePickerValueChanged(_ date: Date) {
         currentDate = date
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        trackerDataController.fetchCategoriesFor(weekday: weekday, animating: true)
+        categoriesController.fetchCategoriesFor(weekday: weekday, animating: true)
     }
 
     func checkNeedPlaceholder(for state: PlaceholderState) {
@@ -72,11 +74,12 @@ final class TrackersViewModel {
     func checkButtonOnCellTapped(cellViewModel: CardCellViewModel) {
         do {
             if cellViewModel.buttonIsChecked {
-                try trackerDataController.addTrackerRecord(id: cellViewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+                try recordsController.addTrackerRecord(id: cellViewModel.tracker.id, date: dateFormatter.string(from: currentDate))
             } else {
-                try trackerDataController.deleteTrackerRecord(id: cellViewModel.tracker.id, date: dateFormatter.string(from: currentDate))
+                try recordsController.deleteTrackerRecord(id: cellViewModel.tracker.id, date: dateFormatter.string(from: currentDate))
             }
-            itemsToReload = [cellViewModel.indexPath]
+            let weekday = Calendar.current.component(.weekday, from: currentDate)-1
+            categoriesController.fetchCategoriesFor(weekday: weekday, animating: false)
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }
@@ -84,19 +87,19 @@ final class TrackersViewModel {
 
     func performSearchFor(text: String) {
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        trackerDataController.fetchSearchedCategories(textToSearch: text, weekday: weekday)
+        categoriesController.fetchSearchedCategories(textToSearch: text, weekday: weekday)
     }
 
     func leftBarButtonTapped() {
-        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self, dataController: trackerDataController)
+        let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self, categoriesController: categoriesController)
         let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
         navigationController?.present(modalNavigationController, animated: true)
     }
 
     func configureCellViewModel(for indexPath: IndexPath) -> CardCellViewModel {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        let counter = trackerDataController.fetchRecordsCountForId(tracker.id)
-        let cardIsChecked = trackerDataController.checkTrackerRecordExist(id: tracker.id, date: dateFormatter.string(from: currentDate))
+        let counter = recordsController.fetchRecordsCountForId(tracker.id)
+        let cardIsChecked = recordsController.checkTrackerRecordExist(id: tracker.id, date: dateFormatter.string(from: currentDate))
         let dateComparision = Calendar.current.compare(currentDate, to: Date(), toGranularity: .day)
         var buttonEnabled = true
         if dateComparision.rawValue == 1 {
@@ -128,9 +131,9 @@ final class TrackersViewModel {
 
     // MARK: - Private methods
     private func configure() {
-        self.trackerDataController.delegate = self
+        self.categoriesController.delegate = self
         let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        trackerDataController.fetchCategoriesFor(weekday: weekday, animating: false)
+        categoriesController.fetchCategoriesFor(weekday: weekday, animating: false)
     }
 
     private func checkNeedOnboardingScreen() {
@@ -197,7 +200,7 @@ final class TrackersViewModel {
 // MARK: - TrackerDataControllerDelegate
 extension TrackersViewModel: TrackerDataControllerDelegate {
     func updateViewByController(_ update: TrackerCategoryStoreUpdate) {
-        let newCategories = trackerDataController.categories
+        let newCategories = categoriesController.categories
         calculateDiff(newCategories: newCategories, withDateChange: true)
         visibleCategories = newCategories
         trackersCollectionViewUpdate = trackersUpdate
@@ -221,7 +224,7 @@ extension TrackersViewModel: NewTrackerViewModelDelegate {
     func addNewTracker(_ trackerCategory: TrackerCategory) {
         navigationController?.dismiss(animated: true)
         do {
-            try trackerDataController.addTrackerCategory(trackerCategory)
+            try categoriesController.addTrackerCategory(trackerCategory)
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }

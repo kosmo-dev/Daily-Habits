@@ -13,11 +13,11 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     // MARK: - Private Properties
     private let habitButton = PrimaryButton(title: S.NewTrackerTypeChoosingViewController.habitButton, action: #selector(habitButtonTapped), type: .primary)
     private let eventButton = PrimaryButton(title: S.NewTrackerTypeChoosingViewController.eventButton, action: #selector(eventButtonTapped), type: .primary)
-    private let dataController: TrackerDataControllerProtocol
+    private let categoriesController: TrackerDataControllerCategoriesProtocol
 
     // MARK: Initializers
-    init(trackersViewController: NewTrackerViewModelDelegate?, dataController: TrackerDataControllerProtocol) {
-        self.dataController = dataController
+    init(trackersViewController: NewTrackerViewModelDelegate?, categoriesController: TrackerDataControllerCategoriesProtocol) {
+        self.categoriesController = categoriesController
         super.init(nibName: nil, bundle: nil)
         self.trackersViewController = trackersViewController
     }
@@ -63,7 +63,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     }
 
     private func showViewController(trackerType: NewTrackerViewModel.TrackerType) {
-        let viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: navigationController, dataController: dataController)
+        let viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: navigationController, categoriesController: categoriesController)
         viewModel.delegate = trackersViewController
         let newTrackerViewController = NewTrackerViewController(viewModel: viewModel)
         navigationController?.pushViewController(newTrackerViewController, animated: true)

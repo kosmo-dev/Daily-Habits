@@ -27,7 +27,7 @@ class AppInitialConfiguration {
         trackerDataController = TrackerDataController(trackerStore: trackerStore, trackerCategoryStore: trackerCategoryStore, trackerRecordStore: trackerRecordStore, context: coreDataPersistentContainer.context)
         trackerCategoryStore.setTrackerDataController(trackerDataController.fetchResultController)
 
-        trackersViewModel = TrackersViewModel(trackerDataController: trackerDataController)
+        trackersViewModel = TrackersViewModel(categoriesController: trackerDataController, recordsController: trackerDataController)
         trackersViewController = TrackersViewController(viewModel: trackersViewModel)
         trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         trackersViewModel.navigationController = trackersNavigationController

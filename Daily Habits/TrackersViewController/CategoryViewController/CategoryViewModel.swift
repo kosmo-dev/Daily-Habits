@@ -19,16 +19,16 @@ final class CategoryViewModel {
 
     private var choosedCategoryIndex: Int?
     private var navigationController: UINavigationController?
-    private var dataController: TrackerDataControllerProtocol
+    private var categoriesController: TrackerDataControllerCategoriesProtocol
 
     init(
         choosedCategoryIndex: Int?,
         navigationController: UINavigationController?,
-        dataController: TrackerDataControllerProtocol
+        categoriesController: TrackerDataControllerCategoriesProtocol
     ) {
         self.choosedCategoryIndex = choosedCategoryIndex
         self.navigationController = navigationController
-        self.dataController = dataController
+        self.categoriesController = categoriesController
         fetchCategories()
     }
 
@@ -53,7 +53,7 @@ final class CategoryViewModel {
 
     private func fetchCategories() {
         categoriesModel.removeAll()
-        let categories = dataController.fetchCategoriesList()
+        let categories = categoriesController.fetchCategoriesList()
         for (index, category) in categories.enumerated() {
             let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -82,7 +82,7 @@ final class CategoryViewModel {
 extension CategoryViewModel: NewCategoryViewControllerDelegate {
     func addNewCategory(_ category: String) {
         do {
-            try dataController.addNewCategory(category)
+            try categoriesController.addNewCategory(category)
             fetchCategories()
         } catch let error as TrackerCategoryStoreError {
             switch error {

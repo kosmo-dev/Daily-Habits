@@ -174,11 +174,6 @@ final class TrackersViewController: UIViewController {
 
         }
 
-        viewModel.$itemsToReload.bind { [weak self] indexPaths in
-            guard let self, let indexPaths else { return }
-            collectionView.reloadItems(at: indexPaths)
-        }
-
         viewModel.$trackersCollectionViewUpdate.bind { [weak self] trackersCollectionViewUpdate in
             guard let self else { return }
             guard let trackersCollectionViewUpdate else { return }
