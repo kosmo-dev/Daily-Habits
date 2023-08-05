@@ -18,7 +18,11 @@
 "TrackersViewControllerNavigationTitle" = "Rastreadores";
 "TrackersViewControllerAlertControllerTitle" = "Error";
 "TrackersViewControllerAlertControllerErrorAddingTracker" = "Error al agregar registro. Intentar otra vez";
+"TrackersViewControllerAlertControllerErrorPinTracker" = "Error al alfiler registro. Intentar otra vez";
 "TrackersViewControllerAlertControllerAction" = "Cerca";
+"TrackersViewControllerAlertControllerDeleteTitle" = "¿Está seguro de que desea eliminar el rastreador?";
+"TrackersViewControllerAlertControllerDeleteAction" = "Eliminar";
+"TrackersViewControllerAlertControllerErrorDeleteTracker" = "Error al eliminar registro. Intentar otra vez";
 "TrackersViewControllerPinnedHeader" = "Fijado";
 "TrackersViewControllerPinAction" = "Alfiler";
 "TrackersViewControllerUnPinAction" = "Desprender";

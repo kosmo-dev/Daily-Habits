@@ -17,6 +17,10 @@
 "TrackersViewControllerNavigationTitle" = "Trackers";
 "TrackersViewControllerAlertControllerTitle" = "Error";
 "TrackersViewControllerAlertControllerErrorAddingTracker" = "Error adding record. Try again";
+"TrackersViewControllerAlertControllerErrorPinTracker" = "Error pin tracker. Try again";
+"TrackersViewControllerAlertControllerDeleteTitle" = "Are you sure you want to delete the tracker?";
+"TrackersViewControllerAlertControllerDeleteAction" = "Delete";
+"TrackersViewControllerAlertControllerErrorDeleteTracker" = "Error delete tracker. Try again";
 "TrackersViewControllerAlertControllerAction" = "Close";
 "TrackersViewControllerPinnedHeader" = "Pinned";
 "TrackersViewControllerPinAction" = "Pin";

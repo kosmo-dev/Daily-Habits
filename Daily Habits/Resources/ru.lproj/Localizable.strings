@@ -18,7 +18,11 @@
 "TrackersViewControllerNavigationTitle" = "Трекеры";
 "TrackersViewControllerAlertControllerTitle" = "Ошибка";
 "TrackersViewControllerAlertControllerErrorAddingTracker" = "Ошибка добавления записи. Попробуйте еще раз";
+"TrackersViewControllerAlertControllerErrorPinTracker" = "Ошибка закрепления ячейки. Попробуйте еще раз";
 "TrackersViewControllerAlertControllerAction" = "Закрыть";
+"TrackersViewControllerAlertControllerDeleteTitle" = "Уверены, что хотите удалить трекер?";
+"TrackersViewControllerAlertControllerDeleteAction" = "Удалить";
+"TrackersViewControllerAlertControllerErrorDeleteTracker" = "Ошибка удаления ячейки. Попробуйте еще раз";
 "TrackersViewControllerPinnedHeader" = "Закрепленные";
 "TrackersViewControllerPinAction" = "Закрепить";
 "TrackersViewControllerUnPinAction" = "Открепить";

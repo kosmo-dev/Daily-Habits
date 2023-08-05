@@ -96,11 +96,10 @@ final class CardCollectionViewCell: UICollectionViewCell {
     func configureCell(viewModel: CardCellViewModel) {
         emojiLabel.text = viewModel.tracker.emoji
         cardText.text = viewModel.tracker.name
-//        daysLabel.text = "\(viewModel.counter) \(dayStringDeclension(for: viewModel.counter))"
         daysLabel.text = String.localizedStringWithFormat(NSLocalizedString("%d days", comment: ""), viewModel.counter)
         cardView.backgroundColor = viewModel.tracker.color
         self.viewModel = viewModel
-        pinImageView.isHidden = true
+        pinImageView.isHidden = !viewModel.tracker.isPinned
         checkButtonState()
         checkIsButtonEnabled()
     }
@@ -174,21 +173,6 @@ final class CardCollectionViewCell: UICollectionViewCell {
         } else {
             checkButton.backgroundColor = viewModel.tracker.color.withAlphaComponent(1)
             checkButton.isEnabled = true
-        }
-    }
-
-    private func dayStringDeclension(for counter: Int) -> String {
-        let reminder = counter % 10
-        if counter == 11 || counter == 12 || counter == 13 || counter == 14 {
-            return "дней"
-        }
-        switch reminder {
-        case 1:
-            return "день"
-        case 2, 3, 4:
-            return "дня"
-        default:
-            return "дней"
         }
     }
 }

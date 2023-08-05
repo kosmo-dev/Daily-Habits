@@ -230,24 +230,20 @@ extension TrackersViewController: UICollectionViewDelegate {
     }
 
     private func makeCellContextMenuConfiguration(for indexPath: IndexPath) -> UIContextMenuConfiguration {
-        let category = viewModel.visibleCategories[indexPath.section]
+        let cellIsPinned = viewModel.visibleCategories[indexPath.section].trackers[indexPath.row].isPinned
         let pinMenu = UIAction(title: S.TrackersViewController.pinAction) { [weak self] _ in
-            guard let self else { return }
-            self.viewModel.pinButtonTapped(for: indexPath)
+            self?.viewModel.pinButtonTapped(for: indexPath)
         }
         let unPinMenu = UIAction(title: S.TrackersViewController.unPinAction) { [weak self] _ in
-            guard let self else { return }
-            self.viewModel.unPinButtonTapped(for: indexPath)
+            self?.viewModel.unPinButtonTapped(for: indexPath)
         }
         let editMenu = UIAction(title: S.TrackersViewController.editAction) { [weak self] _ in
-            guard let self else { return }
-            self.viewModel.editButtonTapped(for: indexPath)
+            self?.viewModel.editButtonTapped(for: indexPath)
         }
         let deleteMenu = UIAction(title: S.TrackersViewController.deleteAction, attributes: .destructive) { [weak self] _ in
-            guard let self else { return }
-            self.viewModel.deleteButtonTapped(for: indexPath)
+            self?.showDeleteAlert(indexPath)
         }
-        let cellFirstMenu = category.name == C.Constants.pinnedHeader ? unPinMenu : pinMenu
+        let cellFirstMenu = cellIsPinned ? unPinMenu : pinMenu
 
         let uiContextMenuConfiguration = UIContextMenuConfiguration(actionProvider:  { actions in
             return UIMenu(children: [
@@ -359,6 +355,17 @@ extension TrackersViewController {
         let alertController = UIAlertController(title: S.TrackersViewController.alertControllerTitle, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: S.TrackersViewController.alertControllerAction, style: .default)
         alertController.addAction(action)
+        present(alertController, animated: true)
+    }
+
+    func showDeleteAlert(_ indexPath: IndexPath) {
+        let alertController = UIAlertController(title: nil, message: S.TrackersViewController.alertControllerDeleteTitle, preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: S.TrackersViewController.alertControllerDeleteAction, style: .destructive) { [weak self] _ in
+            self?.viewModel.deleteButtonTapped(for: indexPath)
+        }
+        let cancelAction = UIAlertAction(title: S.cancelButton, style: .cancel)
+        alertController.addAction(deleteAction)
+        alertController.addAction(cancelAction)
         present(alertController, animated: true)
     }
 }

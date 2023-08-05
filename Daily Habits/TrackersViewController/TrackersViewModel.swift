@@ -24,6 +24,9 @@ final class TrackersViewModel {
 
     // MARK: - Private Properties
     private var currentDate: Date = Date()
+    private var currentWeekday: Int {
+        Calendar.current.component(.weekday, from: currentDate)-1
+    }
 
     private var insertedIndexesInSearch: [IndexPath] = []
     private var removedIndexesInSearch: [IndexPath] = []
@@ -78,16 +81,14 @@ final class TrackersViewModel {
             } else {
                 try recordsController.deleteTrackerRecord(id: cellViewModel.tracker.id, date: dateFormatter.string(from: currentDate))
             }
-            let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-            categoriesController.fetchCategoriesFor(weekday: weekday, animating: false)
+            categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: false)
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }
     }
 
     func performSearchFor(text: String) {
-        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        categoriesController.fetchSearchedCategories(textToSearch: text, weekday: weekday)
+        categoriesController.fetchSearchedCategories(textToSearch: text, weekday: currentWeekday)
     }
 
     func leftBarButtonTapped() {
@@ -114,11 +115,25 @@ final class TrackersViewModel {
     }
 
     func pinButtonTapped(for cellIndexPath: IndexPath) {
-        
+        var tracker = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.row]
+        tracker.isPinned = true
+        do {
+            try categoriesController.updateTrackerProperties(tracker)
+        } catch {
+            alertText = S.TrackersViewController.alertControllerErrorPinTracker
+        }
+        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: true)
     }
 
     func unPinButtonTapped(for cellIndexPath: IndexPath) {
-
+        var tracker = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.row]
+        tracker.isPinned = false
+        do {
+            try categoriesController.updateTrackerProperties(tracker)
+        } catch {
+            alertText = S.TrackersViewController.alertControllerErrorPinTracker
+        }
+        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: true)
     }
 
     func editButtonTapped(for cellIndexPath: IndexPath) {
@@ -126,17 +141,23 @@ final class TrackersViewModel {
     }
 
     func deleteButtonTapped(for cellIndexPath: IndexPath) {
-
+        let trackerID = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.row].id
+        do {
+            try categoriesController.deleteTracker(trackerID)
+        } catch {
+            alertText = S.TrackersViewController.alertControllerErrorDeleteTracker
+        }
+        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: true)
     }
 
     // MARK: - Private methods
     private func configure() {
         self.categoriesController.delegate = self
-        let weekday = Calendar.current.component(.weekday, from: currentDate)-1
-        categoriesController.fetchCategoriesFor(weekday: weekday, animating: false)
+        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: false)
     }
 
     private func checkNeedOnboardingScreen() {
+        print(visibleCategories)
         guard visibleCategories.isEmpty else { return }
         let pageViewController = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pageViewController.modalPresentationStyle = .fullScreen
@@ -195,12 +216,33 @@ final class TrackersViewModel {
             insertedSectionsInSearch: insertedSections,
             removedSectionsInSearch: removedSections)
     }
+
+    private func selectionForPinnedCategory(categories: [TrackerCategory]) -> [TrackerCategory] {
+        var pinnedTrackers: [Tracker] = []
+        var newCategories: [TrackerCategory] = []
+        for category in categories {
+            var trackers: [Tracker] = []
+            for tracker in category.trackers {
+                if tracker.isPinned {
+                    pinnedTrackers.append(tracker)
+                } else {
+                    trackers.append(tracker)
+                }
+            }
+            print(categories)
+            newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
+        }
+        if !pinnedTrackers.isEmpty {
+            newCategories.insert(TrackerCategory(name: S.TrackersViewController.pinnedHeader, trackers: pinnedTrackers), at: 0)
+        }
+        return newCategories
+    }
 }
 
 // MARK: - TrackerDataControllerDelegate
 extension TrackersViewModel: TrackerDataControllerDelegate {
     func updateViewByController(_ update: TrackerCategoryStoreUpdate) {
-        let newCategories = categoriesController.categories
+        let newCategories = selectionForPinnedCategory(categories: categoriesController.categories)
         calculateDiff(newCategories: newCategories, withDateChange: true)
         visibleCategories = newCategories
         trackersCollectionViewUpdate = trackersUpdate
@@ -208,8 +250,9 @@ extension TrackersViewModel: TrackerDataControllerDelegate {
     }
 
     func updateView(categories: [TrackerCategory], animating: Bool, withDateChange: Bool) {
-        calculateDiff(newCategories: categories, withDateChange: withDateChange)
-        visibleCategories = categories
+        let newCategories = selectionForPinnedCategory(categories: categoriesController.categories)
+        calculateDiff(newCategories: newCategories, withDateChange: withDateChange)
+        visibleCategories = newCategories
         if animating {
             trackersCollectionViewUpdate = trackersUpdate
         } else {

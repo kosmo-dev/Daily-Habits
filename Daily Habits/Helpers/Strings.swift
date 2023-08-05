@@ -32,6 +32,10 @@ struct S {
         static let unPinAction = NSLocalizedString("TrackersViewControllerUnPinAction", comment: "")
         static let editAction = NSLocalizedString("TrackersViewControllerEditAction", comment: "")
         static let deleteAction = NSLocalizedString("TrackersViewControllerDeleteAction", comment: "")
+        static let alertControllerErrorPinTracker = NSLocalizedString("TrackersViewControllerAlertControllerErrorPinTracker", comment: "")
+        static let alertControllerDeleteTitle = NSLocalizedString("TrackersViewControllerAlertControllerDeleteTitle", comment: "")
+        static let alertControllerDeleteAction = NSLocalizedString("TrackersViewControllerAlertControllerDeleteAction", comment: "")
+        static let alertControllerErrorDeleteTracker = NSLocalizedString("TrackersViewControllerAlertControllerErrorDeleteTracker", comment: "")
     }
 
     struct NewTrackerTypeChoosingViewController {
