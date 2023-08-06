@@ -270,7 +270,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         }
 
         let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return CGSize(width: collectionView.bounds.width, height: 50)
+//        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
     }
 }
 
@@ -342,9 +343,9 @@ extension TrackersViewController: UITextFieldDelegate {
             if !trackersCollectionViewUpdate.insertedIndexes.isEmpty {
                 collectionView.insertItems(at: trackersCollectionViewUpdate.insertedIndexes)
             }
-            if !trackersCollectionViewUpdate.reloadedIndexes.isEmpty {
-                collectionView.reloadItems(at: trackersCollectionViewUpdate.reloadedIndexes)
-            }
+        }
+        if !trackersCollectionViewUpdate.reloadedIndexes.isEmpty {
+            collectionView.reloadItems(at: trackersCollectionViewUpdate.reloadedIndexes)
         }
     }
 }

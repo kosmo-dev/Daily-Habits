@@ -122,7 +122,6 @@ final class TrackersViewModel {
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorPinTracker
         }
-        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: true)
     }
 
     func unPinButtonTapped(for cellIndexPath: IndexPath) {
@@ -133,7 +132,6 @@ final class TrackersViewModel {
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorPinTracker
         }
-        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: true)
     }
 
     func editButtonTapped(for cellIndexPath: IndexPath) {
@@ -147,7 +145,6 @@ final class TrackersViewModel {
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorDeleteTracker
         }
-        categoriesController.fetchCategoriesFor(weekday: currentWeekday, animating: true)
     }
 
     // MARK: - Private methods
@@ -157,7 +154,6 @@ final class TrackersViewModel {
     }
 
     private func checkNeedOnboardingScreen() {
-        print(visibleCategories)
         guard visibleCategories.isEmpty else { return }
         let pageViewController = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
         pageViewController.modalPresentationStyle = .fullScreen
@@ -173,7 +169,7 @@ final class TrackersViewModel {
 
         for (section, category) in visibleCategories.enumerated() {
             for (index, item) in category.trackers.enumerated() {
-                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.category == item.category }) }) {
                     removedIndexes.append(IndexPath(item: index, section: section))
                 }
             }
@@ -181,16 +177,16 @@ final class TrackersViewModel {
 
         for (section, category) in newCategories.enumerated() {
             for (index, item) in category.trackers.enumerated() {
-                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.category == item.category }) }) {
                     insertedIndexes.append(IndexPath(item: index, section: section))
                 }
             }
         }
 
         if withDateChange {
-            for (section, category) in visibleCategories.enumerated() {
+            for (section, category) in newCategories.enumerated() {
                 for (index, item) in category.trackers.enumerated() {
-                    if newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id }) }) {
+                    if visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.category == item.category }) }) {
                         reloadedIndexes.append(IndexPath(item: index, section: section))
                     }
                 }
@@ -224,12 +220,13 @@ final class TrackersViewModel {
             var trackers: [Tracker] = []
             for tracker in category.trackers {
                 if tracker.isPinned {
-                    pinnedTrackers.append(tracker)
+                    var updatedTracker = tracker
+                    updatedTracker.category = S.TrackersViewController.pinnedHeader
+                    pinnedTrackers.append(updatedTracker)
                 } else {
                     trackers.append(tracker)
                 }
             }
-            print(categories)
             newCategories.append(TrackerCategory(name: category.name, trackers: trackers))
         }
         if !pinnedTrackers.isEmpty {

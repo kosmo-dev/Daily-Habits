@@ -69,7 +69,7 @@ final class NewTrackerViewModel {
         }
         let emoji = emojis[selectedEmojiCellIndexPath.row]
         let color = colors[selectedColorCellIndexPath.row]
-        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: UUID().uuidString, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: false)])
+        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: UUID().uuidString, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: false, category: category)])
         delegate?.addNewTracker(newTracker)
     }
 

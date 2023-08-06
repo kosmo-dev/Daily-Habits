@@ -69,7 +69,8 @@ extension TrackerStore: TrackerStoreProtocol {
               let name = object.name,
               let colorString = object.color,
               let emoji = object.emoji,
-              let scheduleSet = object.schedule
+              let scheduleSet = object.schedule,
+              let category = object.trackerCategory?.name
         else {
             throw TrackerCategoryStoreError.decodingError
         }
@@ -80,7 +81,8 @@ extension TrackerStore: TrackerStoreProtocol {
             color: UIColor.color(from: colorString),
             emoji: emoji,
             schedule: schedule,
-            isPinned: object.isPinned
+            isPinned: object.isPinned,
+            category: category
         )
         return tracker
     }
