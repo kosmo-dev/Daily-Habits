@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D069E852A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D069E842A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift */; };
+		3D069E8E2A822FAD005AD9A9 /* CategoriesControllerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D069E8D2A822FAD005AD9A9 /* CategoriesControllerStub.swift */; };
+		3D069E902A82300B005AD9A9 /* RecordsControllerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D069E8F2A82300B005AD9A9 /* RecordsControllerStub.swift */; };
+		3D069E932A8232DF005AD9A9 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 3D069E922A8232DF005AD9A9 /* SnapshotTesting */; };
 		3D17BC752A727B6C00652304 /* TrackersCollectionViewUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */; };
 		3D204E712A5DE3D6007A6376 /* CoreDataPersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */; };
 		3D204E732A5DEA8C007A6376 /* TrackerDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */; };
@@ -57,7 +61,21 @@
 		3DFF187E2A7C3A2900283264 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 3DFF18802A7C3A2900283264 /* Localizable.stringsdict */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		3D069E862A822E82005AD9A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3DEA00D42A3B280300CE2402 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3DEA00DB2A3B280300CE2402;
+			remoteInfo = "Daily Habits";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		3D069E822A822E82005AD9A9 /* Daily Habits ScreenshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Daily Habits ScreenshotTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D069E842A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daily_Habits_ScreenshotTests.swift; sourceTree = "<group>"; };
+		3D069E8D2A822FAD005AD9A9 /* CategoriesControllerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesControllerStub.swift; sourceTree = "<group>"; };
+		3D069E8F2A82300B005AD9A9 /* RecordsControllerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsControllerStub.swift; sourceTree = "<group>"; };
 		3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCollectionViewUpdate.swift; sourceTree = "<group>"; };
 		3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPersistentContainer.swift; sourceTree = "<group>"; };
 		3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDataController.swift; sourceTree = "<group>"; };
@@ -117,6 +135,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3D069E7F2A822E82005AD9A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D069E932A8232DF005AD9A9 /* SnapshotTesting in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3DEA00D92A3B280300CE2402 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -127,6 +153,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D069E832A822E82005AD9A9 /* Daily Habits ScreenshotTests */ = {
+			isa = PBXGroup;
+			children = (
+				3D069E842A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift */,
+				3D069E8D2A822FAD005AD9A9 /* CategoriesControllerStub.swift */,
+				3D069E8F2A82300B005AD9A9 /* RecordsControllerStub.swift */,
+			);
+			path = "Daily Habits ScreenshotTests";
+			sourceTree = "<group>";
+		};
+		3D069E912A8232DF005AD9A9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		3D3D03422A67B04D0073DE2C /* OnboardingViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,7 +324,9 @@
 			isa = PBXGroup;
 			children = (
 				3DEA00DE2A3B280300CE2402 /* Daily Habits */,
+				3D069E832A822E82005AD9A9 /* Daily Habits ScreenshotTests */,
 				3DEA00DD2A3B280300CE2402 /* Products */,
+				3D069E912A8232DF005AD9A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -289,6 +334,7 @@
 			isa = PBXGroup;
 			children = (
 				3DEA00DC2A3B280300CE2402 /* Daily Habits.app */,
+				3D069E822A822E82005AD9A9 /* Daily Habits ScreenshotTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -314,6 +360,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3D069E812A822E82005AD9A9 /* Daily Habits ScreenshotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D069E882A822E82005AD9A9 /* Build configuration list for PBXNativeTarget "Daily Habits ScreenshotTests" */;
+			buildPhases = (
+				3D069E7E2A822E82005AD9A9 /* Sources */,
+				3D069E7F2A822E82005AD9A9 /* Frameworks */,
+				3D069E802A822E82005AD9A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3D069E872A822E82005AD9A9 /* PBXTargetDependency */,
+			);
+			name = "Daily Habits ScreenshotTests";
+			packageProductDependencies = (
+				3D069E922A8232DF005AD9A9 /* SnapshotTesting */,
+			);
+			productName = "Daily Habits ScreenshotTests";
+			productReference = 3D069E822A822E82005AD9A9 /* Daily Habits ScreenshotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		3DEA00DB2A3B280300CE2402 /* Daily Habits */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3DEA00F02A3B280300CE2402 /* Build configuration list for PBXNativeTarget "Daily Habits" */;
@@ -327,6 +394,8 @@
 			dependencies = (
 			);
 			name = "Daily Habits";
+			packageProductDependencies = (
+			);
 			productName = "Daily Habits";
 			productReference = 3DEA00DC2A3B280300CE2402 /* Daily Habits.app */;
 			productType = "com.apple.product-type.application";
@@ -341,6 +410,10 @@
 				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					3D069E812A822E82005AD9A9 = {
+						CreatedOnToolsVersion = 14.3.1;
+						TestTargetID = 3DEA00DB2A3B280300CE2402;
+					};
 					3DEA00DB2A3B280300CE2402 = {
 						CreatedOnToolsVersion = 14.3;
 					};
@@ -357,16 +430,27 @@
 				es,
 			);
 			mainGroup = 3DEA00D32A3B280300CE2402;
+			packageReferences = (
+				3D069E7B2A822E57005AD9A9 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+			);
 			productRefGroup = 3DEA00DD2A3B280300CE2402 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				3DEA00DB2A3B280300CE2402 /* Daily Habits */,
+				3D069E812A822E82005AD9A9 /* Daily Habits ScreenshotTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		3D069E802A822E82005AD9A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3DEA00DA2A3B280300CE2402 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -381,6 +465,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3D069E7E2A822E82005AD9A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D069E852A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift in Sources */,
+				3D069E902A82300B005AD9A9 /* RecordsControllerStub.swift in Sources */,
+				3D069E8E2A822FAD005AD9A9 /* CategoriesControllerStub.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3DEA00D82A3B280300CE2402 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -434,6 +528,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		3D069E872A822E82005AD9A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3DEA00DB2A3B280300CE2402 /* Daily Habits */;
+			targetProxy = 3D069E862A822E82005AD9A9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		3D6A7D9D2A7BDE9F00047C69 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
@@ -468,6 +570,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		3D069E892A822E82005AD9A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WEZ4D5M6R9;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vadimkuzmin.Daily-Habits-ScreenshotTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Daily Habits.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Daily Habits";
+			};
+			name = Debug;
+		};
+		3D069E8A2A822E82005AD9A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WEZ4D5M6R9;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vadimkuzmin.Daily-Habits-ScreenshotTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Daily Habits.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Daily Habits";
+			};
+			name = Release;
+		};
 		3DEA00EE2A3B280300CE2402 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -649,6 +787,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3D069E882A822E82005AD9A9 /* Build configuration list for PBXNativeTarget "Daily Habits ScreenshotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D069E892A822E82005AD9A9 /* Debug */,
+				3D069E8A2A822E82005AD9A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3DEA00D72A3B280300CE2402 /* Build configuration list for PBXProject "Daily Habits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -668,6 +815,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3D069E7B2A822E57005AD9A9 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3D069E922A8232DF005AD9A9 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3D069E7B2A822E57005AD9A9 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		3DCC16702A60AFFD0061F75D /* CoreDataModel.xcdatamodeld */ = {
