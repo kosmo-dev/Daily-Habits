@@ -34,7 +34,8 @@
 "NewTrackerViewControllerEmojiTitle" = "Emoji";
 "NewTrackerViewControllerColorsTitle" = "Color";
 "NewTrackerViewControllerCreateButton" = "Create";
-"NewTrackerViewControllerNavigationTitle" = "New Tracker";
+"NewTrackerViewControllerNavigationTitleNew" = "New Tracker";
+"NewTrackerViewControllerNavigationTitleEdit" = "Edit tracker";
 "NewTrackerViewControllerCategoryHeader" = "Category";
 "NewTrackerViewControllerScheduleHeader" = "Schedule";
 "NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Every day";

@@ -14,6 +14,7 @@ protocol NewTrackerViewModelDelegate: AnyObject {
 final class NewTrackerViewModel {
     enum Sections {
         case textField
+        case daysLabel
         case listButtonViews
         case emojiLabel
         case emojisCollection
@@ -25,13 +26,14 @@ final class NewTrackerViewModel {
     enum TrackerType {
         case habit
         case event
+        case edit
     }
     
-    private var navigationController: UINavigationController?
+    var navigationController: UINavigationController?
     let emojis = C.Emojis.emojis
     let colors = C.Colors.colors
 
-    let sections: [Sections] = [.textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
+    let sections: [Sections] = [.daysLabel, .textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
     let trackerType: TrackerType
     weak var delegate: NewTrackerViewModelDelegate?
 
@@ -40,22 +42,42 @@ final class NewTrackerViewModel {
     @Observable private(set) var weekdaysTitle: String?
     @ObservableWithOldValue private(set) var selectedEmojiCellIndexPath: IndexPath?
     @ObservableWithOldValue private(set) var selectedColorCellIndexPath: IndexPath?
-
-    private var titleTextFieldText: String?
+    private(set) var daysTitle: String?
+    private(set) var titleTextFieldText: String?
+    
     private var choosedDays: [Int] = []
-    private var choosedCategoryIndex: Int?
     private var categoriesController: TrackerDataControllerCategoriesProtocol
+    private var tracker: Tracker?
+    private var trackerIsPinned = false
+    private var trackerID = UUID().uuidString
 
     init(trackerType: TrackerType,
-         navigationController: UINavigationController?,
-         categoriesController: TrackerDataControllerCategoriesProtocol
+         categoriesController: TrackerDataControllerCategoriesProtocol,
+         navigationController: UINavigationController?
     ) {
         self.trackerType = trackerType
-        self.navigationController = navigationController
         self.categoriesController = categoriesController
+        self.navigationController = navigationController
         
         if trackerType == .event {
             choosedDays = Array(0...6)
+        }
+    }
+
+    convenience init(trackerType: TrackerType,
+         categoriesController: TrackerDataControllerCategoriesProtocol,
+         navigationController: UINavigationController?,
+         tracker: Tracker,
+         daysCount: Int
+    ) {
+        self.init(trackerType: trackerType, categoriesController: categoriesController, navigationController: navigationController)
+        self.tracker = tracker
+        self.daysTitle = String.localizedStringWithFormat(NSLocalizedString("%d days", comment: ""), daysCount)
+    }
+
+    func viewControllerDidLoad() {
+        if let tracker {
+            configureView(tracker)
         }
     }
 
@@ -69,7 +91,7 @@ final class NewTrackerViewModel {
         }
         let emoji = emojis[selectedEmojiCellIndexPath.row]
         let color = colors[selectedColorCellIndexPath.row]
-        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: UUID().uuidString, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: false, category: category)])
+        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: trackerID, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: trackerIsPinned, category: category)])
         delegate?.addNewTracker(newTracker)
     }
 
@@ -115,10 +137,10 @@ final class NewTrackerViewModel {
         case .textField, .emojiLabel, .colorLabel:
             return 1
         case .listButtonViews:
-            if trackerType == .habit {
-                return 2
-            } else {
+            if trackerType == .event {
                 return 1
+            } else {
+                return 2
             }
         case .emojisCollection:
             return emojis.count
@@ -126,11 +148,13 @@ final class NewTrackerViewModel {
             return colors.count
         case .buttons:
             return 2
+        case .daysLabel:
+            return trackerType == .edit ? 1 : 0
         }
     }
 
     private func categoryViewButtonTapped() {
-        let categoryViewModel = CategoryViewModel(choosedCategoryIndex: choosedCategoryIndex, navigationController: navigationController, categoriesController: categoriesController)
+        let categoryViewModel = CategoryViewModel(choosedCategory: category, navigationController: navigationController, categoriesController: categoriesController)
         let viewController = CategoryViewController(viewModel: categoryViewModel)
         categoryViewModel.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
@@ -142,12 +166,26 @@ final class NewTrackerViewModel {
         viewModel.delegate = self
         navigationController?.pushViewController(viewController, animated: true)
     }
+
+    private func configureView(_ tracker: Tracker) {
+        setTitleText(text: tracker.name)
+        addCategory(tracker.category)
+        let sortedSchedule = tracker.schedule.sorted()
+        addWeekDays(sortedSchedule)
+        if let emojiIndex = tracker.emojiIndex,
+           let colorIndex = tracker.colorIndex {
+            selectedEmojiCellIndexPath = IndexPath(item: emojiIndex, section: 4)
+            selectedColorCellIndexPath = IndexPath(item: colorIndex, section: 6)
+        }
+        trackerIsPinned = tracker.isPinned
+        trackerID = tracker.id
+        checkFormCompletion()
+    }
 }
 
 extension NewTrackerViewModel: CategoryViewModelDelegate {
-    func addCategory(_ category: String, index: Int) {
+    func addCategory(_ category: String) {
         self.category = category
-        choosedCategoryIndex = index
         checkFormCompletion()
     }
 }

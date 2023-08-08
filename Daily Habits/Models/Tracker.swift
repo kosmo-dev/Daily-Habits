@@ -16,3 +16,13 @@ struct Tracker {
     var isPinned: Bool
     var category: String
 }
+
+extension Tracker {
+    var colorIndex: Int? {
+        C.Colors.hexColors.firstIndex(of: color.hexString())
+    }
+
+    var emojiIndex: Int? {
+        C.Emojis.emojis.firstIndex(of: emoji)
+    }
+}

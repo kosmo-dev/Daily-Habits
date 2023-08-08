@@ -63,7 +63,7 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     }
 
     private func showViewController(trackerType: NewTrackerViewModel.TrackerType) {
-        let viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: navigationController, categoriesController: categoriesController)
+        let viewModel = NewTrackerViewModel(trackerType: trackerType, categoriesController: categoriesController, navigationController: navigationController)
         viewModel.delegate = trackersViewController
         let newTrackerViewController = NewTrackerViewController(viewModel: viewModel)
         navigationController?.pushViewController(newTrackerViewController, animated: true)

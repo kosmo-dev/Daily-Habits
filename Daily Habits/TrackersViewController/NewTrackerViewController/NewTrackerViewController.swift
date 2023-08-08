@@ -22,6 +22,14 @@ final class NewTrackerViewController: UIViewController {
         return titleTextField
     }()
 
+    private let daysTitle: UILabel = {
+        let daysTitle = UILabel()
+        daysTitle.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        daysTitle.textAlignment = .center
+        daysTitle.translatesAutoresizingMaskIntoConstraints = false
+        return daysTitle
+    }()
+
     private let collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.showsVerticalScrollIndicator = false
@@ -71,12 +79,17 @@ final class NewTrackerViewController: UIViewController {
         collectionView.dataSource = self
 
         setBindings()
+        viewModel.viewControllerDidLoad()
     }
 
     // MARK: - Private Methods
     private func configureView() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = S.NewTrackerViewController.navigationTitle
+        if viewModel.trackerType == .edit {
+            navigationItem.title = S.NewTrackerViewController.navigationTitleEdit
+        } else {
+            navigationItem.title = S.NewTrackerViewController.navigationTitleNew
+        }
         navigationItem.hidesBackButton = true
 
         view.addSubview(collectionView)
@@ -100,6 +113,7 @@ final class NewTrackerViewController: UIViewController {
 
     private func registerCells() {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "textFieldCell")
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "daysCell")
         collectionView.register(ListCollectionViewCell.self, forCellWithReuseIdentifier: "listViewCell")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiLabelCell")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsLabelCell")
@@ -122,9 +136,9 @@ final class NewTrackerViewController: UIViewController {
             self.updateCategoryViewSecondaryText(category)
         }
 
-        viewModel.$weekdaysTitle.bind { [weak self] weekdaysTitle in
-            guard let self, let weekdaysTitle else { return }
-            self.updateScheduleViewSecondaryText(weekdaysTitle)
+        viewModel.$weekdaysTitle.bind { [weak self] weekdays in
+            guard let self, let weekdays else { return }
+            self.updateScheduleViewSecondaryText(weekdays)
         }
 
         viewModel.$selectedEmojiCellIndexPath.bind { [weak self] oldIndexPath in
@@ -155,14 +169,35 @@ final class NewTrackerViewController: UIViewController {
     }
 
     private func updateCategoryViewSecondaryText(_ text: String) {
-        let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 1)) as? ListCollectionViewCell
+        let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 2)) as? ListCollectionViewCell
         cell?.addSecondaryText(text)
     }
 
     private func updateScheduleViewSecondaryText(_ text: String) {
-        let indexPath = viewModel.trackerType == .habit ? IndexPath(item: 1, section: 1) : IndexPath(item: 0, section: 2)
+        let indexPath = viewModel.trackerType == .event ? IndexPath(item: 0, section: 3) : IndexPath(item: 1, section: 2)
         let cell = collectionView.cellForItem(at: indexPath) as? ListCollectionViewCell
         cell?.addSecondaryText(text)
+    }
+
+    private func updateSecondaryText(in cell: ListCollectionViewCell?, for indexPath: IndexPath) {
+        if indexPath.item == 0 {
+            guard let category = viewModel.$category.wrappedValue else { return }
+            cell?.addSecondaryText(category)
+        } else {
+            guard let schedule = viewModel.$weekdaysTitle.wrappedValue else { return }
+            cell?.addSecondaryText(schedule)
+        }
+    }
+
+    private func updateCellSelection(in cell: CollectionViewCell?, at indexPath: IndexPath, type: CollectionViewCell.CellType) {
+        if type == .color {
+            guard indexPath.item == viewModel.$selectedColorCellIndexPath.wrappedValue?.item else { return }
+            let color = viewModel.colors[indexPath.row].withAlphaComponent(0.3)
+            cell?.cellSelected(type: type, color: color)
+        } else {
+            guard indexPath.item == viewModel.$selectedEmojiCellIndexPath.wrappedValue?.item else { return }
+            cell?.cellSelected(type: type, color: nil)
+        }
     }
 }
 
@@ -204,9 +239,24 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             cell.addSubview(titleTextField)
             NSLayoutConstraint.activate([
                 titleTextField.topAnchor.constraint(equalTo: cell.topAnchor),
-                titleTextField.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
-                titleTextField.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -padding),
+                titleTextField.leadingAnchor.constraint(equalTo: cell.leadingAnchor),
+                titleTextField.trailingAnchor.constraint(equalTo: cell.trailingAnchor),
                 titleTextField.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
+            ])
+            if let title = viewModel.titleTextFieldText {
+                titleTextField.text = title
+            }
+            return cell
+
+        case .daysLabel:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "daysCell", for: indexPath)
+            daysTitle.text = viewModel.daysTitle
+            cell.addSubview(daysTitle)
+            NSLayoutConstraint.activate([
+                daysTitle.topAnchor.constraint(equalTo: cell.topAnchor),
+                daysTitle.leadingAnchor.constraint(equalTo: cell.leadingAnchor),
+                daysTitle.trailingAnchor.constraint(equalTo: cell.trailingAnchor),
+                daysTitle.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
             ])
             return cell
 
@@ -232,6 +282,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             }
             let cellViewModel = ListViewModel(maskedCorners: maskedCorners, bottomDividerIsHidden: hideBottomDivider, primaryText: primaryText, type: .disclosure, action: nil, switcherIsOn: nil)
             cell?.configureCell(cellViewModel)
+            updateSecondaryText(in: cell, for: indexPath)
             return cell ?? UICollectionViewCell()
 
         case .emojiLabel:
@@ -239,7 +290,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             cell.addSubview(emojiLabel)
             NSLayoutConstraint.activate([
                 emojiLabel.topAnchor.constraint(equalTo: cell.topAnchor),
-                emojiLabel.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 28),
+                emojiLabel.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
                 emojiLabel.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
             ])
             return cell
@@ -247,6 +298,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
         case .emojisCollection:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as? CollectionViewCell
             cell?.configureView(with: viewModel.emojis[indexPath.row])
+            updateCellSelection(in: cell, at: indexPath, type: .emoji)
             return cell ?? UICollectionViewCell()
 
         case .colorLabel:
@@ -254,7 +306,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             cell.addSubview(colorsLabel)
             NSLayoutConstraint.activate([
                 colorsLabel.topAnchor.constraint(equalTo: cell.topAnchor),
-                colorsLabel.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 28),
+                colorsLabel.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: padding),
                 colorsLabel.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
             ])
             return cell
@@ -262,6 +314,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
         case .colorCollection:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorsCell", for: indexPath) as? CollectionViewCell
             cell?.configureView(with: viewModel.colors[indexPath.row])
+            updateCellSelection(in: cell, at: indexPath, type: .color)
             return cell ?? UICollectionViewCell()
 
         case .buttons:
@@ -300,21 +353,23 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
         let section = viewModel.sections[indexPath.section]
         switch section {
         case .textField:
-            return CGSize(width: view.bounds.width, height: 75)
+            return CGSize(width: collectionView.bounds.width, height: 75)
         case .listButtonViews:
-            return CGSize(width: view.bounds.width, height: 75)
+            return CGSize(width: collectionView.bounds.width, height: 75)
         case .emojiLabel:
-            return CGSize(width: view.bounds.width, height: 20)
+            return CGSize(width: collectionView.bounds.width, height: 20)
         case .emojisCollection:
             return CGSize(width: cellWidth, height: cellWidth)
         case .colorLabel:
-            return CGSize(width: view.bounds.width, height: 20)
+            return CGSize(width: collectionView.bounds.width, height: 20)
         case .colorCollection:
             return CGSize(width: cellWidth, height: cellWidth)
         case .buttons:
             let spacing: CGFloat = 8
             let cellWidth = (collectionWidth - spacing) / 2
             return CGSize(width: cellWidth, height: 60)
+        case .daysLabel:
+            return CGSize(width: collectionView.bounds.width, height: 40)
         }
     }
 
@@ -338,6 +393,12 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
             return UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         case .colorCollection:
             return UIEdgeInsets(top: 24, left: 0, bottom: 24, right: 0)
+        case .daysLabel:
+            if viewModel.trackerType == .edit {
+                return UIEdgeInsets(top: 24, left: 0, bottom: 40, right: 0)
+            } else {
+                return UIEdgeInsets.zero
+            }
         }
     }
 

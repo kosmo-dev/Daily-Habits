@@ -135,7 +135,9 @@ final class TrackersViewModel {
     }
 
     func editButtonTapped(for cellIndexPath: IndexPath) {
-
+        let tracker = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.item]
+        let daysCount = recordsController.fetchRecordsCountForId(tracker.id)
+        showNewTrackerViewController(tracker, daysCount: daysCount)
     }
 
     func deleteButtonTapped(for cellIndexPath: IndexPath) {
@@ -220,9 +222,7 @@ final class TrackersViewModel {
             var trackers: [Tracker] = []
             for tracker in category.trackers {
                 if tracker.isPinned {
-                    var updatedTracker = tracker
-                    updatedTracker.category = S.TrackersViewController.pinnedHeader
-                    pinnedTrackers.append(updatedTracker)
+                    pinnedTrackers.append(tracker)
                 } else {
                     trackers.append(tracker)
                 }
@@ -233,6 +233,21 @@ final class TrackersViewModel {
             newCategories.insert(TrackerCategory(name: S.TrackersViewController.pinnedHeader, trackers: pinnedTrackers), at: 0)
         }
         return newCategories
+    }
+
+    private func showNewTrackerViewController(_ tracker: Tracker, daysCount: Int) {
+        let viewModel = NewTrackerViewModel(
+            trackerType: .edit,
+            categoriesController: categoriesController,
+            navigationController: nil,
+            tracker: tracker,
+            daysCount: daysCount
+        )
+        viewModel.delegate = self
+        let viewController = NewTrackerViewController(viewModel: viewModel)
+        let modalNavigationController = UINavigationController(rootViewController: viewController)
+        viewModel.navigationController = modalNavigationController
+        navigationController?.present(modalNavigationController, animated: true)
     }
 }
 

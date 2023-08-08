@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CategoryViewModelDelegate: AnyObject {
-    func addCategory(_ category: String, index: Int)
+    func addCategory(_ category: String)
 }
 
 final class CategoryViewModel {
@@ -22,14 +22,13 @@ final class CategoryViewModel {
     private var categoriesController: TrackerDataControllerCategoriesProtocol
 
     init(
-        choosedCategoryIndex: Int?,
+        choosedCategory: String?,
         navigationController: UINavigationController?,
         categoriesController: TrackerDataControllerCategoriesProtocol
     ) {
-        self.choosedCategoryIndex = choosedCategoryIndex
         self.navigationController = navigationController
         self.categoriesController = categoriesController
-        fetchCategories()
+        fetchCategories(choosedCategory)
     }
 
     func addCategoryButtonTapped() {
@@ -47,13 +46,17 @@ final class CategoryViewModel {
     }
 
     func didSelectRow(at indexPath: IndexPath) {
-        delegate?.addCategory(categoriesModel[indexPath.row].title, index: indexPath.row)
+        delegate?.addCategory(categoriesModel[indexPath.row].title)
         navigationController?.popViewController(animated: true)
     }
 
-    private func fetchCategories() {
+    private func fetchCategories(_ choosedCategory: String?) {
         categoriesModel.removeAll()
         let categories = categoriesController.fetchCategoriesList()
+        if let choosedCategory {
+            let index = categories.firstIndex(where: { $0 == choosedCategory })
+            choosedCategoryIndex = index
+        }
         for (index, category) in categories.enumerated() {
             let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -83,7 +86,10 @@ extension CategoryViewModel: NewCategoryViewControllerDelegate {
     func addNewCategory(_ category: String) {
         do {
             try categoriesController.addNewCategory(category)
-            fetchCategories()
+            fetchCategories(category)
+            if let choosedCategoryIndex {
+                didSelectRow(at: IndexPath(row: choosedCategoryIndex, section: 0))
+            }
         } catch let error as TrackerCategoryStoreError {
             switch error {
             case .categoryExist:

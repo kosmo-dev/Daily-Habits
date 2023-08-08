@@ -35,7 +35,8 @@
 "NewTrackerViewControllerEmojiTitle" = "Emoji";
 "NewTrackerViewControllerColorsTitle" = "Цвет";
 "NewTrackerViewControllerCreateButton" = "Создать";
-"NewTrackerViewControllerNavigationTitle" = "Новая привычка";
+"NewTrackerViewControllerNavigationTitleNew" = "Новая привычка";
+"NewTrackerViewControllerNavigationTitleEdit" = "Редактирование привычки";
 "NewTrackerViewControllerCategoryHeader" = "Категория";
 "NewTrackerViewControllerScheduleHeader" = "Расписание";
 "NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Каждый день";

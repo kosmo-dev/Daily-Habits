@@ -44,6 +44,7 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
 
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws {
         guard let tracker = trackerCategory.trackers.first else { throw TrackerCategoryStoreError.noTrackerInTrackerCategory}
+        try? trackerStore.deleteTracker(tracker.id)
         let trackerCoreData = trackerStore.convertTrackerToTrackerCoreData(tracker)
 
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: C.CoreDataEntityNames.trackerCategoryCoreData)
@@ -61,6 +62,9 @@ extension TrackerCategoryStore: TrackerCategoryStoreProtocol {
     }
 
     func addNewCategory(_ category: String) throws {
+        if category.lowercased() == S.TrackersViewController.pinnedHeader.lowercased() {
+            throw TrackerCategoryStoreError.categoryExist
+        }
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: C.CoreDataEntityNames.trackerCategoryCoreData)
         let categories = try context.fetch(request)
 
