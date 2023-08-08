@@ -96,6 +96,16 @@ final class TrackersViewController: UIViewController {
         viewModel.viewControllerDidLoad()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.viewControllerDidAppear()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        viewModel.viewControllerDidDissapear()
+    }
+
     // MARK: - Private Methods
     private func configureNavigationBar() {
         let leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done, target: self, action: nil)
@@ -269,7 +279,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             return CGSizeZero
         }
 
-        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         return CGSize(width: collectionView.bounds.width, height: 50)
 //        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
     }

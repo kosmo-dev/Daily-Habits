@@ -19,6 +19,8 @@ class AppInitialConfiguration {
     let trackersNavigationController: UINavigationController
     let statisticViewController: StatisticViewController
 
+    let analyticsController: AppMetric
+
     init() {
         coreDataPersistentContainer = CoreDataPersistentContainer()
         trackerStore = TrackerStore(context: coreDataPersistentContainer.context)
@@ -26,8 +28,9 @@ class AppInitialConfiguration {
         trackerRecordStore = TrackerRecordStore(context: coreDataPersistentContainer.context)
         trackerDataController = TrackerDataController(trackerStore: trackerStore, trackerCategoryStore: trackerCategoryStore, trackerRecordStore: trackerRecordStore, context: coreDataPersistentContainer.context)
         trackerCategoryStore.setTrackerDataController(trackerDataController.fetchResultController)
+        analyticsController = AppMetric()
 
-        trackersViewModel = TrackersViewModel(categoriesController: trackerDataController, recordsController: trackerDataController)
+        trackersViewModel = TrackersViewModel(categoriesController: trackerDataController, recordsController: trackerDataController, analyticsController: analyticsController)
         trackersViewController = TrackersViewController(viewModel: trackersViewModel)
         trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         trackersViewModel.navigationController = trackersNavigationController

@@ -35,6 +35,7 @@ final class TrackersViewModel {
 
     private var categoriesController: TrackerDataControllerCategoriesProtocol
     private var recordsController: TrackerDataControllerRecordsProtocol
+    private var analyticsController: AppMetricProtocol
 
     private var trackersUpdate: TrackersCollectionViewUpdate?
 
@@ -44,10 +45,16 @@ final class TrackersViewModel {
         return dateFormatter
     }()
 
+    private let analyticScreenName = "main"
+
     // MARK: - Initializer
-    init(categoriesController: TrackerDataControllerCategoriesProtocol, recordsController: TrackerDataControllerRecordsProtocol) {
+    init(categoriesController: TrackerDataControllerCategoriesProtocol,
+         recordsController: TrackerDataControllerRecordsProtocol,
+         analyticsController: AppMetricProtocol)
+    {
         self.categoriesController = categoriesController
         self.recordsController = recordsController
+        self.analyticsController = analyticsController
         configure()
     }
 
@@ -75,6 +82,7 @@ final class TrackersViewModel {
     }
 
     func checkButtonOnCellTapped(cellViewModel: CardCellViewModel) {
+        analyticsController.reportEvent(screen: analyticScreenName, event: .click, item: .track)
         do {
             if cellViewModel.buttonIsChecked {
                 try recordsController.addTrackerRecord(id: cellViewModel.tracker.id, date: dateFormatter.string(from: currentDate))
@@ -92,6 +100,7 @@ final class TrackersViewModel {
     }
 
     func leftBarButtonTapped() {
+        analyticsController.reportEvent(screen: analyticScreenName, event: .click, item: .add_track)
         let newTrackerTypeChoosingviewController = NewTrackerTypeChoosingViewController(trackersViewController: self, categoriesController: categoriesController)
         let modalNavigationController = UINavigationController(rootViewController: newTrackerTypeChoosingviewController)
         navigationController?.present(modalNavigationController, animated: true)
@@ -112,6 +121,14 @@ final class TrackersViewModel {
     func viewControllerDidLoad() {
         checkNeedPlaceholder(for: .noTrackers)
         checkNeedOnboardingScreen()
+    }
+
+    func viewControllerDidAppear() {
+        analyticsController.reportEvent(screen: analyticScreenName, event: .open, item: nil)
+    }
+
+    func viewControllerDidDissapear() {
+        analyticsController.reportEvent(screen: analyticScreenName, event: .close, item: nil)
     }
 
     func pinButtonTapped(for cellIndexPath: IndexPath) {
@@ -135,12 +152,14 @@ final class TrackersViewModel {
     }
 
     func editButtonTapped(for cellIndexPath: IndexPath) {
+        analyticsController.reportEvent(screen: analyticScreenName, event: .click, item: .edit)
         let tracker = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.item]
         let daysCount = recordsController.fetchRecordsCountForId(tracker.id)
         showNewTrackerViewController(tracker, daysCount: daysCount)
     }
 
     func deleteButtonTapped(for cellIndexPath: IndexPath) {
+        analyticsController.reportEvent(screen: analyticScreenName, event: .click, item: .delete)
         let trackerID = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.row].id
         do {
             try categoriesController.deleteTracker(trackerID)
