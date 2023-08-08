@@ -53,8 +53,8 @@ final class NewTrackerViewController: UIViewController {
         return colorsLabel
     }()
 
-    private let cancelButton = PrimaryButton(title: S.cancelButton, action: #selector(cancelButtonTapped), type: .cancel)
-    private let saveButton = PrimaryButton(title: S.NewTrackerViewController.createButton, action: #selector(saveButtonTapped), type: .notActive)
+    private lazy var cancelButton = PrimaryButton(title: S.cancelButton, action: #selector(cancelButtonTapped), type: .cancel)
+    private lazy var saveButton = PrimaryButton(title: viewModel.saveButtonTitle, action: #selector(saveButtonTapped), type: .notActive)
 
     private var viewModel: NewTrackerViewModel
 

@@ -36,6 +36,13 @@ final class NewTrackerViewModel {
     let sections: [Sections] = [.daysLabel, .textField, .listButtonViews, .emojiLabel, .emojisCollection, .colorLabel, .colorCollection, .buttons]
     let trackerType: TrackerType
     weak var delegate: NewTrackerViewModelDelegate?
+    var saveButtonTitle: String {
+        if trackerType == .edit {
+            return S.NewTrackerViewController.saveButton
+        } else {
+            return S.NewTrackerViewController.createButton
+        }
+    }
 
     @Observable private(set) var category: String?
     @Observable private(set) var buttonIsEnabled = false

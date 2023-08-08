@@ -35,6 +35,7 @@
 "NewTrackerViewControllerEmojiTitle" = "Emoticonos";
 "NewTrackerViewControllerColorsTitle" = "Color";
 "NewTrackerViewControllerCreateButton" = "Crear";
+"NewTrackerViewControllerSaveButton" = "Ahorrar";
 "NewTrackerViewControllerNavigationTitleNew" = "Nuevo hábito";
 "NewTrackerViewControllerNavigationTitleEdit" = "Edición hábito";
 "NewTrackerViewControllerCategoryHeader" = "Categoría";

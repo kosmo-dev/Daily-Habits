@@ -38,7 +38,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     private let pinImageView: UIImageView = {
         let pinImageView = UIImageView()
         pinImageView.image = UIImage(systemName: "pin.fill")
-        pinImageView.tintColor = .ypWhite
+        pinImageView.tintColor = .white
         pinImageView.translatesAutoresizingMaskIntoConstraints = false
         return pinImageView
     }()

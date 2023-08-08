@@ -49,6 +49,7 @@ struct S {
         static let emojiTitle = NSLocalizedString("NewTrackerViewControllerEmojiTitle", comment: "")
         static let colorsTitle = NSLocalizedString("NewTrackerViewControllerColorsTitle", comment: "")
         static let createButton = NSLocalizedString("NewTrackerViewControllerCreateButton", comment: "")
+        static let saveButton = NSLocalizedString("NewTrackerViewControllerSaveButton", comment: "")
         static let navigationTitleNew = NSLocalizedString("NewTrackerViewControllerNavigationTitleNew", comment: "")
         static let navigationTitleEdit = NSLocalizedString("NewTrackerViewControllerNavigationTitleEdit", comment: "")
         static let categoryHeader = NSLocalizedString("NewTrackerViewControllerCategoryHeader", comment: "")
