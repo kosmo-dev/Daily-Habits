@@ -109,7 +109,7 @@ final class NewTrackerViewModel {
         }
         let emoji = emojis[selectedEmojiCellIndexPath.row]
         let color = colors[selectedColorCellIndexPath.row]
-        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: trackerID, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: trackerIsPinned, category: category)])
+        let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: trackerID, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: trackerIsPinned, category: category, viewCategory: category)])
         appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .saveNewTracker)
         delegate?.addNewTracker(newTracker)
     }

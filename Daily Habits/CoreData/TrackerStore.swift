@@ -82,7 +82,8 @@ extension TrackerStore: TrackerStoreProtocol {
             emoji: emoji,
             schedule: schedule,
             isPinned: object.isPinned,
-            category: category
+            category: category,
+            viewCategory: category
         )
         return tracker
     }

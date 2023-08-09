@@ -190,7 +190,7 @@ final class TrackersViewModel {
 
         for (section, category) in visibleCategories.enumerated() {
             for (index, item) in category.trackers.enumerated() {
-                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.category == item.category }) }) {
+                if !newCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.viewCategory == item.viewCategory }) }) {
                     removedIndexes.append(IndexPath(item: index, section: section))
                 }
             }
@@ -198,7 +198,7 @@ final class TrackersViewModel {
 
         for (section, category) in newCategories.enumerated() {
             for (index, item) in category.trackers.enumerated() {
-                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.category == item.category }) }) {
+                if !visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.viewCategory == item.viewCategory }) }) {
                     insertedIndexes.append(IndexPath(item: index, section: section))
                 }
             }
@@ -207,7 +207,7 @@ final class TrackersViewModel {
         if withDateChange {
             for (section, category) in newCategories.enumerated() {
                 for (index, item) in category.trackers.enumerated() {
-                    if visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.category == item.category }) }) {
+                    if visibleCategories.contains(where: { $0.trackers.contains(where: { $0.id == item.id && $0.viewCategory == item.viewCategory }) }) {
                         reloadedIndexes.append(IndexPath(item: index, section: section))
                     }
                 }
@@ -241,7 +241,9 @@ final class TrackersViewModel {
             var trackers: [Tracker] = []
             for tracker in category.trackers {
                 if tracker.isPinned {
-                    pinnedTrackers.append(tracker)
+                    var updatedTracker = tracker
+                    updatedTracker.viewCategory = C.Constants.pinnedHeader
+                    pinnedTrackers.append(updatedTracker)
                 } else {
                     trackers.append(tracker)
                 }
