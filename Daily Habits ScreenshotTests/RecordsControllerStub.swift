@@ -9,6 +9,10 @@ import Foundation
 @testable import Daily_Habits
 
 class RecordsControllerStub: TrackerDataControllerRecordsProtocol {
+    func fetchRecordsCount() -> Int? {
+        return 0
+    }
+
     func fetchRecordsCountForId(_ id: String) -> Int {
         return 0
     }

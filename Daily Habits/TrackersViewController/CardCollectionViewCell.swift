@@ -106,6 +106,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Private Methods
     private func makeLayout() {
+        layer.cornerRadius = 16
         addSubview(cardView)
         cardView.addSubview(emojiLabel)
         cardView.addSubview(pinImageView)
