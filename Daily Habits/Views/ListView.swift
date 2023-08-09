@@ -106,7 +106,6 @@ final class ListView: UIView {
             stackView.addArrangedSubview(secondaryText)
             secondaryTextDidAdd = true
         }
-        print("addSecondaryText ", text)
     }
 
     func addPrimaryText(_ text: String) {

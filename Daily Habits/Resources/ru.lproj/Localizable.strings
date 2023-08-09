@@ -47,3 +47,6 @@
 "NewCategoryViewControllerTextFieldPlaceholder" = "Введите название категории";
 "NewCategoryViewControllerNavigationTitle" = "Новая категория";
 "ScheduleViewControllerConfirmButton" = "Готово"; 
+"StatisticViewControllerPlaceholderText" = "Анализировать пока нечего";
+"StatisticViewControllerFinishedTrackers" = "Трекеров завершено";
+"StatisticViewControllerNavigationTitle" = "Статистика";

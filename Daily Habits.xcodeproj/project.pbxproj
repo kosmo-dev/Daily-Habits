@@ -48,6 +48,8 @@
 		3DB172B12A4301400043A3F1 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B02A4301400043A3F1 /* Tracker.swift */; };
 		3DB172B32A43015A0043A3F1 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B22A43015A0043A3F1 /* TrackerCategory.swift */; };
 		3DB172B52A4301780043A3F1 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB172B42A4301780043A3F1 /* TrackerRecord.swift */; };
+		3DB3294D2A83B315000CC701 /* StatisticCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB3294C2A83B315000CC701 /* StatisticCellView.swift */; };
+		3DB3294F2A83BCB1000CC701 /* StatisticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB3294E2A83BCB1000CC701 /* StatisticViewModel.swift */; };
 		3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB998D32A46F8B900EC9069 /* String+Extension.swift */; };
 		3DC0BC382A69C237008C1080 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC0BC372A69C237008C1080 /* Observable.swift */; };
 		3DCC16722A60AFFD0061F75D /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3DCC16702A60AFFD0061F75D /* CoreDataModel.xcdatamodeld */; };
@@ -125,6 +127,8 @@
 		3DB172B02A4301400043A3F1 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		3DB172B22A43015A0043A3F1 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		3DB172B42A4301780043A3F1 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
+		3DB3294C2A83B315000CC701 /* StatisticCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticCellView.swift; sourceTree = "<group>"; };
+		3DB3294E2A83BCB1000CC701 /* StatisticViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModel.swift; sourceTree = "<group>"; };
 		3DB998D32A46F8B900EC9069 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		3DC0BC372A69C237008C1080 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		3DCC16712A60AFFD0061F75D /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -265,6 +269,8 @@
 			isa = PBXGroup;
 			children = (
 				3D7BF5BD2A3F6B83007FDAC9 /* StatisticViewController.swift */,
+				3DB3294E2A83BCB1000CC701 /* StatisticViewModel.swift */,
+				3DB3294C2A83B315000CC701 /* StatisticCellView.swift */,
 			);
 			path = StatisticViewController;
 			sourceTree = "<group>";
@@ -603,6 +609,7 @@
 				3DB998D42A46F8B900EC9069 /* String+Extension.swift in Sources */,
 				3D204E732A5DEA8C007A6376 /* TrackerDataController.swift in Sources */,
 				3D5EA9812A76790B0054CEDC /* AppInitialConfiguration.swift in Sources */,
+				3DB3294D2A83B315000CC701 /* StatisticCellView.swift in Sources */,
 				3DE04A722A4791BC00AA623B /* CardCellViewModel.swift in Sources */,
 				3D7268682A692EAD00540D6B /* NewCategoryViewController.swift in Sources */,
 				3DCC16722A60AFFD0061F75D /* CoreDataModel.xcdatamodeld in Sources */,
@@ -624,6 +631,7 @@
 				3D351BBB2A74170800BDF635 /* CategoryCellModel.swift in Sources */,
 				3D6A7D962A7BCDF200047C69 /* Strings.swift in Sources */,
 				3D3D03442A67B0740073DE2C /* OnboardingPageViewController.swift in Sources */,
+				3DB3294F2A83BCB1000CC701 /* StatisticViewModel.swift in Sources */,
 				3D7BF5BE2A3F6B83007FDAC9 /* StatisticViewController.swift in Sources */,
 				3D44CA102A43998600B7AF05 /* NewTrackerViewController.swift in Sources */,
 				3DEA00E22A3B280300CE2402 /* SceneDelegate.swift in Sources */,

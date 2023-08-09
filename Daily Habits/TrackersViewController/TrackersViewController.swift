@@ -278,10 +278,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         if viewModel.visibleCategories[indexPath.section].trackers.count == 0 {
             return CGSizeZero
         }
-
-//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         return CGSize(width: collectionView.bounds.width, height: 50)
-//        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
     }
 }
 

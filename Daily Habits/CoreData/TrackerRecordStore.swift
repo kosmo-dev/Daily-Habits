@@ -13,6 +13,7 @@ protocol TrackerRecordStoreProtocol {
     func checkTrackerRecordExist(id: String, date: String) -> Bool
     func addTrackerRecord(id: String, date: String) throws
     func deleteTrackerRecord(id: String, date: String) throws
+    func fetchRecordsCount() -> Int?
 }
 
 final class TrackerRecordStore {
@@ -64,6 +65,16 @@ extension TrackerRecordStore: TrackerRecordStoreProtocol {
             return count > 0
         } catch {
             return false
+        }
+    }
+
+    func fetchRecordsCount() -> Int? {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: C.CoreDataEntityNames.trackerRecordCoreData)
+        do {
+            let count = try context.count(for: request)
+            return count
+        } catch {
+            return nil
         }
     }
 }

@@ -25,7 +25,7 @@ final class TabBarController: UITabBarController {
         appInitialConfiguration.trackersViewController.tabBarItem = UITabBarItem(title: S.TabBarController.trackersTabBarItem, image: UIImage(systemName: "record.circle.fill"), selectedImage: nil)
         appInitialConfiguration.statisticViewController.tabBarItem = UITabBarItem(title: S.TabBarController.statisticsTabBarItem, image: UIImage(systemName: "hare.fill"), selectedImage: nil)
 
-        self.viewControllers = [appInitialConfiguration.trackersNavigationController, appInitialConfiguration.statisticViewController]
+        self.viewControllers = [appInitialConfiguration.trackersNavigationController, appInitialConfiguration.statisticNavigationCOntroller]
 
         tabBar.isTranslucent = false
         view.tintColor = .ypBlue

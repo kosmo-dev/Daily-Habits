@@ -72,5 +72,11 @@ struct S {
         static let confirmButton = NSLocalizedString("ScheduleViewControllerConfirmButton", comment: "")
     }
 
+    struct StatisticViewController {
+        static let placeholderText = NSLocalizedString("StatisticViewControllerPlaceholderText", comment: "")
+        static let finishedTrackers = NSLocalizedString("StatisticViewControllerFinishedTrackers", comment: "")
+        static let navigationTitle = NSLocalizedString("StatisticViewControllerNavigationTitle", comment: "")
+    }
+
     static let cancelButton = NSLocalizedString("CancelButton", comment: "")
 }

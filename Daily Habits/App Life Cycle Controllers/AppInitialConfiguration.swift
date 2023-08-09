@@ -17,7 +17,9 @@ class AppInitialConfiguration {
     let trackersViewModel: TrackersViewModel
     let trackersViewController: TrackersViewController
     let trackersNavigationController: UINavigationController
+    let statisticNavigationCOntroller: UINavigationController
     let statisticViewController: StatisticViewController
+    let statisticViewModel: StatisticViewModel
 
     let analyticsController: AppMetric
 
@@ -34,6 +36,8 @@ class AppInitialConfiguration {
         trackersViewController = TrackersViewController(viewModel: trackersViewModel)
         trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
         trackersViewModel.navigationController = trackersNavigationController
-        statisticViewController = StatisticViewController()
+        statisticViewModel = StatisticViewModel(dataController: trackerDataController)
+        statisticViewController = StatisticViewController(viewModel: statisticViewModel)
+        statisticNavigationCOntroller = UINavigationController(rootViewController: statisticViewController)
     }
 }

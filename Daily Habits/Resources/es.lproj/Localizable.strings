@@ -47,3 +47,6 @@
 "NewCategoryViewControllerTextFieldPlaceholder" = "Introduce el nombre de la categoría";
 "NewCategoryViewControllerNavigationTitle" = "Nueva categoría";
 "ScheduleViewControllerConfirmButton" = "Confirmar";
+"StatisticViewControllerPlaceholderText" = "Nada que analizar";
+"StatisticViewControllerFinishedTrackers" = "Rastreadores completados";
+"StatisticViewControllerNavigationTitle" = "Estadísticas";

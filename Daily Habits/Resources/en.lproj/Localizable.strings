@@ -10,7 +10,7 @@
 "OnboardingViewControllerSecondViewControllerText" = "Even if it's not quarts of water and yoga";
 "OnboardingViewControllerButton" = "That's technology!";
 "TabBarControllerTrackersTabBarItem"= "Trackers";
-"TabBarControllerStatisticsTabBarItem" = "Statistic";
+"TabBarControllerStatisticsTabBarItem" = "Statistics";
 "TrackersViewControllerSearchPlaceholder" = "Search";
 "TrackersViewControllerEmptyTrackersPlaceholder" = "What will we track?";
 "TrackersViewControllerNotFoundPlaceholder" = "Nothing found";
@@ -46,4 +46,7 @@
 "NewCategoryViewControllerTextFieldPlaceholder" = "Enter category name";
 "NewCategoryViewControllerNavigationTitle" = "New Category";
 "ScheduleViewControllerConfirmButton" = "Confirm";
+"StatisticViewControllerPlaceholderText" = "Nothing to analyze";
+"StatisticViewControllerFinishedTrackers" = "Trackers completed";
+"StatisticViewControllerNavigationTitle" = "Statistics";
 
