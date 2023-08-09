@@ -58,12 +58,17 @@ final class NewTrackerViewModel {
     private var trackerIsPinned = false
     private var trackerID = UUID().uuidString
 
+    private let appMetricController: AppMetricProtocol
+    private let appMetricScreenName = "newTracker"
+
     init(trackerType: TrackerType,
          categoriesController: TrackerDataControllerCategoriesProtocol,
+         appMetricController: AppMetricProtocol,
          navigationController: UINavigationController?
     ) {
         self.trackerType = trackerType
         self.categoriesController = categoriesController
+        self.appMetricController = appMetricController
         self.navigationController = navigationController
         
         if trackerType == .event {
@@ -73,11 +78,12 @@ final class NewTrackerViewModel {
 
     convenience init(trackerType: TrackerType,
          categoriesController: TrackerDataControllerCategoriesProtocol,
+         appMetricController: AppMetricProtocol,
          navigationController: UINavigationController?,
          tracker: Tracker,
          daysCount: Int
     ) {
-        self.init(trackerType: trackerType, categoriesController: categoriesController, navigationController: navigationController)
+        self.init(trackerType: trackerType, categoriesController: categoriesController, appMetricController: appMetricController, navigationController: navigationController)
         self.tracker = tracker
         self.daysTitle = String.localizedStringWithFormat(NSLocalizedString("%d days", comment: ""), daysCount)
     }
@@ -86,6 +92,11 @@ final class NewTrackerViewModel {
         if let tracker {
             configureView(tracker)
         }
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .open, item: nil)
+    }
+
+    func viewControllerDidDisappear() {
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .close, item: nil)
     }
 
     func saveButtonTapped(text: String) {
@@ -99,6 +110,7 @@ final class NewTrackerViewModel {
         let emoji = emojis[selectedEmojiCellIndexPath.row]
         let color = colors[selectedColorCellIndexPath.row]
         let newTracker = TrackerCategory(name: category, trackers: [Tracker(id: trackerID, name: text, color: color, emoji: emoji, schedule: choosedDays, isPinned: trackerIsPinned, category: category)])
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .saveNewTracker)
         delegate?.addNewTracker(newTracker)
     }
 
@@ -124,8 +136,10 @@ final class NewTrackerViewModel {
         let section = sections[indexPath.section]
         if section == .emojisCollection  {
             selectedEmojiCellIndexPath = indexPath
+            appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .emoji)
         } else if section == .colorCollection {
             selectedColorCellIndexPath = indexPath
+            appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .color)
         } else if section == .listButtonViews {
             if trackerType == .event {
                 categoryViewButtonTapped()
@@ -164,6 +178,7 @@ final class NewTrackerViewModel {
         let categoryViewModel = CategoryViewModel(choosedCategory: category, navigationController: navigationController, categoriesController: categoriesController)
         let viewController = CategoryViewController(viewModel: categoryViewModel)
         categoryViewModel.delegate = self
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .trackerCategory)
         navigationController?.pushViewController(viewController, animated: true)
     }
 
@@ -171,6 +186,7 @@ final class NewTrackerViewModel {
         let viewModel = ScheduleViewModel(choosedDays: choosedDays, navigationController: navigationController)
         let viewController = ScheduleViewController(viewModel: viewModel)
         viewModel.delegate = self
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .trackerSchedule)
         navigationController?.pushViewController(viewController, animated: true)
     }
 

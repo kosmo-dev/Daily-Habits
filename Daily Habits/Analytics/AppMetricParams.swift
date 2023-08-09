@@ -19,5 +19,14 @@ enum AppMetricParams {
         case filter
         case edit
         case delete
+
+        case habitButton
+        case eventButton
+
+        case saveNewTracker
+        case trackerCategory
+        case trackerSchedule
+        case emoji
+        case color
     }
 }

@@ -82,6 +82,11 @@ final class NewTrackerViewController: UIViewController {
         viewModel.viewControllerDidLoad()
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        viewModel.viewControllerDidDisappear()
+    }
+
     // MARK: - Private Methods
     private func configureView() {
         view.backgroundColor = .ypWhite
