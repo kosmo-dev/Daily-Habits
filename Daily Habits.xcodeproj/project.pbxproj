@@ -13,6 +13,7 @@
 		3D069E932A8232DF005AD9A9 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 3D069E922A8232DF005AD9A9 /* SnapshotTesting */; };
 		3D1140EE2A824E5A003DAAC4 /* AppMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1140ED2A824E5A003DAAC4 /* AppMetric.swift */; };
 		3D1140F02A824F45003DAAC4 /* AppMetricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1140EF2A824F45003DAAC4 /* AppMetricParams.swift */; };
+		3D1140F22A8262B1003DAAC4 /* AppMetricStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1140F12A8262B1003DAAC4 /* AppMetricStub.swift */; };
 		3D17BC752A727B6C00652304 /* TrackersCollectionViewUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */; };
 		3D204E712A5DE3D6007A6376 /* CoreDataPersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */; };
 		3D204E732A5DEA8C007A6376 /* TrackerDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */; };
@@ -84,6 +85,7 @@
 		3D069E8F2A82300B005AD9A9 /* RecordsControllerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsControllerStub.swift; sourceTree = "<group>"; };
 		3D1140ED2A824E5A003DAAC4 /* AppMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetric.swift; sourceTree = "<group>"; };
 		3D1140EF2A824F45003DAAC4 /* AppMetricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetricParams.swift; sourceTree = "<group>"; };
+		3D1140F12A8262B1003DAAC4 /* AppMetricStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetricStub.swift; sourceTree = "<group>"; };
 		3D17BC742A727B6C00652304 /* TrackersCollectionViewUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCollectionViewUpdate.swift; sourceTree = "<group>"; };
 		3D204E702A5DE3D6007A6376 /* CoreDataPersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPersistentContainer.swift; sourceTree = "<group>"; };
 		3D204E722A5DEA8C007A6376 /* TrackerDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerDataController.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				3D069E842A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift */,
 				3D069E8D2A822FAD005AD9A9 /* CategoriesControllerStub.swift */,
 				3D069E8F2A82300B005AD9A9 /* RecordsControllerStub.swift */,
+				3D1140F12A8262B1003DAAC4 /* AppMetricStub.swift */,
 			);
 			path = "Daily Habits ScreenshotTests";
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D069E852A822E82005AD9A9 /* Daily_Habits_ScreenshotTests.swift in Sources */,
+				3D1140F22A8262B1003DAAC4 /* AppMetricStub.swift in Sources */,
 				3D069E902A82300B005AD9A9 /* RecordsControllerStub.swift in Sources */,
 				3D069E8E2A822FAD005AD9A9 /* CategoriesControllerStub.swift in Sources */,
 			);

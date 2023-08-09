@@ -60,6 +60,7 @@ struct S {
     struct CategoryViewController {
         static let addCategoryButton = NSLocalizedString("CategoryViewControllerAddCategoryButton", comment: "")
         static let alertControllerErrorCategoryExist = NSLocalizedString("CategoryViewControllerAlertControllerErrorCategoryExist", comment: "")
+        static let placeholderText = NSLocalizedString("CategoryViewControllerPlaceholderText", comment: "")
     }
 
     struct NewCategoryViewController {

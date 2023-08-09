@@ -14,8 +14,9 @@ protocol CategoryViewModelDelegate: AnyObject {
 final class CategoryViewModel {
     weak var delegate: CategoryViewModelDelegate?
 
-    @Observable private (set) var categoriesModel: [CategoryCellModel] = []
+    @Observable private(set) var categoriesModel: [CategoryCellModel] = []
     @Observable private(set) var alertText: String?
+    @Observable private(set) var showPlaceholder: Bool = false
 
     private var choosedCategoryIndex: Int?
     private var navigationController: UINavigationController?
@@ -50,6 +51,10 @@ final class CategoryViewModel {
         navigationController?.popViewController(animated: true)
     }
 
+    func viewControllerDidLoad() {
+        checkNeedPlaceholder()
+    }
+
     private func fetchCategories(_ choosedCategory: String?) {
         categoriesModel.removeAll()
         let categories = categoriesController.fetchCategoriesList()
@@ -78,6 +83,15 @@ final class CategoryViewModel {
                 hideCheckMark = false
             }
             categoriesModel.append(CategoryCellModel(title: category, hideCheckmark: hideCheckMark, hideBottomDivider: hideBottomDivider, maskedCorners: maskedCorners))
+        }
+        checkNeedPlaceholder()
+    }
+
+    private func checkNeedPlaceholder() {
+        if categoriesModel.isEmpty {
+            showPlaceholder = true
+        } else {
+            showPlaceholder = false
         }
     }
 }

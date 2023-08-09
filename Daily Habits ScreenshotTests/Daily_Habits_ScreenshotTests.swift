@@ -14,7 +14,8 @@ final class Daily_Habits_ScreenshotTests: XCTestCase {
     func testTrackersViewController() {
         let categoriesController = CategoriesControllerStub()
         let recordsController = RecordsControllerStub()
-        let trackersViewModel = TrackersViewModel(categoriesController: categoriesController, recordsController: recordsController)
+        let appMetric = AppMetricStub()
+        let trackersViewModel = TrackersViewModel(categoriesController: categoriesController, recordsController: recordsController, analyticsController: appMetric)
         let trackersViewController = TrackersViewController(viewModel: trackersViewModel)
         categoriesController.delegate = trackersViewModel
 

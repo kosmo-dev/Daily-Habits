@@ -42,6 +42,7 @@
 "NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Every day";
 "CategoryViewControllerAddCategoryButton" = "Add Category";
 "CategoryViewControllerAlertControllerErrorCategoryExist" = "Category already exists";
+"CategoryViewControllerPlaceholderText" = "Habits and events can be combined in meaning";
 "NewCategoryViewControllerTextFieldPlaceholder" = "Enter category name";
 "NewCategoryViewControllerNavigationTitle" = "New Category";
 "ScheduleViewControllerConfirmButton" = "Confirm";

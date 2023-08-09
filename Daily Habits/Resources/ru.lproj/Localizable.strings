@@ -42,7 +42,8 @@
 "NewTrackerViewControllerScheduleHeader" = "Расписание";
 "NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Каждый день";
 "CategoryViewControllerAddCategoryButton" = "Добавить категорию";
-"CategoryViewControllerAlertControllerErrorCategoryExist" = "Категория уже существует"; 
+"CategoryViewControllerAlertControllerErrorCategoryExist" = "Категория уже существует";
+"CategoryViewControllerPlaceholderText" = "Привычки и события можно объединить по смыслу";
 "NewCategoryViewControllerTextFieldPlaceholder" = "Введите название категории";
 "NewCategoryViewControllerNavigationTitle" = "Новая категория";
 "ScheduleViewControllerConfirmButton" = "Готово"; 
