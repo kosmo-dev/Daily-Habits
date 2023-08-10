@@ -31,6 +31,7 @@ protocol TrackerDataControllerRecordsProtocol {
     func addTrackerRecord(id: String, date: String) throws
     func deleteTrackerRecord(id: String, date: String) throws
     func fetchRecordsCount() -> Int?
+    func deleteRecords(for id: String) throws
 }
 
 final class TrackerDataController: NSObject {
@@ -139,6 +140,10 @@ extension TrackerDataController: TrackerDataControllerRecordsProtocol {
 
     func fetchRecordsCount() -> Int? {
         return trackerRecordStore.fetchRecordsCount()
+    }
+
+    func deleteRecords(for id: String) throws {
+        try trackerRecordStore.deleteRecords(for: id)
     }
 }
 

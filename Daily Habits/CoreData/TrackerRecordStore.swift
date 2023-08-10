@@ -14,6 +14,7 @@ protocol TrackerRecordStoreProtocol {
     func addTrackerRecord(id: String, date: String) throws
     func deleteTrackerRecord(id: String, date: String) throws
     func fetchRecordsCount() -> Int?
+    func deleteRecords(for id: String) throws
 }
 
 final class TrackerRecordStore {
@@ -42,6 +43,15 @@ extension TrackerRecordStore: TrackerRecordStoreProtocol {
             context.delete(trackerRecord)
             try context.save()
         }
+    }
+
+    func deleteRecords(for id: String) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: C.CoreDataEntityNames.trackerRecordCoreData)
+        let predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerRecordCoreData.trackerID), id)
+        request.predicate = predicate
+        let trackerRecords = try context.fetch(request)
+        trackerRecords.forEach { context.delete($0) }
+        try context.save()
     }
 
     func fetchRecordsCountForId(_ id: String) -> Int {

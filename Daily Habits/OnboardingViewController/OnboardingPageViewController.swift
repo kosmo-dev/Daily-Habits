@@ -44,6 +44,9 @@ final class OnboardingPageViewController: UIPageViewController {
         view.addSubview(pageControl)
         view.addSubview(button)
 
+        button.backgroundColor = UIColor.color(from: "1A1B22")
+        button.setTitleColor(.white, for: .normal)
+
         NSLayoutConstraint.activate([
             button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),

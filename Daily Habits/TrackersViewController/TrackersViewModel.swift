@@ -163,6 +163,7 @@ final class TrackersViewModel {
         let trackerID = visibleCategories[cellIndexPath.section].trackers[cellIndexPath.row].id
         do {
             try categoriesController.deleteTracker(trackerID)
+            try recordsController.deleteRecords(for: trackerID)
         } catch {
             alertText = S.TrackersViewController.alertControllerErrorDeleteTracker
         }
