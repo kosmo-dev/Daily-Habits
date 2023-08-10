@@ -22,5 +22,4 @@ final class Daily_Habits_ScreenshotTests: XCTestCase {
         assertSnapshots(matching: trackersViewController, as: [.image(traits: .init(userInterfaceStyle: .light))])
         assertSnapshots(matching: trackersViewController, as: [.image(traits: .init(userInterfaceStyle: .dark))])
     }
-
 }

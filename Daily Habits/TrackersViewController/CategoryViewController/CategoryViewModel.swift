@@ -88,11 +88,7 @@ final class CategoryViewModel {
     }
 
     private func checkNeedPlaceholder() {
-        if categoriesModel.isEmpty {
-            showPlaceholder = true
-        } else {
-            showPlaceholder = false
-        }
+        showPlaceholder = categoriesModel.isEmpty
     }
 }
 
