@@ -86,6 +86,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         makeLayout()
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cardView.addInteraction(interaction)
     }
 
     required init?(coder: NSCoder) {
@@ -175,5 +177,15 @@ final class CardCollectionViewCell: UICollectionViewCell {
             checkButton.backgroundColor = viewModel.tracker.color.withAlphaComponent(1)
             checkButton.isEnabled = true
         }
+    }
+}
+
+extension CardCollectionViewCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(actionProvider:  { [weak self] _ in
+            guard let contextMenu = self?.viewModel?.contextMenu  else { return nil }
+            return UIMenu(children: contextMenu)
+        })
+
     }
 }

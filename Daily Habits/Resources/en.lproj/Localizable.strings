@@ -22,6 +22,7 @@
 "TrackersViewControllerAlertControllerDeleteAction" = "Delete";
 "TrackersViewControllerAlertControllerErrorDeleteTracker" = "Error delete tracker. Try again";
 "TrackersViewControllerAlertControllerAction" = "Close";
+"TrackersViewControllerFilterButtonTitle" = "Filters";
 "TrackersViewControllerPinnedHeader" = "Pinned";
 "TrackersViewControllerPinAction" = "Pin";
 "TrackersViewControllerUnPinAction" = "Unpin";

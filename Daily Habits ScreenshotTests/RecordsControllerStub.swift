@@ -9,6 +9,8 @@ import Foundation
 @testable import Daily_Habits
 
 class RecordsControllerStub: TrackerDataControllerRecordsProtocol {
+    func deleteRecords(for id: String) throws {}
+
     func fetchRecordsCount() -> Int? {
         return 0
     }

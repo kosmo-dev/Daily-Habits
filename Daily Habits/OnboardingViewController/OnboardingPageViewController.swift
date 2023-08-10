@@ -9,9 +9,9 @@ import UIKit
 
 final class OnboardingPageViewController: UIPageViewController {
 
-    let firstViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingFirst)!,
+    let firstViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingFirst),
                                                        text: S.OnboardingViewController.firstViewControllerText)
-    let secondViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingSecond)!,
+    let secondViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingSecond),
                                                         text: S.OnboardingViewController.secondViewControllerText)
 
     lazy var pages: [UIViewController] = [firstViewController, secondViewController]

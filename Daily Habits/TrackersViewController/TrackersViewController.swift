@@ -70,6 +70,8 @@ final class TrackersViewController: UIViewController {
         return placeholderText
     }()
 
+    private let filterButton = PrimaryButton(title: S.TrackersViewController.filterButtonTitle, action: #selector(filterButtonTapped), type: .secondary)
+
     private var viewModel: TrackersViewModel
 
     // MARK: - Initializers
@@ -132,7 +134,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private func makeLayout() {
-        [searchStackView, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
+        [searchStackView, collectionView, placeholderImageView, placeholderText, filterButton].forEach({ view.addSubview($0) })
         searchStackView.addArrangedSubview(searchField)
 
         let padding: CGFloat = 16
@@ -153,7 +155,12 @@ final class TrackersViewController: UIViewController {
             placeholderText.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
             placeholderText.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
 
-            cancelSearchButton.widthAnchor.constraint(equalToConstant: 83)
+            cancelSearchButton.widthAnchor.constraint(equalToConstant: 83),
+
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -padding),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 
@@ -163,8 +170,10 @@ final class TrackersViewController: UIViewController {
             if let image {
                 placeholderImageView.isHidden = false
                 placeholderImageView.image = image
+                filterButton.isHidden = true
             } else {
                 placeholderImageView.isHidden = true
+                filterButton.isHidden = false
             }
         }
 
@@ -206,40 +215,12 @@ final class TrackersViewController: UIViewController {
         datePickerValueChanged()
         viewModel.checkNeedPlaceholder(for: .noTrackers)
     }
-}
 
-// MARK: - UICollectionViewDataSource
-extension TrackersViewController: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel.visibleCategories.count
-    }
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = viewModel.visibleCategories[section].trackers.count
-        return count
+    @objc private func filterButtonTapped() {
+        viewModel.filterButtonTapped()
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CardCollectionViewCell
-        cell?.delegate = self
-        let cellViewModel = viewModel.configureCellViewModel(for: indexPath)
-        cell?.configureCell(viewModel: cellViewModel)
-        return cell ?? UICollectionViewCell()
-    }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header", for: indexPath) as? HeaderCollectionReusableView
-        view?.configureView(text: viewModel.visibleCategories[indexPath.section].name)
-        return view ?? UICollectionReusableView()
-    }
-}
-
-// MARK: - UICollectionViewDelegate
-extension TrackersViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        return makeCellContextMenuConfiguration(for: indexPath)
-    }
-
-    private func makeCellContextMenuConfiguration(for indexPath: IndexPath) -> UIContextMenuConfiguration {
+    private func makeContextMenu(for indexPath: IndexPath) -> [UIMenuElement] {
         let cellIsPinned = viewModel.visibleCategories[indexPath.section].trackers[indexPath.row].isPinned
         let pinMenu = UIAction(title: S.TrackersViewController.pinAction) { [weak self] _ in
             self?.viewModel.pinButtonTapped(for: indexPath)
@@ -255,16 +236,38 @@ extension TrackersViewController: UICollectionViewDelegate {
         }
         let cellFirstMenu = cellIsPinned ? unPinMenu : pinMenu
 
-        let uiContextMenuConfiguration = UIContextMenuConfiguration(actionProvider:  { actions in
-            return UIMenu(children: [
-                cellFirstMenu,
-                editMenu,
-                deleteMenu
-            ])
-        })
-        return uiContextMenuConfiguration
+        return [cellFirstMenu, editMenu, deleteMenu]
     }
 }
+
+// MARK: - UICollectionViewDataSource
+extension TrackersViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return viewModel.visibleCategories.count
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let count = viewModel.visibleCategories[section].trackers.count
+        return count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CardCollectionViewCell
+        cell?.delegate = self
+        var cellViewModel = viewModel.configureCellViewModel(for: indexPath)
+        cellViewModel.contextMenu = makeContextMenu(for: indexPath)
+        cell?.configureCell(viewModel: cellViewModel)
+        return cell ?? UICollectionViewCell()
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header", for: indexPath) as? HeaderCollectionReusableView
+        view?.configureView(text: viewModel.visibleCategories[indexPath.section].name)
+        return view ?? UICollectionReusableView()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDelegate {}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {

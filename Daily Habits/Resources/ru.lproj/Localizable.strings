@@ -28,6 +28,7 @@
 "TrackersViewControllerUnPinAction" = "Открепить";
 "TrackersViewControllerEditAction" = "Редактировать";
 "TrackersViewControllerDeleteAction" = "Удалить";
+"TrackersViewControllerFilterButtonTitle" = "Фильтры";
 "NewTrackerTypeChoosingViewControllerHabitButton" = "Привычка";
 "NewTrackerTypeChoosingViewControllerEventButton" = "Нерегулярное событие";
 "NewTrackerTypeChoosingViewControllerNavigationTitle" = "Создание трекера";

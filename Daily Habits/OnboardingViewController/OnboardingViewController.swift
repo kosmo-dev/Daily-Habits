@@ -42,7 +42,7 @@ final class OnboardingViewController: UIViewController {
         ])
     }
 
-    init(image: UIImage, text: String) {
+    init(image: UIImage?, text: String) {
         super.init(nibName: nil, bundle: nil)
         imageView.image = image
         textLabel.text = text

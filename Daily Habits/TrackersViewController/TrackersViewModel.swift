@@ -169,6 +169,10 @@ final class TrackersViewModel {
         }
     }
 
+    func filterButtonTapped() {
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .filter)
+    }
+
     // MARK: - Private methods
     private func configure() {
         self.categoriesController.delegate = self

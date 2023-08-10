@@ -36,6 +36,7 @@ struct S {
         static let alertControllerDeleteTitle = NSLocalizedString("TrackersViewControllerAlertControllerDeleteTitle", comment: "")
         static let alertControllerDeleteAction = NSLocalizedString("TrackersViewControllerAlertControllerDeleteAction", comment: "")
         static let alertControllerErrorDeleteTracker = NSLocalizedString("TrackersViewControllerAlertControllerErrorDeleteTracker", comment: "")
+        static let filterButtonTitle = NSLocalizedString("TrackersViewControllerFilterButtonTitle", comment: "")
     }
 
     struct NewTrackerTypeChoosingViewController {

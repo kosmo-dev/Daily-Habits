@@ -28,6 +28,7 @@
 "TrackersViewControllerUnPinAction" = "Desprender";
 "TrackersViewControllerEditAction" = "Editar";
 "TrackersViewControllerDeleteAction" = "Borrar";
+"TrackersViewControllerFilterButtonTitle" = "Filtros";
 "NewTrackerTypeChoosingViewControllerHabitButton" = "Hábito";
 "NewTrackerTypeChoosingViewControllerEventButton" = "Evento";
 "NewTrackerTypeChoosingViewControllerNavigationTitle" = "Crear un rastreador";

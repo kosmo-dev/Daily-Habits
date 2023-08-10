@@ -5,7 +5,7 @@
 //  Created by Вадим Кузьмин on 25.06.2023.
 //
 
-import Foundation
+import UIKit
 
 struct CardCellViewModel {
     let tracker: Tracker
@@ -13,4 +13,5 @@ struct CardCellViewModel {
     var buttonIsChecked: Bool
     let indexPath: IndexPath
     let buttonIsEnabled: Bool
+    var contextMenu: [UIMenuElement]?
 }
