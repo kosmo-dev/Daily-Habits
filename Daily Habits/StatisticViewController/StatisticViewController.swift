@@ -29,7 +29,15 @@ final class StatisticViewController: UIViewController {
         return placeholderText
     }()
 
-    private let cell = StatisticCellView()
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .ypWhite
+        tableView.showsVerticalScrollIndicator = false
+        tableView.isScrollEnabled = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
+
     private let viewModel: StatisticViewModel
 
     init(viewModel: StatisticViewModel) {
@@ -45,7 +53,7 @@ final class StatisticViewController: UIViewController {
         super.viewDidLoad()
         configureView()
         setBindings()
-        cell.configureCell(counterText: "", desciptionText: S.StatisticViewController.finishedTrackers)
+        tableView.dataSource = self
         viewModel.getStatisticInfo()
     }
 
@@ -58,9 +66,8 @@ final class StatisticViewController: UIViewController {
         view.backgroundColor = .ypWhite
         navigationItem.title = S.StatisticViewController.navigationTitle
         navigationController?.navigationBar.prefersLargeTitles = true
-        cell.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(cell)
-        [placeholderImageView, placeholderText, cell].forEach { view.addSubview($0) }
+        tableView.register(StatisticCellView.self, forCellReuseIdentifier: "StatisticCellView")
+        [placeholderImageView, placeholderText, tableView].forEach { view.addSubview($0) }
         NSLayoutConstraint.activate([
             placeholderImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             placeholderImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -71,25 +78,42 @@ final class StatisticViewController: UIViewController {
             placeholderText.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             placeholderText.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
 
-            cell.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cell.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            cell.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
     }
 
     private func setBindings() {
-        viewModel.$recordsCounterLabel.bind { [weak self] counter in
+        viewModel.$dataSource.bind { [weak self] data in
             guard let self else { return }
-            if let counter, counter != 0 {
-                cell.isHidden = false
+            if data.isEmpty == false {
+                tableView.isHidden = false
                 placeholderImageView.isHidden = true
                 placeholderText.isHidden = true
-                cell.configureCell(counterText: "\(counter)", desciptionText: S.StatisticViewController.finishedTrackers)
+                tableView.reloadData()
             } else {
-                cell.isHidden = true
+                tableView.isHidden = true
                 placeholderImageView.isHidden = false
                 placeholderText.isHidden = false
             }
         }
+    }
+}
+
+extension StatisticViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.dataSource.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "StatisticCellView") as? StatisticCellView else {
+            return UITableViewCell()
+        }
+        let counter = viewModel.dataSource[indexPath.row].counter
+        let description = viewModel.dataSource[indexPath.row].description
+        cell.configureCell(counterText: "\(counter)", desciptionText: description)
+        return cell
     }
 }

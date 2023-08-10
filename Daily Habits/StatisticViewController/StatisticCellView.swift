@@ -7,7 +7,7 @@
 
 import UIKit
 
-class StatisticCellView: UIView {
+class StatisticCellView: UITableViewCell {
     private let gradientView: UIView = {
         let gradientView = UIView()
         gradientView.layer.cornerRadius = 16
@@ -41,7 +41,7 @@ class StatisticCellView: UIView {
         return descriptionLabel
     }()
 
-    private let backgroundView: UIView = {
+    private let containerView: UIView = {
         let backgroundView = UIView()
         backgroundView.layer.cornerRadius = 16
         backgroundView.layer.masksToBounds = true
@@ -50,8 +50,8 @@ class StatisticCellView: UIView {
         return backgroundView
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         layer.cornerRadius = 16
         layer.masksToBounds = true
         backgroundColor = .ypWhite
@@ -75,9 +75,9 @@ class StatisticCellView: UIView {
     private func configureView() {
         addSubview(gradientView)
         gradientView.layer.addSublayer(gradientLayer)
-        gradientView.addSubview(backgroundView)
-        backgroundView.addSubview(counterLabel)
-        backgroundView.addSubview(descriptionLabel)
+        gradientView.addSubview(containerView)
+        containerView.addSubview(counterLabel)
+        containerView.addSubview(descriptionLabel)
 
         let borderWidth: CGFloat = 1
 
@@ -87,19 +87,19 @@ class StatisticCellView: UIView {
             gradientView.trailingAnchor.constraint(equalTo: trailingAnchor),
             gradientView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            backgroundView.topAnchor.constraint(equalTo: gradientView.topAnchor, constant: borderWidth),
-            backgroundView.leadingAnchor.constraint(equalTo: gradientView.leadingAnchor, constant: borderWidth),
-            backgroundView.trailingAnchor.constraint(equalTo: gradientView.trailingAnchor, constant: -borderWidth),
-            backgroundView.bottomAnchor.constraint(equalTo: gradientView.bottomAnchor, constant: -borderWidth),
+            containerView.topAnchor.constraint(equalTo: gradientView.topAnchor, constant: borderWidth),
+            containerView.leadingAnchor.constraint(equalTo: gradientView.leadingAnchor, constant: borderWidth),
+            containerView.trailingAnchor.constraint(equalTo: gradientView.trailingAnchor, constant: -borderWidth),
+            containerView.bottomAnchor.constraint(equalTo: gradientView.bottomAnchor, constant: -borderWidth),
 
-            counterLabel.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 12),
-            counterLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 12),
-            counterLabel.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -12),
+            counterLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            counterLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            counterLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
 
             descriptionLabel.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: 7),
-            descriptionLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 12),
-            descriptionLabel.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -12),
-            descriptionLabel.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -12)
+            descriptionLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
+            descriptionLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
     }
 }

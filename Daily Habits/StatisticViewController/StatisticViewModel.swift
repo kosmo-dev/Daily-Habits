@@ -8,7 +8,7 @@
 import Foundation
 
 class StatisticViewModel {
-    @Observable private(set) var recordsCounterLabel: Int?
+    @Observable private(set) var dataSource: [(counter: Int, description: String)] = []
 
     private let dataController: TrackerDataControllerRecordsProtocol
 
@@ -17,6 +17,11 @@ class StatisticViewModel {
     }
 
     func getStatisticInfo() {
-        recordsCounterLabel = dataController.fetchRecordsCount()
+        dataSource.removeAll()
+        guard let firstCounter = dataController.fetchRecordsCount() else { return }
+        let firstDescription = S.StatisticViewController.finishedTrackers
+        if firstCounter != 0 {
+            dataSource.append((counter: firstCounter, description: firstDescription))
+        }
     }
 }
