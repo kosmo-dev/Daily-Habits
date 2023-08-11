@@ -38,9 +38,9 @@ final class StatisticViewController: UIViewController {
         return tableView
     }()
 
-    private let viewModel: StatisticViewModel
+    private let viewModel: StatisticViewModelProtocol
 
-    init(viewModel: StatisticViewModel) {
+    init(viewModel: StatisticViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -86,7 +86,7 @@ final class StatisticViewController: UIViewController {
     }
 
     private func setBindings() {
-        viewModel.$dataSource.bind { [weak self] data in
+        viewModel.setBindings { [weak self] data in
             guard let self else { return }
             if data.isEmpty == false {
                 tableView.isHidden = false
@@ -104,15 +104,15 @@ final class StatisticViewController: UIViewController {
 
 extension StatisticViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.dataSource.count
+        return viewModel.internalDataSource.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "StatisticCellView") as? StatisticCellView else {
             return UITableViewCell()
         }
-        let counter = viewModel.dataSource[indexPath.row].counter
-        let description = viewModel.dataSource[indexPath.row].description
+        let counter = viewModel.internalDataSource[indexPath.row].counter
+        let description = viewModel.internalDataSource[indexPath.row].description
         cell.configureCell(counterText: "\(counter)", desciptionText: description)
         return cell
     }
