@@ -19,7 +19,27 @@ final class CategoryViewController: UIViewController {
         return tableView
     }()
 
-    private let addCategoryButton = PrimaryButton(title: "Добавить категорию", action: #selector(addCategoryButtonTapped), type: .primary)
+    private let placeholderImageView: UIImageView = {
+        let placeholderImageView = UIImageView()
+        placeholderImageView.image = UIImage(named: C.UIImages.emptyTrackersPlaceholder)
+        placeholderImageView.isHidden = true
+        placeholderImageView.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderImageView
+    }()
+
+    private let placeholderText: UILabel = {
+        let placeholderText = UILabel()
+        placeholderText.text = S.CategoryViewController.placeholderText
+        placeholderText.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        placeholderText.textColor = .ypBlack
+        placeholderText.textAlignment = .center
+        placeholderText.numberOfLines = 0
+        placeholderText.isHidden = true
+        placeholderText.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderText
+    }()
+
+    private let addCategoryButton = PrimaryButton(title: S.CategoryViewController.addCategoryButton, action: #selector(addCategoryButtonTapped), type: .primary)
 
     // MARK: - Initializers
     init(viewModel: CategoryViewModel) {
@@ -39,17 +59,18 @@ final class CategoryViewController: UIViewController {
 
         tableView.dataSource = self
         tableView.delegate = self
+
+        viewModel.viewControllerDidLoad()
     }
 
     // MARK: - Private Methods
     private func configureView() {
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: "categoryTableViewCell")
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Категория"
+        navigationItem.title = S.NewTrackerViewController.categoryHeader
         navigationItem.hidesBackButton = true
 
-        view.addSubview(addCategoryButton)
-        view.addSubview(tableView)
+        [addCategoryButton, tableView, placeholderImageView, placeholderText].forEach { view.addSubview($0) }
 
         NSLayoutConstraint.activate([
             addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
@@ -60,7 +81,13 @@ final class CategoryViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24)
+            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24),
+
+            placeholderImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            placeholderImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderText.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
+            placeholderText.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            placeholderText.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
 
@@ -77,6 +104,17 @@ final class CategoryViewController: UIViewController {
         viewModel.$alertText.bind { [weak self] text in
             guard let self, let text else { return }
             self.showAlertController(with: text)
+        }
+
+        viewModel.$showPlaceholder.bind { [weak self] show in
+            guard let self else { return }
+            if show {
+                self.placeholderText.isHidden = false
+                self.placeholderImageView.isHidden = false
+            } else {
+                self.placeholderText.isHidden = true
+                self.placeholderImageView.isHidden = true
+            }
         }
     }
 }
@@ -110,8 +148,8 @@ extension CategoryViewController: UITableViewDataSource {
 // MARK: - Alert Presentation
 extension CategoryViewController {
     func showAlertController(with message: String) {
-        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Закрыть", style: .default)
+        let alertController = UIAlertController(title: S.TrackersViewController.alertControllerTitle, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: S.TrackersViewController.alertControllerAction, style: .default)
         alertController.addAction(action)
         present(alertController, animated: true)
     }

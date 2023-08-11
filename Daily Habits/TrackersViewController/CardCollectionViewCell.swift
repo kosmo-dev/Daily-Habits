@@ -38,7 +38,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     private let pinImageView: UIImageView = {
         let pinImageView = UIImageView()
         pinImageView.image = UIImage(systemName: "pin.fill")
-        pinImageView.tintColor = .ypWhite
+        pinImageView.tintColor = .white
         pinImageView.translatesAutoresizingMaskIntoConstraints = false
         return pinImageView
     }()
@@ -86,6 +86,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         makeLayout()
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cardView.addInteraction(interaction)
     }
 
     required init?(coder: NSCoder) {
@@ -96,16 +98,17 @@ final class CardCollectionViewCell: UICollectionViewCell {
     func configureCell(viewModel: CardCellViewModel) {
         emojiLabel.text = viewModel.tracker.emoji
         cardText.text = viewModel.tracker.name
-        daysLabel.text = "\(viewModel.counter) \(dayStringDeclension(for: viewModel.counter))"
+        daysLabel.text = String.localizedStringWithFormat(NSLocalizedString("%d days", comment: ""), viewModel.counter)
         cardView.backgroundColor = viewModel.tracker.color
         self.viewModel = viewModel
-        pinImageView.isHidden = true
+        pinImageView.isHidden = !viewModel.tracker.isPinned
         checkButtonState()
         checkIsButtonEnabled()
     }
 
     // MARK: - Private Methods
     private func makeLayout() {
+        layer.cornerRadius = 16
         addSubview(cardView)
         cardView.addSubview(emojiLabel)
         cardView.addSubview(pinImageView)
@@ -175,19 +178,14 @@ final class CardCollectionViewCell: UICollectionViewCell {
             checkButton.isEnabled = true
         }
     }
+}
 
-    private func dayStringDeclension(for counter: Int) -> String {
-        let reminder = counter % 10
-        if counter == 11 || counter == 12 || counter == 13 || counter == 14 {
-            return "дней"
-        }
-        switch reminder {
-        case 1:
-            return "день"
-        case 2, 3, 4:
-            return "дня"
-        default:
-            return "дней"
-        }
+extension CardCollectionViewCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(actionProvider:  { [weak self] _ in
+            guard let contextMenu = self?.viewModel?.contextMenu  else { return nil }
+            return UIMenu(children: contextMenu)
+        })
+
     }
 }

@@ -13,16 +13,14 @@ final class TrackersViewController: UIViewController {
         let datePickerView = UIDatePicker()
         datePickerView.preferredDatePickerStyle = .compact
         datePickerView.datePickerMode = .date
-        var calendar = Calendar.current
-        calendar.locale = Locale(identifier: "ru_RU")
-        datePickerView.calendar = calendar
+        datePickerView.calendar = Calendar.current
         datePickerView.translatesAutoresizingMaskIntoConstraints = false
         return datePickerView
     }()
 
     private let searchField: UISearchTextField = {
         let searchField = UISearchTextField()
-        searchField.placeholder = "Поиск"
+        searchField.placeholder = S.TrackersViewController.searchPlaceholder
         searchField.addTarget(nil, action: #selector(searchFieldEditingChanged), for: .editingChanged)
         searchField.translatesAutoresizingMaskIntoConstraints = false
         return searchField
@@ -38,7 +36,7 @@ final class TrackersViewController: UIViewController {
 
     private let cancelSearchButton: UIButton = {
         let cancelSearchButton = UIButton()
-        cancelSearchButton.setTitle("Отменить", for: .normal)
+        cancelSearchButton.setTitle(S.cancelButton, for: .normal)
         cancelSearchButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         cancelSearchButton.setTitleColor(.ypBlue, for: .normal)
         cancelSearchButton.addTarget(nil, action: #selector(cancelSearchButtonTapped), for: .touchUpInside)
@@ -64,13 +62,15 @@ final class TrackersViewController: UIViewController {
 
     private let placeholderText: UILabel = {
         let placeholderText = UILabel()
-        placeholderText.text = "Что будем отслеживать?"
+        placeholderText.text = S.TrackersViewController.emptyTrackersPlaceholder
         placeholderText.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         placeholderText.textColor = .ypBlack
         placeholderText.isHidden = true
         placeholderText.translatesAutoresizingMaskIntoConstraints = false
         return placeholderText
     }()
+
+    private let filterButton = PrimaryButton(title: S.TrackersViewController.filterButtonTitle, action: #selector(filterButtonTapped), type: .secondary)
 
     private var viewModel: TrackersViewModel
 
@@ -98,6 +98,16 @@ final class TrackersViewController: UIViewController {
         viewModel.viewControllerDidLoad()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.viewControllerDidAppear()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        viewModel.viewControllerDidDissapear()
+    }
+
     // MARK: - Private Methods
     private func configureNavigationBar() {
         let leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done, target: self, action: nil)
@@ -109,7 +119,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.rightBarButtonItem = rightBarButtonItem
 
-        navigationItem.title = "Трекеры"
+        navigationItem.title = S.TrackersViewController.navigationTitle
         navigationController?.navigationBar.prefersLargeTitles = true
 
         datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
@@ -124,7 +134,7 @@ final class TrackersViewController: UIViewController {
     }
 
     private func makeLayout() {
-        [searchStackView, collectionView, placeholderImageView, placeholderText].forEach({ view.addSubview($0) })
+        [searchStackView, collectionView, placeholderImageView, placeholderText, filterButton].forEach({ view.addSubview($0) })
         searchStackView.addArrangedSubview(searchField)
 
         let padding: CGFloat = 16
@@ -145,7 +155,12 @@ final class TrackersViewController: UIViewController {
             placeholderText.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
             placeholderText.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
 
-            cancelSearchButton.widthAnchor.constraint(equalToConstant: 83)
+            cancelSearchButton.widthAnchor.constraint(equalToConstant: 83),
+
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -padding),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 
@@ -155,8 +170,10 @@ final class TrackersViewController: UIViewController {
             if let image {
                 placeholderImageView.isHidden = false
                 placeholderImageView.image = image
+                filterButton.isHidden = true
             } else {
                 placeholderImageView.isHidden = true
+                filterButton.isHidden = false
             }
         }
 
@@ -174,11 +191,6 @@ final class TrackersViewController: UIViewController {
             guard let self, let alertText  else { return }
             showAlertController(with: alertText)
 
-        }
-
-        viewModel.$itemsToReload.bind { [weak self] indexPaths in
-            guard let self, let indexPaths else { return }
-            collectionView.reloadItems(at: indexPaths)
         }
 
         viewModel.$trackersCollectionViewUpdate.bind { [weak self] trackersCollectionViewUpdate in
@@ -203,6 +215,29 @@ final class TrackersViewController: UIViewController {
         datePickerValueChanged()
         viewModel.checkNeedPlaceholder(for: .noTrackers)
     }
+
+    @objc private func filterButtonTapped() {
+        viewModel.filterButtonTapped()
+    }
+
+    private func makeContextMenu(for indexPath: IndexPath) -> [UIMenuElement] {
+        let cellIsPinned = viewModel.visibleCategories[indexPath.section].trackers[indexPath.row].isPinned
+        let pinMenu = UIAction(title: S.TrackersViewController.pinAction) { [weak self] _ in
+            self?.viewModel.pinButtonTapped(for: indexPath)
+        }
+        let unPinMenu = UIAction(title: S.TrackersViewController.unPinAction) { [weak self] _ in
+            self?.viewModel.unPinButtonTapped(for: indexPath)
+        }
+        let editMenu = UIAction(title: S.TrackersViewController.editAction) { [weak self] _ in
+            self?.viewModel.editButtonTapped(for: indexPath)
+        }
+        let deleteMenu = UIAction(title: S.TrackersViewController.deleteAction, attributes: .destructive) { [weak self] _ in
+            self?.showDeleteAlert(indexPath)
+        }
+        let cellFirstMenu = cellIsPinned ? unPinMenu : pinMenu
+
+        return [cellFirstMenu, editMenu, deleteMenu]
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -218,7 +253,8 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CardCollectionViewCell
         cell?.delegate = self
-        let cellViewModel = viewModel.configureCellViewModel(for: indexPath)
+        var cellViewModel = viewModel.configureCellViewModel(for: indexPath)
+        cellViewModel.contextMenu = makeContextMenu(for: indexPath)
         cell?.configureCell(viewModel: cellViewModel)
         return cell ?? UICollectionViewCell()
     }
@@ -245,9 +281,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         if viewModel.visibleCategories[indexPath.section].trackers.count == 0 {
             return CGSizeZero
         }
-
-        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return CGSize(width: collectionView.bounds.width, height: 50)
     }
 }
 
@@ -319,9 +353,9 @@ extension TrackersViewController: UITextFieldDelegate {
             if !trackersCollectionViewUpdate.insertedIndexes.isEmpty {
                 collectionView.insertItems(at: trackersCollectionViewUpdate.insertedIndexes)
             }
-            if !trackersCollectionViewUpdate.reloadedIndexes.isEmpty {
-                collectionView.reloadItems(at: trackersCollectionViewUpdate.reloadedIndexes)
-            }
+        }
+        if !trackersCollectionViewUpdate.reloadedIndexes.isEmpty {
+            collectionView.reloadItems(at: trackersCollectionViewUpdate.reloadedIndexes)
         }
     }
 }
@@ -329,9 +363,20 @@ extension TrackersViewController: UITextFieldDelegate {
 // MARK: - Alert Presentation
 extension TrackersViewController {
     func showAlertController(with message: String) {
-        let alertController = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Закрыть", style: .default)
+        let alertController = UIAlertController(title: S.TrackersViewController.alertControllerTitle, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: S.TrackersViewController.alertControllerAction, style: .default)
         alertController.addAction(action)
+        present(alertController, animated: true)
+    }
+
+    func showDeleteAlert(_ indexPath: IndexPath) {
+        let alertController = UIAlertController(title: nil, message: S.TrackersViewController.alertControllerDeleteTitle, preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: S.TrackersViewController.alertControllerDeleteAction, style: .destructive) { [weak self] _ in
+            self?.viewModel.deleteButtonTapped(for: indexPath)
+        }
+        let cancelAction = UIAlertAction(title: S.cancelButton, style: .cancel)
+        alertController.addAction(deleteAction)
+        alertController.addAction(cancelAction)
         present(alertController, animated: true)
     }
 }

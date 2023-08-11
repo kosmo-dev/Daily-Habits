@@ -11,13 +11,20 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     weak var trackersViewController: NewTrackerViewModelDelegate?
 
     // MARK: - Private Properties
-    private let habitButton = PrimaryButton(title: "Привычка", action: #selector(habitButtonTapped), type: .primary)
-    private let eventButton = PrimaryButton(title: "Нерегулярное событие", action: #selector(eventButtonTapped), type: .primary)
-    private let dataController: TrackerDataControllerProtocol
+    private let habitButton = PrimaryButton(title: S.NewTrackerTypeChoosingViewController.habitButton, action: #selector(habitButtonTapped), type: .primary)
+    private let eventButton = PrimaryButton(title: S.NewTrackerTypeChoosingViewController.eventButton, action: #selector(eventButtonTapped), type: .primary)
+    private let categoriesController: TrackerDataControllerCategoriesProtocol
+    private let appMetricController: AppMetricProtocol
+    private let appMetricScreenName = "NewTrackerTypeChoosingViewController"
 
     // MARK: Initializers
-    init(trackersViewController: NewTrackerViewModelDelegate?, dataController: TrackerDataControllerProtocol) {
-        self.dataController = dataController
+    init(
+        trackersViewController: NewTrackerViewModelDelegate?,
+        categoriesController: TrackerDataControllerCategoriesProtocol,
+        appMetricController: AppMetricProtocol
+    ) {
+        self.categoriesController = categoriesController
+        self.appMetricController = appMetricController
         super.init(nibName: nil, bundle: nil)
         self.trackersViewController = trackersViewController
     }
@@ -30,13 +37,19 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .open, item: nil)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .close, item: nil)
     }
 
     // MARK: - Private Methods
     private func configureView() {
         view.backgroundColor = .ypWhite
         
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = S.NewTrackerTypeChoosingViewController.navigationTitle
         navigationController?.navigationBar.prefersLargeTitles = false
         view.addSubview(habitButton)
         view.addSubview(eventButton)
@@ -56,14 +69,16 @@ final class NewTrackerTypeChoosingViewController: UIViewController {
 
     @objc private func habitButtonTapped() {
         showViewController(trackerType: .habit)
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .habitButton)
     }
 
     @objc private func eventButtonTapped() {
         showViewController(trackerType: .event)
+        appMetricController.reportEvent(screen: appMetricScreenName, event: .click, item: .eventButton)
     }
 
     private func showViewController(trackerType: NewTrackerViewModel.TrackerType) {
-        let viewModel = NewTrackerViewModel(trackerType: trackerType, navigationController: navigationController, dataController: dataController)
+        let viewModel = NewTrackerViewModel(trackerType: trackerType, categoriesController: categoriesController, appMetricController: appMetricController, navigationController: navigationController)
         viewModel.delegate = trackersViewController
         let newTrackerViewController = NewTrackerViewController(viewModel: viewModel)
         navigationController?.pushViewController(newTrackerViewController, animated: true)

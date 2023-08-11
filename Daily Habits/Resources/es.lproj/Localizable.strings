@@ -1,0 +1,53 @@
+/* 
+  Localizable.strings
+  Daily Habits
+
+  Created by Вадим Кузьмин on 03.08.2023.
+  
+*/
+
+"CancelButton" = "Cancelar";
+"OnboardingViewControllerFirstViewControllerText" = "Rastrea solo lo que quieras";
+"OnboardingViewControllerSecondViewControllerText" = "Aunque no sean litros de agua y yoga";
+"OnboardingViewControllerButton" = "¡Eso es tecnología!";
+"TabBarControllerTrackersTabBarItem"= "Rastreadores";
+"TabBarControllerStatisticsTabBarItem" = "Estadísticas";
+"TrackersViewControllerSearchPlaceholder" = "Buscar";
+"TrackersViewControllerEmptyTrackersPlaceholder" = "¿Qué rastrearemos?";
+"TrackersViewControllerNotFoundPlaceholder" = "Nada encontrado";
+"TrackersViewControllerNavigationTitle" = "Rastreadores";
+"TrackersViewControllerAlertControllerTitle" = "Error";
+"TrackersViewControllerAlertControllerErrorAddingTracker" = "Error al agregar registro. Intentar otra vez";
+"TrackersViewControllerAlertControllerErrorPinTracker" = "Error al alfiler registro. Intentar otra vez";
+"TrackersViewControllerAlertControllerAction" = "Cerca";
+"TrackersViewControllerAlertControllerDeleteTitle" = "¿Está seguro de que desea eliminar el rastreador?";
+"TrackersViewControllerAlertControllerDeleteAction" = "Eliminar";
+"TrackersViewControllerAlertControllerErrorDeleteTracker" = "Error al eliminar registro. Intentar otra vez";
+"TrackersViewControllerPinnedHeader" = "Fijado";
+"TrackersViewControllerPinAction" = "Alfiler";
+"TrackersViewControllerUnPinAction" = "Desprender";
+"TrackersViewControllerEditAction" = "Editar";
+"TrackersViewControllerDeleteAction" = "Borrar";
+"TrackersViewControllerFilterButtonTitle" = "Filtros";
+"NewTrackerTypeChoosingViewControllerHabitButton" = "Hábito";
+"NewTrackerTypeChoosingViewControllerEventButton" = "Evento";
+"NewTrackerTypeChoosingViewControllerNavigationTitle" = "Crear un rastreador";
+"NewTrackerViewControllerTitleTextFieldPlaceholder" = "Introduce el nombre del rastreador";
+"NewTrackerViewControllerEmojiTitle" = "Emoticonos";
+"NewTrackerViewControllerColorsTitle" = "Color";
+"NewTrackerViewControllerCreateButton" = "Crear";
+"NewTrackerViewControllerSaveButton" = "Ahorrar";
+"NewTrackerViewControllerNavigationTitleNew" = "Nuevo hábito";
+"NewTrackerViewControllerNavigationTitleEdit" = "Edición hábito";
+"NewTrackerViewControllerCategoryHeader" = "Categoría";
+"NewTrackerViewControllerScheduleHeader" = "Cronograma";
+"NewTrackerViewControllerScheduleEveryDaySecondaryText" = "Cada día";
+"CategoryViewControllerAddCategoryButton" = "Añadir categoría";
+"CategoryViewControllerAlertControllerErrorCategoryExist" = "La categoría ya existe";
+"CategoryViewControllerPlaceholderText" = "Hábitos y eventos se pueden combinar en significado";
+"NewCategoryViewControllerTextFieldPlaceholder" = "Introduce el nombre de la categoría";
+"NewCategoryViewControllerNavigationTitle" = "Nueva categoría";
+"ScheduleViewControllerConfirmButton" = "Confirmar";
+"StatisticViewControllerPlaceholderText" = "Nada que analizar";
+"StatisticViewControllerFinishedTrackers" = "Rastreadores completados";
+"StatisticViewControllerNavigationTitle" = "Estadísticas";

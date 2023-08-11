@@ -8,9 +8,22 @@
 import UIKit
 
 struct Tracker {
-    let id: UUID
+    let id: String
     let name: String
     let color: UIColor
     let emoji: String
     let schedule: [Int]
+    var isPinned: Bool
+    let category: String
+    var viewCategory: String
+}
+
+extension Tracker {
+    var colorIndex: Int? {
+        C.Colors.hexColors.firstIndex(of: color.hexString())
+    }
+
+    var emojiIndex: Int? {
+        C.Emojis.emojis.firstIndex(of: emoji)
+    }
 }

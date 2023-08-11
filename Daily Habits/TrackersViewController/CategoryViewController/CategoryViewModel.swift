@@ -8,28 +8,28 @@
 import UIKit
 
 protocol CategoryViewModelDelegate: AnyObject {
-    func addCategory(_ category: String, index: Int)
+    func addCategory(_ category: String)
 }
 
 final class CategoryViewModel {
     weak var delegate: CategoryViewModelDelegate?
 
-    @Observable private (set) var categoriesModel: [CategoryCellModel] = []
+    @Observable private(set) var categoriesModel: [CategoryCellModel] = []
     @Observable private(set) var alertText: String?
+    @Observable private(set) var showPlaceholder: Bool = false
 
     private var choosedCategoryIndex: Int?
     private var navigationController: UINavigationController?
-    private var dataController: TrackerDataControllerProtocol
+    private var categoriesController: TrackerDataControllerCategoriesProtocol
 
     init(
-        choosedCategoryIndex: Int?,
+        choosedCategory: String?,
         navigationController: UINavigationController?,
-        dataController: TrackerDataControllerProtocol
+        categoriesController: TrackerDataControllerCategoriesProtocol
     ) {
-        self.choosedCategoryIndex = choosedCategoryIndex
         self.navigationController = navigationController
-        self.dataController = dataController
-        fetchCategories()
+        self.categoriesController = categoriesController
+        fetchCategories(choosedCategory)
     }
 
     func addCategoryButtonTapped() {
@@ -47,13 +47,21 @@ final class CategoryViewModel {
     }
 
     func didSelectRow(at indexPath: IndexPath) {
-        delegate?.addCategory(categoriesModel[indexPath.row].title, index: indexPath.row)
+        delegate?.addCategory(categoriesModel[indexPath.row].title)
         navigationController?.popViewController(animated: true)
     }
 
-    private func fetchCategories() {
+    func viewControllerDidLoad() {
+        checkNeedPlaceholder()
+    }
+
+    private func fetchCategories(_ choosedCategory: String?) {
         categoriesModel.removeAll()
-        let categories = dataController.fetchCategoriesList()
+        let categories = categoriesController.fetchCategoriesList()
+        if let choosedCategory {
+            let index = categories.firstIndex(where: { $0 == choosedCategory })
+            choosedCategoryIndex = index
+        }
         for (index, category) in categories.enumerated() {
             let upperMaskedCorners: CACornerMask = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             let lowerMaskedCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -76,23 +84,31 @@ final class CategoryViewModel {
             }
             categoriesModel.append(CategoryCellModel(title: category, hideCheckmark: hideCheckMark, hideBottomDivider: hideBottomDivider, maskedCorners: maskedCorners))
         }
+        checkNeedPlaceholder()
+    }
+
+    private func checkNeedPlaceholder() {
+        showPlaceholder = categoriesModel.isEmpty
     }
 }
 
 extension CategoryViewModel: NewCategoryViewControllerDelegate {
     func addNewCategory(_ category: String) {
         do {
-            try dataController.addNewCategory(category)
-            fetchCategories()
+            try categoriesController.addNewCategory(category)
+            fetchCategories(category)
+            if let choosedCategoryIndex {
+                didSelectRow(at: IndexPath(row: choosedCategoryIndex, section: 0))
+            }
         } catch let error as TrackerCategoryStoreError {
             switch error {
             case .categoryExist:
-                alertText = "Категория уже существует"
+                alertText = S.CategoryViewController.alertControllerErrorCategoryExist
             default:
-                alertText = "Ошибка добавления новой категории"
+                alertText = S.TrackersViewController.alertControllerErrorAddingTracker
             }
         } catch {
-            alertText = "Ошибка добавления новой категории"
+            alertText = S.TrackersViewController.alertControllerErrorAddingTracker
         }
     }
 }

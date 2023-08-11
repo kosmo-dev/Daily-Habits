@@ -17,13 +17,14 @@ final class ScheduleViewModel {
 
     private var calendar = Calendar.current
     private var days: [String] = []
+    private var weekdaySymbolsLowercased = Calendar.current.weekdaySymbols.map { $0.lowercased() }
 
     private(set) var list: [ListViewModel]  = []
     private(set) var finalList: [Int] = []
 
     init(choosedDays: [Int], navigationController: UINavigationController?) {
         self.navigationController = navigationController
-        calendar.locale = Locale(identifier: "ru_RU")
+        calendar.locale = .current
         days = calendar.weekdaySymbols
         finalList = choosedDays
         configureDaysArray()
@@ -80,13 +81,13 @@ final class ScheduleViewModel {
             weekdays.append(weekdaySymbol.capitalizeFirstLetter())
         }
 
-        guard let firstDay = weekdays.first else { return }
-        weekdays.append(firstDay)
-        weekdays.remove(at: 0)
+        let elementsBeforeIndex = Array(weekdays[..<(calendar.firstWeekday - 1)])
+        let elementsFromIndexOnwards = Array(weekdays[(calendar.firstWeekday - 1)...])
+        weekdays = elementsFromIndexOnwards + elementsBeforeIndex
         days = weekdays
     }
 
     private func getIndexOfWeek(_ text: String) -> Int? {
-        return calendar.weekdaySymbols.firstIndex(of: text.lowercased())
+        return weekdaySymbolsLowercased.firstIndex(of: text.lowercased())
     }
 }

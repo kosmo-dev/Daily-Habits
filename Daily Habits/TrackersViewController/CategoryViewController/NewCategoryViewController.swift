@@ -15,7 +15,7 @@ final class NewCategoryViewController: UIViewController {
 
     private let titleTextField: UITextField = {
         let titleTextField = UITextField()
-        titleTextField.placeholder = "Введите название категории"
+        titleTextField.placeholder = S.NewCategoryViewController.textFieldPlaceholder
         titleTextField.backgroundColor = .ypBackground
         titleTextField.layer.cornerRadius = 16
         titleTextField.layer.masksToBounds = true
@@ -26,7 +26,7 @@ final class NewCategoryViewController: UIViewController {
         return titleTextField
     }()
 
-    private let button = PrimaryButton(title: "Создать", action: #selector(saveButtonTapped), type: .notActive)
+    private let button = PrimaryButton(title: S.NewTrackerViewController.createButton, action: #selector(saveButtonTapped), type: .notActive)
     weak var delegate: NewCategoryViewControllerDelegate?
 
     override func viewDidLoad() {
@@ -37,7 +37,7 @@ final class NewCategoryViewController: UIViewController {
 
     private func configureView() {
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Новая категория"
+        navigationItem.title = S.NewCategoryViewController.navigationTitle
         navigationItem.hidesBackButton = true
 
         view.addSubview(titleTextField)

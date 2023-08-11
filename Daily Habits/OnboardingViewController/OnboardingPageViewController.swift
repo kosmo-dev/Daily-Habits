@@ -9,10 +9,10 @@ import UIKit
 
 final class OnboardingPageViewController: UIPageViewController {
 
-    let firstViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingFirst)!,
-                                                       text: "Отслеживайте только то, что хотите")
-    let secondViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingSecond)!,
-                                                        text: "Даже если это не литры воды и йога")
+    let firstViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingFirst),
+                                                       text: S.OnboardingViewController.firstViewControllerText)
+    let secondViewController = OnboardingViewController(image: UIImage(named: C.UIImages.onboardingSecond),
+                                                        text: S.OnboardingViewController.secondViewControllerText)
 
     lazy var pages: [UIViewController] = [firstViewController, secondViewController]
 
@@ -27,7 +27,7 @@ final class OnboardingPageViewController: UIPageViewController {
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
-    let button = PrimaryButton(title: "Вот это технологии!", action: #selector(buttonTapped), type: .primary)
+    let button = PrimaryButton(title: S.OnboardingViewController.button, action: #selector(buttonTapped), type: .primary)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +43,9 @@ final class OnboardingPageViewController: UIPageViewController {
     private func configureView() {
         view.addSubview(pageControl)
         view.addSubview(button)
+
+        button.backgroundColor = UIColor.color(from: "1A1B22")
+        button.setTitleColor(.white, for: .normal)
 
         NSLayoutConstraint.activate([
             button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),

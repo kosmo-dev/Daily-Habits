@@ -14,7 +14,7 @@ struct TrackersCollectionViewUpdate {
     let insertedSections: IndexSet
     let removedSections: IndexSet
 
-    init(insertedIndexesInSearch: [IndexPath], removedIndexesInSearch: [IndexPath], reloadedIndexes: [IndexPath] , insertedSectionsInSearch: IndexSet, removedSectionsInSearch: IndexSet) {
+    init(insertedIndexesInSearch: [IndexPath], removedIndexesInSearch: [IndexPath], reloadedIndexes: [IndexPath], insertedSectionsInSearch: IndexSet, removedSectionsInSearch: IndexSet) {
         self.insertedIndexes = insertedIndexesInSearch
         self.removedIndexes = removedIndexesInSearch
         self.reloadedIndexes = reloadedIndexes

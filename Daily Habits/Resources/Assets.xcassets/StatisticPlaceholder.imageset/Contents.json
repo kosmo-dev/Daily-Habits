@@ -1,17 +1,16 @@
 {
   "images" : [
     {
-      "filename" : "SearchNotFoundPlaceholder@1x.png",
+      "filename" : "StatisticPlaceholder@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "SearchNotFoundPlaceholder@2x.png",
+      "filename" : "StatisticPlaceholder@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "SearchNotFoundPlaceholder@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

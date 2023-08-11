@@ -36,8 +36,8 @@ class ListCollectionViewCell: UICollectionViewCell {
 
         NSLayoutConstraint.activate([
             listView.topAnchor.constraint(equalTo: topAnchor),
-            listView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            listView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            listView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            listView.trailingAnchor.constraint(equalTo: trailingAnchor),
             listView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }

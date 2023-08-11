@@ -13,20 +13,25 @@ protocol TrackerDataControllerDelegate: AnyObject {
     func updateView(categories: [TrackerCategory], animating: Bool, withDateChange: Bool)
 }
 
-protocol TrackerDataControllerProtocol: AnyObject {
+protocol TrackerDataControllerCategoriesProtocol {
     func addTrackerCategory(_ trackerCategory: TrackerCategory) throws
     func fetchCategoriesFor(weekday: Int, animating: Bool)
     func fetchSearchedCategories(textToSearch: String, weekday: Int)
     func addNewCategory(_ category: String) throws
     func fetchCategoriesList() -> [String]
-
-    func fetchRecordsCountForId(_ id: UUID) -> Int
-    func checkTrackerRecordExist(id: UUID, date: String) -> Bool
-    func addTrackerRecord(id: UUID, date: String) throws
-    func deleteTrackerRecord(id: UUID, date: String) throws
-
+    func updateTrackerProperties(_ tracker: Tracker) throws
+    func deleteTracker(_ trackerID: String) throws
     var categories: [TrackerCategory] { get }
     var delegate: TrackerDataControllerDelegate? { get set }
+}
+
+protocol TrackerDataControllerRecordsProtocol {
+    func fetchRecordsCountForId(_ id: String) -> Int
+    func checkTrackerRecordExist(id: String, date: String) -> Bool
+    func addTrackerRecord(id: String, date: String) throws
+    func deleteTrackerRecord(id: String, date: String) throws
+    func fetchRecordsCount() -> Int?
+    func deleteRecords(for id: String) throws
 }
 
 final class TrackerDataController: NSObject {
@@ -68,8 +73,15 @@ final class TrackerDataController: NSObject {
     }
 }
 
-// MARK: - TrackerDataControllerProtocol
-extension TrackerDataController: TrackerDataControllerProtocol {
+// MARK: - TrackerDataControllerCategoriesProtocol
+extension TrackerDataController: TrackerDataControllerCategoriesProtocol {
+    var categories: [TrackerCategory] {
+        guard let objects = self.fetchResultController?.fetchedObjects else { return [] }
+        var trackerCategories = trackerCategoryStore.convertTrackerCoreDataToTrackerCategories(objects)
+        trackerCategories.sort(by: { $0.name < $1.name })
+        return trackerCategories
+    }
+
     func fetchSearchedCategories(textToSearch: String, weekday: Int) {
         let weekdayPredicate = NSPredicate(format: "ANY %K.%K == %ld", #keyPath(TrackerCoreData.schedule), #keyPath(ScheduleCoreData.weekday), weekday)
         let textPredicate = NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(TrackerCoreData.name), textToSearch)
@@ -90,22 +102,6 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         try trackerCategoryStore.addTrackerCategory(trackerCategory)
     }
 
-    func fetchRecordsCountForId(_ id: UUID) -> Int {
-        trackerRecordStore.fetchRecordsCountForId(id)
-    }
-
-    func checkTrackerRecordExist(id: UUID, date: String) -> Bool {
-        trackerRecordStore.checkTrackerRecordExist(id: id, date: date)
-    }
-
-    func addTrackerRecord(id: UUID, date: String) throws {
-        try trackerRecordStore.addTrackerRecord(id: id, date: date)
-    }
-
-    func deleteTrackerRecord(id: UUID, date: String) throws {
-        try trackerRecordStore.deleteTrackerRecord(id: id, date: date)
-    }
-
     func addNewCategory(_ category: String) throws {
         try trackerCategoryStore.addNewCategory(category)
     }
@@ -115,13 +111,42 @@ extension TrackerDataController: TrackerDataControllerProtocol {
         return categories
     }
 
-    var categories: [TrackerCategory] {
-        guard let objects = self.fetchResultController?.fetchedObjects else { return [] }
-        var trackerCategories = trackerCategoryStore.convertTrackerCoreDataToTrackerCategories(objects)
-        trackerCategories.sort(by: { $0.name < $1.name })
-        return trackerCategories
+    func updateTrackerProperties(_ tracker: Tracker) throws {
+        try trackerStore.updateTrackerProperties(for: tracker)
+    }
+
+    func deleteTracker(_ trackerID: String) throws {
+        try trackerStore.deleteTracker(trackerID)
     }
 }
+
+// MARK: - TrackerDataControllerRecordsProtocol
+extension TrackerDataController: TrackerDataControllerRecordsProtocol {
+    func fetchRecordsCountForId(_ id: String) -> Int {
+        trackerRecordStore.fetchRecordsCountForId(id)
+    }
+
+    func checkTrackerRecordExist(id: String, date: String) -> Bool {
+        trackerRecordStore.checkTrackerRecordExist(id: id, date: date)
+    }
+
+    func addTrackerRecord(id: String, date: String) throws {
+        try trackerRecordStore.addTrackerRecord(id: id, date: date)
+    }
+
+    func deleteTrackerRecord(id: String, date: String) throws {
+        try trackerRecordStore.deleteTrackerRecord(id: id, date: date)
+    }
+
+    func fetchRecordsCount() -> Int? {
+        return trackerRecordStore.fetchRecordsCount()
+    }
+
+    func deleteRecords(for id: String) throws {
+        try trackerRecordStore.deleteRecords(for: id)
+    }
+}
+
 // MARK: - NSFetchedResultsControllerDelegate
 extension TrackerDataController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
